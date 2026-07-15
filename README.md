@@ -1,6 +1,8 @@
 # AWS Certified Solutions Architect – Professional (SAP-C02)
 
-![AWS Solutions Architect Professional](0_WN1yxw4ekEwhf_JM.png)
+<p align="center">
+  <img src="0_WN1yxw4ekEwhf_JM.png" alt="AWS Solutions Architect Professional" width="600">
+</p>
 
 Material de estudo completo em **Português do Brasil** para a certificação AWS Solutions Architect Professional (SAP-C02). Conteúdo baseado no guia oficial do exame, documentação AWS e material complementar.
 

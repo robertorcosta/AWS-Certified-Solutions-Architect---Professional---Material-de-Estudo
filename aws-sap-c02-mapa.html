@@ -327,6 +327,97 @@
             .domains { flex-direction: column; align-items: center; }
             .domain { max-width: 100%; }
         }
+
+        /* Search */
+        .search-bar {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            padding: 0 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-bar input {
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg-node);
+            color: var(--text);
+            font-size: 0.85rem;
+            width: 280px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-bar input:focus {
+            border-color: var(--accent);
+        }
+
+        .search-bar input::placeholder {
+            color: var(--text-dim);
+        }
+
+        .toolbar-btn {
+            padding: 8px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg-node);
+            color: var(--text-dim);
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .toolbar-btn:hover {
+            background: rgba(79, 195, 247, 0.1);
+            border-color: var(--blue);
+            color: var(--text);
+        }
+
+        mark.map-hl {
+            background: rgba(233, 196, 53, 0.35);
+            color: var(--text);
+            padding: 1px 2px;
+            border-radius: 3px;
+        }
+
+        .search-count {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-align: center;
+            margin-top: -12px;
+            margin-bottom: 12px;
+        }
+
+        /* Print styles */
+        @media print {
+            body { background: white; color: #222; }
+            .header, .search-bar, .search-count { margin: 0; padding: 10px; }
+            .header h1 { -webkit-text-fill-color: #333; background: none; font-size: 1.3rem; }
+            .header p, .header a { color: #555; }
+            .mindmap { padding: 0; }
+            .domains { gap: 10px; }
+
+            .domain { max-width: 100%; min-width: 100%; }
+            .domain-header { color: white !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+            .domain-header::after { display: none; }
+
+            .domain, .topic, .service { page-break-inside: avoid; }
+            .topics, .services, .service-detail { display: flex !important; }
+            .topic-header .arrow { display: none; }
+            .service-name .expand { display: none; }
+
+            .topic { border-color: #ccc; }
+            .service { border-color: #ddd; }
+            .service-detail { border-top-color: #eee; }
+            .service-name { color: #333; }
+            .service-detail { color: #444; }
+            .service-detail .tip { background: #f5f5f5; border-left-color: #2196f3; }
+
+            .toolbar-btn, .search-bar input { display: none; }
+            .connector-down, .branch-line { background: #ccc !important; }
+        }
     </style>
 </head>
 <body>
@@ -336,6 +427,14 @@
         <p>Clique nos domínios → tópicos → serviços para expandir. Cada nó revela detalhes "bate-pronto" para revisão rápida.</p>
         <p style="margin-top: 8px;"><a href="aws-sap-c02-guia.html" style="color: var(--blue); text-decoration: none; font-size: 0.85rem;">📖 Abrir Guia Completo (versão detalhada)</a></p>
     </div>
+
+    <div class="search-bar">
+        <input type="text" id="mapSearch" placeholder="🔍 Buscar serviço...">
+        <button class="toolbar-btn" onclick="expandAll()">📂 Expandir tudo</button>
+        <button class="toolbar-btn" onclick="collapseAll()">📁 Colapsar tudo</button>
+        <button class="toolbar-btn" onclick="window.print()">🖨️ Imprimir</button>
+    </div>
+    <div class="search-count" id="mapSearchCount"></div>
 
     <div class="mindmap">
         <div class="central">AWS Solutions Architect Professional</div>
@@ -1447,7 +1546,97 @@
     </div><!-- end .mindmap -->
 
     <script>
-        // Allow expanding all on double-click of domain header
+        // Expand/Collapse All
+        function expandAll() {
+            document.querySelectorAll('.domain').forEach(d => d.classList.add('open'));
+            document.querySelectorAll('.topic').forEach(t => t.classList.add('open'));
+            document.querySelectorAll('.service').forEach(s => s.classList.add('open'));
+        }
+
+        function collapseAll() {
+            document.querySelectorAll('.domain').forEach(d => d.classList.remove('open'));
+            document.querySelectorAll('.topic').forEach(t => t.classList.remove('open'));
+            document.querySelectorAll('.service').forEach(s => s.classList.remove('open'));
+        }
+
+        // Search
+        const mapSearchInput = document.getElementById('mapSearch');
+        const mapSearchCount = document.getElementById('mapSearchCount');
+        let mapSearchTimeout;
+
+        mapSearchInput.addEventListener('input', () => {
+            clearTimeout(mapSearchTimeout);
+            mapSearchTimeout = setTimeout(performMapSearch, 300);
+        });
+
+        function performMapSearch() {
+            const query = mapSearchInput.value.trim().toLowerCase();
+            // Remove old highlights
+            document.querySelectorAll('mark.map-hl').forEach(m => {
+                const parent = m.parentNode;
+                parent.replaceChild(document.createTextNode(m.textContent), m);
+                parent.normalize();
+            });
+
+            if (query.length < 2) {
+                mapSearchCount.textContent = '';
+                return;
+            }
+
+            // Search in services
+            const services = document.querySelectorAll('.service');
+            let matchCount = 0;
+
+            services.forEach(service => {
+                const text = service.textContent.toLowerCase();
+                if (text.includes(query)) {
+                    matchCount++;
+                    // Open parents
+                    const topic = service.closest('.topic');
+                    const domain = service.closest('.domain');
+                    if (domain) domain.classList.add('open');
+                    if (topic) topic.classList.add('open');
+                    service.classList.add('open');
+                }
+            });
+
+            // Also highlight text
+            const mindmap = document.querySelector('.mindmap');
+            const walker = document.createTreeWalker(mindmap, NodeFilter.SHOW_TEXT);
+            const textMatches = [];
+
+            while (walker.nextNode()) {
+                const node = walker.currentNode;
+                if (node.parentElement.tagName === 'SCRIPT') continue;
+                const idx = node.textContent.toLowerCase().indexOf(query);
+                if (idx !== -1) textMatches.push({ node, idx });
+            }
+
+            textMatches.slice(0, 20).reverse().forEach(({ node, idx }) => {
+                const text = node.textContent;
+                const before = text.substring(0, idx);
+                const match = text.substring(idx, idx + query.length);
+                const after = text.substring(idx + query.length);
+                const mark = document.createElement('mark');
+                mark.className = 'map-hl';
+                mark.textContent = match;
+                const parent = node.parentNode;
+                parent.insertBefore(document.createTextNode(before), node);
+                parent.insertBefore(mark, node);
+                parent.insertBefore(document.createTextNode(after), node);
+                parent.removeChild(node);
+            });
+
+            mapSearchCount.textContent = matchCount > 0 ? `${matchCount} serviço(s) encontrado(s)` : 'Nenhum resultado';
+
+            // Scroll to first highlight
+            const firstMark = document.querySelector('mark.map-hl');
+            if (firstMark) {
+                firstMark.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        // Double-click domain to expand/collapse all topics
         document.querySelectorAll('.domain-header').forEach(header => {
             header.addEventListener('dblclick', (e) => {
                 const domain = header.parentElement;

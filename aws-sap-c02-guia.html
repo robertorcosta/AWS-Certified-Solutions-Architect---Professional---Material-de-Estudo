@@ -457,6 +457,150 @@
             color: var(--text-secondary);
             font-size: 0.85rem;
         }
+
+        /* Search */
+        .search-container {
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 10px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-size: 0.82rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .search-results-count {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-top: 5px;
+            display: none;
+        }
+
+        mark {
+            background: rgba(233, 196, 53, 0.3);
+            color: var(--text-primary);
+            padding: 1px 3px;
+            border-radius: 3px;
+        }
+
+        /* Progress */
+        .progress-container {
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 10px;
+        }
+
+        .progress-bar-wrapper {
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            height: 6px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success), var(--accent));
+            border-radius: 4px;
+            transition: width 0.3s;
+            width: 0%;
+        }
+
+        .progress-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .study-check {
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--border);
+            border-radius: 4px;
+            cursor: pointer;
+            vertical-align: middle;
+            margin-right: 8px;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .study-check:checked {
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        .study-check:checked::after {
+            content: "✓";
+            color: white;
+            font-size: 11px;
+            position: absolute;
+            top: -1px;
+            left: 2px;
+        }
+
+        details:has(.study-check:checked) summary {
+            opacity: 0.6;
+        }
+
+        /* Print styles */
+        @media print {
+            .sidebar, .menu-toggle, .scroll-top, .search-container, .progress-container, .study-check {
+                display: none !important;
+            }
+
+            .main-content {
+                margin-left: 0 !important;
+                padding: 20px !important;
+                max-width: 100% !important;
+            }
+
+            body {
+                background: white;
+                color: #222;
+            }
+
+            h1, h2, h3, h4 { color: #111; }
+            p, li, td { color: #333; }
+
+            .card, details, .info-box {
+                break-inside: avoid;
+                border-color: #ccc;
+                background: #f9f9f9;
+            }
+
+            th { background: #eee; color: #333; }
+            td { border-color: #ddd; }
+
+            a { color: #0066cc; }
+            a::after { content: " (" attr(href) ")"; font-size: 0.7rem; color: #666; }
+            .ref-link::after { content: ""; }
+
+            details { border: 1px solid #ccc; }
+            details[open] summary { border-bottom: 1px solid #ccc; }
+
+            .info-box { border-left-width: 4px; }
+            .info-box.warning { border-left-color: #e6a817; }
+            .info-box.success { border-left-color: #2e7d32; }
+            .info-box.danger { border-left-color: #c62828; }
+        }
     </style>
 </head>
 <body>
@@ -469,6 +613,21 @@
         <div class="sidebar-header">
             <h2>☁️ AWS SAP-C02</h2>
             <p>Guia de Estudo - PT-BR</p>
+        </div>
+
+        <div class="search-container">
+            <input type="text" class="search-input" id="searchInput" placeholder="🔍 Buscar serviço ou tópico...">
+            <div class="search-results-count" id="searchCount"></div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-label">
+                <span>📊 Progresso de estudo</span>
+                <span id="progressText">0%</span>
+            </div>
+            <div class="progress-bar-wrapper">
+                <div class="progress-bar-fill" id="progressBar"></div>
+            </div>
         </div>
 
         <div class="nav-section">
@@ -2599,6 +2758,7 @@
         </section>
 
         <footer style="margin-top: 60px; padding: 30px 0; border-top: 1px solid var(--border); text-align: center; color: var(--text-secondary); font-size: 0.85rem;">
+            <p><button onclick="window.print()" style="background: var(--bg-tertiary); border: 1px solid var(--border); color: var(--text-primary); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; margin-bottom: 15px;">🖨️ Imprimir / Salvar como PDF</button></p>
             <p>Material de estudo compilado com base no <a href="https://docs.aws.amazon.com/aws-certification/latest/examguides/solutions-architect-professional-02.html" target="_blank">Guia Oficial do Exame SAP-C02</a></p>
             <p style="margin-top: 8px;">Links de referência apontam para a documentação oficial da AWS. Atualizado em Julho 2026.</p>
         </footer>
@@ -2645,6 +2805,113 @@
                 document.querySelector('.sidebar').classList.remove('open');
             });
         });
+
+        // === SEARCH FUNCTIONALITY ===
+        const searchInput = document.getElementById('searchInput');
+        const searchCount = document.getElementById('searchCount');
+        let searchTimeout;
+
+        searchInput.addEventListener('input', () => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(performSearch, 300);
+        });
+
+        function performSearch() {
+            const query = searchInput.value.trim().toLowerCase();
+            // Remove old highlights
+            document.querySelectorAll('mark.search-hl').forEach(m => {
+                const parent = m.parentNode;
+                parent.replaceChild(document.createTextNode(m.textContent), m);
+                parent.normalize();
+            });
+
+            if (query.length < 2) {
+                searchCount.style.display = 'none';
+                return;
+            }
+
+            const mainContent = document.querySelector('.main-content');
+            const walker = document.createTreeWalker(mainContent, NodeFilter.SHOW_TEXT);
+            const matches = [];
+
+            while (walker.nextNode()) {
+                const node = walker.currentNode;
+                if (node.parentElement.tagName === 'SCRIPT' || node.parentElement.tagName === 'STYLE') continue;
+                const idx = node.textContent.toLowerCase().indexOf(query);
+                if (idx !== -1) matches.push({ node, idx });
+            }
+
+            // Highlight first 30 matches
+            let count = 0;
+            matches.slice(0, 30).reverse().forEach(({ node, idx }) => {
+                const text = node.textContent;
+                const before = text.substring(0, idx);
+                const match = text.substring(idx, idx + query.length);
+                const after = text.substring(idx + query.length);
+                const mark = document.createElement('mark');
+                mark.className = 'search-hl';
+                mark.textContent = match;
+                const parent = node.parentNode;
+                parent.insertBefore(document.createTextNode(before), node);
+                parent.insertBefore(mark, node);
+                parent.insertBefore(document.createTextNode(after), node);
+                parent.removeChild(node);
+                count++;
+            });
+
+            searchCount.style.display = 'block';
+            searchCount.textContent = count > 0 ? `${matches.length} resultado(s) encontrado(s)` : 'Nenhum resultado';
+
+            // Open details containing first match and scroll
+            if (matches.length > 0) {
+                const firstMark = document.querySelector('mark.search-hl');
+                if (firstMark) {
+                    const detail = firstMark.closest('details');
+                    if (detail) detail.open = true;
+                    firstMark.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        }
+
+        // === STUDY PROGRESS ===
+        function initProgress() {
+            // Add checkboxes to all details summaries
+            document.querySelectorAll('.main-content details').forEach((detail, i) => {
+                const summary = detail.querySelector('summary');
+                if (!summary || summary.querySelector('.study-check')) return;
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'study-check';
+                checkbox.dataset.id = 'study-' + i;
+                // Load state
+                if (localStorage.getItem('study-' + i) === 'done') {
+                    checkbox.checked = true;
+                }
+                checkbox.addEventListener('change', (e) => {
+                    e.stopPropagation();
+                    if (checkbox.checked) {
+                        localStorage.setItem('study-' + i, 'done');
+                    } else {
+                        localStorage.removeItem('study-' + i);
+                    }
+                    updateProgress();
+                });
+                // Prevent checkbox click from toggling details
+                checkbox.addEventListener('click', (e) => e.stopPropagation());
+                summary.insertBefore(checkbox, summary.firstChild);
+            });
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const all = document.querySelectorAll('.study-check');
+            const checked = document.querySelectorAll('.study-check:checked');
+            const pct = all.length > 0 ? Math.round((checked.length / all.length) * 100) : 0;
+            document.getElementById('progressBar').style.width = pct + '%';
+            document.getElementById('progressText').textContent = `${checked.length}/${all.length} (${pct}%)`;
+        }
+
+        initProgress();
     </script>
 </body>
 </html>

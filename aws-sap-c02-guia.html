@@ -1,0 +1,2650 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS SAP-C02 - Guia de Estudo</title>
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent: #58a6ff;
+            --accent-hover: #79c0ff;
+            --border: #30363d;
+            --success: #3fb950;
+            --warning: #d29922;
+            --danger: #f85149;
+            --purple: #bc8cff;
+            --sidebar-width: 280px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            display: flex;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            padding: 20px 0;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 15px;
+        }
+
+        .sidebar-header h2 {
+            font-size: 1rem;
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .sidebar-header p {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .nav-section {
+            padding: 8px 20px;
+        }
+
+        .nav-section-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 6px 12px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            margin-bottom: 2px;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .nav-link.active {
+            background: var(--bg-tertiary);
+            color: var(--accent);
+        }
+
+        .nav-link .badge {
+            float: right;
+            background: var(--bg-tertiary);
+            padding: 1px 6px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 40px 60px;
+            max-width: 900px;
+        }
+
+        /* Mobile Toggle */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 200;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        /* Typography */
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-primary);
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            margin-top: 30px;
+            margin-bottom: 12px;
+            color: var(--accent);
+        }
+
+        h4 {
+            font-size: 1rem;
+            margin-top: 20px;
+            margin-bottom: 8px;
+            color: var(--purple);
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: var(--text-secondary);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .card-header .icon {
+            font-size: 1.3rem;
+        }
+
+        .card-header h4 {
+            margin: 0;
+            color: var(--text-primary);
+        }
+
+        /* Info boxes */
+        .info-box {
+            border-left: 4px solid var(--accent);
+            background: rgba(88, 166, 255, 0.05);
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .info-box.warning {
+            border-left-color: var(--warning);
+            background: rgba(210, 153, 34, 0.05);
+        }
+
+        .info-box.success {
+            border-left-color: var(--success);
+            background: rgba(63, 185, 80, 0.05);
+        }
+
+        .info-box.danger {
+            border-left-color: var(--danger);
+            background: rgba(248, 81, 73, 0.05);
+        }
+
+        .info-box strong {
+            color: var(--text-primary);
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--bg-tertiary);
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tr:hover td {
+            background: rgba(88, 166, 255, 0.03);
+        }
+
+        /* Collapsible sections */
+        details {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+
+        summary {
+            padding: 15px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-primary);
+            transition: background 0.2s;
+            list-style: none;
+        }
+
+        summary::-webkit-details-marker {
+            display: none;
+        }
+
+        summary::before {
+            content: "▶ ";
+            color: var(--accent);
+            font-size: 0.8rem;
+            margin-right: 8px;
+            display: inline-block;
+            transition: transform 0.2s;
+        }
+
+        details[open] summary::before {
+            transform: rotate(90deg);
+        }
+
+        summary:hover {
+            background: var(--bg-tertiary);
+        }
+
+        details .content {
+            padding: 15px 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        /* Lists */
+        ul, ol {
+            margin: 10px 0 15px 20px;
+            color: var(--text-secondary);
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+
+        li strong {
+            color: var(--text-primary);
+        }
+
+        /* Links */
+        a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: var(--accent-hover);
+            text-decoration: underline;
+        }
+
+        .ref-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.8rem;
+            background: var(--bg-tertiary);
+            padding: 3px 10px;
+            border-radius: 4px;
+            margin: 3px 2px;
+        }
+
+        .ref-link::before {
+            content: "📖";
+        }
+
+        /* Tags/Badges */
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin: 2px;
+        }
+
+        .tag-blue { background: rgba(88, 166, 255, 0.15); color: var(--accent); }
+        .tag-green { background: rgba(63, 185, 80, 0.15); color: var(--success); }
+        .tag-yellow { background: rgba(210, 153, 34, 0.15); color: var(--warning); }
+        .tag-red { background: rgba(248, 81, 73, 0.15); color: var(--danger); }
+        .tag-purple { background: rgba(188, 140, 255, 0.15); color: var(--purple); }
+
+        /* Progress bar */
+        .domain-weight {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .domain-weight .bar {
+            flex: 1;
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .domain-weight .bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s;
+        }
+
+        .domain-weight .percentage {
+            font-size: 0.85rem;
+            font-weight: 600;
+            min-width: 40px;
+            text-align: right;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            table {
+                font-size: 0.8rem;
+            }
+
+            th, td {
+                padding: 8px 10px;
+            }
+        }
+
+        /* Scroll to top */
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--accent);
+            color: var(--bg-primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+            text-decoration: none;
+        }
+
+        .scroll-top.visible {
+            opacity: 1;
+        }
+
+        /* Section divider */
+        .section-divider {
+            margin: 60px 0 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        .section-divider::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .section-divider span {
+            background: var(--bg-primary);
+            padding: 0 20px;
+            position: relative;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Mobile Menu Toggle -->
+    <button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2>☁️ AWS SAP-C02</h2>
+            <p>Guia de Estudo - PT-BR</p>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-section-title">Visão Geral</div>
+            <a href="#visao-geral" class="nav-link">Sobre o Exame</a>
+            <a href="#dominios" class="nav-link">Domínios e Pesos</a>
+            <a href="#estrategia" class="nav-link">Estratégia de Estudo</a>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-section-title">Domínio 1 — 26%</div>
+            <a href="#d1" class="nav-link">Complexidade Organizacional</a>
+            <a href="#d1-networking" class="nav-link">Conectividade de Rede</a>
+            <a href="#d1-security" class="nav-link">Controles de Segurança</a>
+            <a href="#d1-resilience" class="nav-link">Resiliência e DR</a>
+            <a href="#d1-multi-account" class="nav-link">Multi-Account</a>
+            <a href="#d1-cost" class="nav-link">Otimização de Custos</a>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-section-title">Domínio 2 — 29%</div>
+            <a href="#d2" class="nav-link">Design de Novas Soluções</a>
+            <a href="#d2-deploy" class="nav-link">Estratégia de Deploy</a>
+            <a href="#d2-continuity" class="nav-link">Continuidade de Negócio</a>
+            <a href="#d2-security" class="nav-link">Segurança</a>
+            <a href="#d2-reliability" class="nav-link">Confiabilidade</a>
+            <a href="#d2-performance" class="nav-link">Performance</a>
+            <a href="#d2-cost" class="nav-link">Custos</a>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-section-title">Domínio 3 — 25%</div>
+            <a href="#d3" class="nav-link">Melhoria Contínua</a>
+            <a href="#d3-operational" class="nav-link">Excelência Operacional</a>
+            <a href="#d3-security" class="nav-link">Melhorar Segurança</a>
+            <a href="#d3-performance" class="nav-link">Melhorar Performance</a>
+            <a href="#d3-reliability" class="nav-link">Melhorar Confiabilidade</a>
+            <a href="#d3-cost" class="nav-link">Otimizar Custos</a>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-section-title">Domínio 4 — 20%</div>
+            <a href="#d4" class="nav-link">Migração e Modernização</a>
+            <a href="#d4-assess" class="nav-link">Avaliação de Workloads</a>
+            <a href="#d4-migrate" class="nav-link">Abordagem de Migração</a>
+            <a href="#d4-architecture" class="nav-link">Nova Arquitetura</a>
+            <a href="#d4-modernize" class="nav-link">Modernização</a>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-section-title">Extras</div>
+            <a href="#comparativos" class="nav-link">Tabelas Comparativas</a>
+            <a href="#dicas" class="nav-link">Dicas para a Prova</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <section id="visao-geral">
+            <h1>AWS Certified Solutions Architect – Professional</h1>
+            <p style="font-size: 1.1rem; color: var(--text-primary);">Guia completo de estudo em Português do Brasil — Exame SAP-C02</p>
+            <p style="margin-top: 8px;"><a href="aws-sap-c02-mapa.html" style="font-size: 0.9rem;">🧠 Abrir Mapa Mental (versão bate-pronto para revisão rápida)</a></p>
+
+            <div class="card" style="margin-top: 25px;">
+                <table>
+                    <tr><td><strong>Código do Exame</strong></td><td>SAP-C02</td></tr>
+                    <tr><td><strong>Custo</strong></td><td>$300 USD</td></tr>
+                    <tr><td><strong>Duração</strong></td><td>180 minutos (3 horas)</td></tr>
+                    <tr><td><strong>Quantidade de Questões</strong></td><td>75 (65 pontuadas + 10 não pontuadas)</td></tr>
+                    <tr><td><strong>Nota para Aprovação</strong></td><td>750 / 1000</td></tr>
+                    <tr><td><strong>Tipo de Questões</strong></td><td>Múltipla escolha e múltipla resposta</td></tr>
+                    <tr><td><strong>Idioma</strong></td><td>Disponível em Português (BR)</td></tr>
+                    <tr><td><strong>Pré-requisito Recomendado</strong></td><td>AWS SAA (Associate) + 2 anos de experiência</td></tr>
+                </table>
+            </div>
+
+            <div class="info-box">
+                <strong>📌 Referência Oficial</strong>
+                <a href="https://aws.amazon.com/certification/certified-solutions-architect-professional/" target="_blank">Página oficial da certificação AWS SAP-C02</a> |
+                <a href="https://docs.aws.amazon.com/aws-certification/latest/examguides/solutions-architect-professional-02.html" target="_blank">Guia do Exame (Exam Guide)</a>
+            </div>
+        </section>
+
+        <!-- Domains Overview -->
+        <section id="dominios">
+            <h2>Domínios do Exame</h2>
+
+            <div class="domain-weight">
+                <span style="min-width: 220px;"><strong>D1:</strong> Complexidade Organizacional</span>
+                <div class="bar"><div class="bar-fill" style="width: 26%; background: var(--accent);"></div></div>
+                <span class="percentage" style="color: var(--accent);">26%</span>
+            </div>
+            <div class="domain-weight">
+                <span style="min-width: 220px;"><strong>D2:</strong> Design de Novas Soluções</span>
+                <div class="bar"><div class="bar-fill" style="width: 29%; background: var(--success);"></div></div>
+                <span class="percentage" style="color: var(--success);">29%</span>
+            </div>
+            <div class="domain-weight">
+                <span style="min-width: 220px;"><strong>D3:</strong> Melhoria Contínua</span>
+                <div class="bar"><div class="bar-fill" style="width: 25%; background: var(--purple);"></div></div>
+                <span class="percentage" style="color: var(--purple);">25%</span>
+            </div>
+            <div class="domain-weight">
+                <span style="min-width: 220px;"><strong>D4:</strong> Migração e Modernização</span>
+                <div class="bar"><div class="bar-fill" style="width: 20%; background: var(--warning);"></div></div>
+                <span class="percentage" style="color: var(--warning);">20%</span>
+            </div>
+        </section>
+
+        <!-- Study Strategy -->
+        <section id="estrategia">
+            <h2>Estratégia de Estudo Recomendada</h2>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="icon">🎯</span>
+                    <h4>Ordem de Prioridade</h4>
+                </div>
+                <ol>
+                    <li><strong>Domínio 2 (29%)</strong> — Maior peso. Foque em arquitetar soluções novas com múltiplos requisitos simultâneos.</li>
+                    <li><strong>Domínio 1 (26%)</strong> — Networking avançado, multi-account e segurança em escala enterprise.</li>
+                    <li><strong>Domínio 3 (25%)</strong> — Otimizar soluções existentes. Exige entender trade-offs.</li>
+                    <li><strong>Domínio 4 (20%)</strong> — Migração e modernização. Conheça os 7Rs e as ferramentas de migração.</li>
+                </ol>
+            </div>
+
+            <div class="info-box warning">
+                <strong>⚠️ Diferença do Associate</strong>
+                Este exame NÃO testa conhecimento isolado de serviços. As questões apresentam cenários complexos com múltiplos requisitos e restrições. Você precisa saber combinar serviços e entender trade-offs entre custo, performance, segurança e confiabilidade.
+            </div>
+        </section>
+
+        <div class="section-divider"><span>DOMÍNIO 1</span></div>
+
+        <!-- DOMAIN 1 -->
+        <section id="d1">
+            <h2>Domínio 1: Soluções para Complexidade Organizacional (26%)</h2>
+            <p>Este domínio avalia sua capacidade de projetar arquiteturas que funcionam em ambientes corporativos complexos com múltiplas contas, conectividade híbrida e governança em escala.</p>
+        </section>
+
+        <section id="d1-networking">
+            <h3>1.1 Estratégias de Conectividade de Rede</h3>
+
+            <details>
+                <summary>AWS Transit Gateway</summary>
+                <div class="content">
+                    <p>Hub central para conectar múltiplas VPCs e redes on-premises. Substitui o modelo de peering mesh complexo.</p>
+                    <ul>
+                        <li><strong>Suporta:</strong> peering entre Regions, roteamento entre VPCs, integração com Direct Connect e VPN</li>
+                        <li><strong>Route Tables:</strong> permite segmentação de tráfego (ex: isolar VPCs de produção de desenvolvimento)</li>
+                        <li><strong>Multicast:</strong> suportado nativamente</li>
+                        <li><strong>Bandwidth:</strong> até 50 Gbps por attachment</li>
+                        <li><strong>Inter-Region Peering:</strong> tráfego criptografado entre TGWs de diferentes regiões</li>
+                    </ul>
+                    <p><span class="tag tag-yellow">Cenário comum na prova:</span> "Empresa com 50+ VPCs precisa de conectividade full-mesh com roteamento centralizado"</p>
+                    <a href="https://docs.aws.amazon.com/vpc/latest/tgw/what-is-transit-gateway.html" target="_blank" class="ref-link">Documentação Transit Gateway</a>
+                </div>
+            </details>
+
+            <details>
+                <summary>AWS Direct Connect</summary>
+                <div class="content">
+                    <p>Conexão dedicada entre seu data center e a AWS. Reduz custos de rede, aumenta largura de banda e oferece latência mais consistente.</p>
+                    <ul>
+                        <li><strong>Tipos:</strong> Dedicated (1/10/100 Gbps) e Hosted (50 Mbps a 10 Gbps)</li>
+                        <li><strong>Virtual Interfaces:</strong>
+                            <ul>
+                                <li>Private VIF — acessa VPCs (via Direct Connect Gateway para múltiplas VPCs/Regions)</li>
+                                <li>Public VIF — acessa serviços públicos da AWS</li>
+                                <li>Transit VIF — conecta ao Transit Gateway</li>
+                            </ul>
+                        </li>
+                        <li><strong>LAG (Link Aggregation Group):</strong> agrupa múltiplas conexões para aumentar throughput</li>
+                        <li><strong>Resiliência:</strong> para alta disponibilidade, use 2 conexões em locais diferentes + VPN como fallback</li>
+                        <li><strong>MACsec:</strong> criptografia na camada 2 (disponível em 10/100 Gbps dedicated)</li>
+                    </ul>
+                    <p><span class="tag tag-yellow">Cenário comum:</span> "Migração de grandes volumes de dados com latência consistente" ou "Conexão híbrida resiliente com failover"</p>
+                    <a href="https://docs.aws.amazon.com/directconnect/latest/UserGuide/Welcome.html" target="_blank" class="ref-link">Documentação Direct Connect</a>
+                </div>
+            </details>
+
+            <details>
+                <summary>AWS Site-to-Site VPN</summary>
+                <div class="content">
+                    <p>Conexão criptografada (IPsec) entre rede on-premises e VPC via internet pública.</p>
+                    <ul>
+                        <li><strong>Virtual Private Gateway (VGW):</strong> endpoint do lado AWS para uma única VPC</li>
+                        <li><strong>Transit Gateway + VPN:</strong> permite VPN para múltiplas VPCs</li>
+                        <li><strong>Accelerated VPN:</strong> usa AWS Global Accelerator para melhorar performance</li>
+                        <li><strong>Throughput:</strong> ~1.25 Gbps por túnel (2 túneis por conexão VPN)</li>
+                        <li><strong>ECMP:</strong> Equal-Cost Multi-Path — com Transit Gateway, permite agregar múltiplas VPNs para mais throughput</li>
+                    </ul>
+                    <p><span class="tag tag-yellow">Cenário comum:</span> "Precisa de conexão rápida enquanto Direct Connect é provisionado" (VPN como backup ou solução temporária)</p>
+                    <a href="https://docs.aws.amazon.com/vpn/latest/s2svpn/VPC_VPN.html" target="_blank" class="ref-link">Documentação Site-to-Site VPN</a>
+                </div>
+            </details>
+
+            <details>
+                <summary>VPC Peering vs Transit Gateway vs PrivateLink</summary>
+                <div class="content">
+                    <table>
+                        <tr>
+                            <th>Característica</th>
+                            <th>VPC Peering</th>
+                            <th>Transit Gateway</th>
+                            <th>PrivateLink</th>
+                        </tr>
+                        <tr>
+                            <td>Modelo</td>
+                            <td>1-para-1</td>
+                            <td>Hub-and-spoke</td>
+                            <td>Serviço específico</td>
+                        </tr>
+                        <tr>
+                            <td>Transitividade</td>
+                            <td>❌ Não</td>
+                            <td>✅ Sim</td>
+                            <td>❌ Não</td>
+                        </tr>
+                        <tr>
+                            <td>Cross-Region</td>
+                            <td>✅ Sim</td>
+                            <td>✅ Sim (peering)</td>
+                            <td>✅ Sim</td>
+                        </tr>
+                        <tr>
+                            <td>Cross-Account</td>
+                            <td>✅ Sim</td>
+                            <td>✅ Sim (RAM)</td>
+                            <td>✅ Sim</td>
+                        </tr>
+                        <tr>
+                            <td>Custo</td>
+                            <td>Sem taxa hora</td>
+                            <td>$0.05/h por attachment</td>
+                            <td>$0.01/h + dados</td>
+                        </tr>
+                        <tr>
+                            <td>Uso ideal</td>
+                            <td>Poucos VPCs</td>
+                            <td>Muitos VPCs</td>
+                            <td>Expor serviço</td>
+                        </tr>
+                    </table>
+                    <a href="https://docs.aws.amazon.com/vpc/latest/peering/what-is-vpc-peering.html" target="_blank" class="ref-link">VPC Peering</a>
+                    <a href="https://docs.aws.amazon.com/vpc/latest/privatelink/what-is-privatelink.html" target="_blank" class="ref-link">PrivateLink</a>
+                </div>
+            </details>
+
+            <details>
+                <summary>AWS Network Topologies - Arquiteturas de Referência</summary>
+                <div class="content">
+                    <h4>Padrão: Rede Centralizada com Transit Gateway</h4>
+                    <ul>
+                        <li><strong>Shared Services VPC:</strong> DNS, Active Directory, ferramentas de monitoramento</li>
+                        <li><strong>Inspection VPC:</strong> Network Firewall para inspecionar tráfego entre VPCs</li>
+                        <li><strong>Egress VPC:</strong> NAT Gateway centralizado para acesso à internet</li>
+                        <li><strong>Ingress VPC:</strong> ALB/NLB para tráfego de entrada</li>
+                    </ul>
+                    <p>Use Transit Gateway Route Tables para segmentar tráfego (ex: produção não acessa desenvolvimento direto).</p>
+
+                    <h4>VPC Endpoints — Gateway vs Interface</h4>
+                    <table>
+                        <tr><th>Tipo</th><th>Serviços</th><th>Custo</th><th>Rede</th></tr>
+                        <tr>
+                            <td><strong>Gateway Endpoint</strong></td>
+                            <td>S3 e DynamoDB apenas</td>
+                            <td>Grátis</td>
+                            <td>Rota na route table</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Interface Endpoint</strong></td>
+                            <td>Quase todos os outros serviços</td>
+                            <td>$0.01/h + dados</td>
+                            <td>ENI com IP privado na subnet</td>
+                        </tr>
+                    </table>
+                    <div class="info-box warning">
+                        <strong>⚠️ Pegadinha na prova</strong>
+                        Gateway Endpoint para S3 é GRÁTIS e deve ser a resposta quando a questão pede "reduzir custo de NAT Gateway" ou "manter tráfego S3 dentro da rede AWS".
+                    </div>
+                    <a href="https://docs.aws.amazon.com/vpc/latest/privatelink/gateway-endpoints.html" target="_blank" class="ref-link">Gateway Endpoints</a>
+                    <a href="https://docs.aws.amazon.com/vpc/latest/privatelink/create-interface-endpoint.html" target="_blank" class="ref-link">Interface Endpoints</a>
+                </div>
+            </details>
+
+            <details>
+                <summary>DNS Híbrido (Route 53 Resolver)</summary>
+                <div class="content">
+                    <p>Permite resolução de DNS bidirecional entre rede on-premises e VPCs.</p>
+                    <ul>
+                        <li><strong>Inbound Endpoint:</strong> permite que o DNS on-premises resolva nomes no Route 53 (on-prem → AWS)</li>
+                        <li><strong>Outbound Endpoint:</strong> permite que VPCs resolvam nomes no DNS on-premises (AWS → on-prem)</li>
+                        <li><strong>Resolver Rules:</strong> regras de encaminhamento condicional (ex: "*.corp.local" → DNS on-prem)</li>
+                        <li><strong>RAM Sharing:</strong> compartilhe regras entre contas via Resource Access Manager</li>
+                    </ul>
+                    <p><span class="tag tag-yellow">Cenário comum:</span> "Resolver nomes de domínio privados entre AWS e on-premises em ambiente multi-account"</p>
+                    <a href="https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver.html" target="_blank" class="ref-link">Route 53 Resolver</a>
+                </div>
+            </details>
+
+            <details>
+                <summary>AWS Global Accelerator vs CloudFront</summary>
+                <div class="content">
+                    <table>
+                        <tr>
+                            <th>Aspecto</th>
+                            <th>Global Accelerator</th>
+                            <th>CloudFront</th>
+                        </tr>
+                        <tr>
+                            <td>Tipo</td>
+                            <td>Anycast IP (camada 4)</td>
+                            <td>CDN (camada 7)</td>
+                        </tr>
+                        <tr>
+                            <td>Protocolo</td>
+                            <td>TCP/UDP</td>
+                            <td>HTTP/HTTPS/WebSocket</td>
+                        </tr>
+                        <tr>
+                            <td>Cache</td>
+                            <td>❌ Não</td>
+                            <td>✅ Sim</td>
+                        </tr>
+                        <tr>
+                            <td>Caso de uso</td>
+                            <td>Gaming, IoT, VoIP, failover rápido</td>
+                            <td>Sites, APIs, streaming</td>
+                        </tr>
+                        <tr>
+                            <td>IP estático</td>
+                            <td>✅ 2 IPs anycast</td>
+                            <td>❌ (usa DNS CNAME)</td>
+                        </tr>
+                        <tr>
+                            <td>Health checks</td>
+                            <td>✅ Failover instantâneo</td>
+                            <td>Via Origin failover</td>
+                        </tr>
+                    </table>
+                    <a href="https://docs.aws.amazon.com/global-accelerator/latest/dg/what-is-global-accelerator.html" target="_blank" class="ref-link">Global Accelerator</a>
+                    <a href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html" target="_blank" class="ref-link">CloudFront</a>
+                </div>
+            </details>
+        </section>
+
+        <!-- D1 Security -->
+        <section id="d1-security">
+            <h3>1.2 Controles de Segurança</h3>
+
+            <details>
+                <summary>IAM Avançado e Cross-Account Access</summary>
+                <div class="content">
+                    <h4>Métodos de Acesso Cross-Account</h4>
+                    <ul>
+                        <li><strong>IAM Roles (AssumeRole):</strong> método preferido. Conta A assume role na Conta B. Temporário e auditável.</li>
+                        <li><strong>Resource-based Policies:</strong> S3 bucket policy, KMS key policy, SQS policy — permite acesso direto sem assumir role.</li>
+                        <li><strong>AWS Organizations SCPs:</strong> limites máximos de permissão (guardrails) em nível de OU/conta.</li>
+                        <li><strong>Permission Boundaries:</strong> limite máximo para roles/users dentro de uma conta.</li>
+                    </ul>
+
+                    <h4>Ordem de Avaliação de Políticas</h4>
+                    <ol>
+                        <li>SCP (Organization) — deny explícito prevalece</li>
+                        <li>Permission Boundary — limita o teto</li>
+                        <li>Identity-based Policy — o que o user/role pode fazer</li>
+                        <li>Resource-based Policy — o que o recurso permite</li>
+                        <li>Session Policy — restrição adicional em sessões assumidas</li>
+                    </ol>
+
+                    <div class="info-box danger">
+                        <strong>🔑 Conceito-chave para a prova</strong>
+                        Um deny explícito em QUALQUER nível sempre vence. Para cross-account, AMBOS os lados precisam permitir (exceto resource-based policies do S3 que podem conceder direto).
+                    </div>
+
+                    <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html" target="_blank" class="ref-link">Lógica de Avaliação IAM</a>
+                    <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_boundaries.html" target="_blank" class="ref-link">Permission Boundaries</a>
+                </div>
+            </details>
+
+            <details>
+                <summary>AWS IAM Identity Center (SSO)</summary>
+                <div class="content">
+                    <p>Gerenciamento centralizado de acesso a múltiplas contas AWS e aplicações de negócio. Substitui o antigo AWS Single Sign-On.</p>
+                    <ul>
+                        <li><strong>Integração:</strong> Active Directory (AD Connector ou AWS Managed AD), provedores SAML 2.0 externos (Okta, Azure AD), ou Identity Store built-in</li>
+                        <li><strong>Permission Sets:</strong> coleção de IAM Policies atribuída a users/groups para definir acesso AWS por conta</li>
+                        <li><strong>ABAC:</strong> Attribute-Based Access Control — define permissões uma vez, modifica acesso mudando atributos (cost center, title, locale)</li>
+                        <li><strong>Multi-Account:</strong> um login único para acessar qualquer conta da Organization</li>
+                        <li><strong>Application Assignments:</strong> SSO para apps SAML 2.0 (Salesforce, Box, Microsoft 365)</li>
+                        <li><strong>EC2 Windows:</strong> login único em instâncias Windows via SSO</li>
+                    </ul>
+                    <p><span class="tag tag-yellow">Cenário comum:</span> "Centralizar autenticação para 100+ contas AWS com identidades corporativas existentes"</p>
+                    <div class="info-box">
+                        <strong>💡 SAML 2.0 Federation vs IAM Identity Center</strong>
+                        SAML 2.0 Federation é o "jeito antigo" — Identity Center é o recomendado. Se a questão menciona setup novo com AD, a resposta é IAM Identity Center. Se menciona sistema legado já com SAML configurado, pode ser SAML direto.
+                    </div>
+                    <a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/what-is.html" target="_blank" class="ref-link">IAM Identity Center</a>
+                </div>
+            </details>
+
+            <details>
+                <summary>Identity Federation — Flavors</summary>
+                <div class="content">
+                    <p>Permite que usuários fora da AWS acessem recursos AWS sem criar IAM Users.</p>
+                    <table>
+                        <tr><th>Método</th><th>Quando usar</th><th>API STS</th></tr>
+                        <tr>
+                            <td><strong>SAML 2.0</strong></td>
+                            <td>IdP corporativo compatível (ADFS, Okta)</td>
+                            <td>AssumeRoleWithSAML</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Custom Identity Broker</strong></td>
+                            <td>IdP NÃO compatível com SAML</td>
+                            <td>AssumeRole ou GetFederationToken</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Web Identity (Cognito)</strong></td>
+                            <td>Apps mobile/web (Google, Facebook, OIDC)</td>
+                            <td>AssumeRoleWithWebIdentity</td>
+                        </tr>
+                        <tr>
+                            <td><strong>IAM Identity Center</strong></td>
+                            <td>Método recomendado para tudo novo</td>
+                            <td>Gerenciado internamente</td>
+                        </tr>
+                    </table>
+
+                    <h4>STS APIs Importantes</h4>
+                    <ul>
+                        <li><strong>AssumeRole:</strong> acesso cross-account ou dentro da mesma conta</li>
+                        <li><strong>AssumeRoleWithSAML:</strong> usuários autenticados via SAML</li>
+                        <li><strong>AssumeRoleWithWebIdentity:</strong> usuários via IdP web (usar Cognito ao invés disso)</li>
+                        <li><strong>GetSessionToken:</strong> para MFA (user ou root)</li>
+                        <li><strong>GetFederationToken:</strong> credenciais temporárias via proxy app corporativo</li>
+                    </ul>
+
+                    <h4>AWS Directory Services</h4>
+                    <table>
+                        <tr><th>Serviço</th><th>Uso</th><th>Gerenciamento</th></tr>
+                        <tr>
+                            <td><strong>AWS Managed Microsoft AD</strong></td>
+                            <td>AD completo na AWS, trust com on-prem</td>
+                            <td>AWS gerencia infra, você gerencia users</td>
+                        </tr>
+                        <tr>
+                            <td><strong>AD Connector</strong></td>
+                            <td>Proxy/gateway para AD on-premises</td>
+                            <td>Users gerenciados on-prem only</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Simple AD</strong></td>
+                            <td>AD básico standalone (sem trust, sem MFA)</td>
+                            <td>Alternativa barata para pequenos ambientes</td>
+                        </tr>
+                    </table>
+                    <div class="info-box danger">
+                        <strong>🔑 Diferenças-chave para a prova</strong>
+                        <ul>
+                            <li>AD Connector: sem cache, sem trust, sem SQL Server, não faz seamless join. Apenas proxy.</li>
+                            <li>Managed AD: suporta trust bidirecional, MFA, Multi-AZ, replicação multi-region.</li>
+                            <li>Se a questão fala "replicar AD para reduzir latência na cloud": Managed AD + trust com on-prem.</li>
+                        </ul>
+                    </div>
+                    <a href="https://docs.aws.amazon.com/directoryservice/latest/admin-guide/what_is.html" target="_blank" class="ref-link">Directory Services</a>
+                    <a href="https://docs.aws.amazon.com/cognito/latest/developerguide/what-is-amazon-cognito.html" target="_blank" class="ref-link">Amazon Cognito</a>
+                </div>
+            </details>
+
+            <details>
+                <summary>Criptografia e Gerenciamento de Chaves</summary>
+                <div class="content">
+                    <h4>AWS KMS (Key Management Service)</h4>
+                    <p>Sempre que ouvir "criptografia" para um serviço AWS, provavelmente envolve KMS. Keys são regionais.</p>
+
+                    <h4>Tipos de KMS Keys</h4>
+                    <table>
+                        <tr><th>Tipo</th><th>Gerenciamento</th><th>Rotação</th><th>Visibilidade</th></tr>
+                        <tr>
+                            <td><strong>Customer Managed Key</strong></td>
+                            <td>Você cria, gerencia, habilita/desabilita</td>
+                            <td>90-2560 dias (default 365) + on-demand</td>
+                            <td>Total (policy + CloudTrail)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>AWS Managed Key</strong></td>
+                            <td>AWS gerencia (aws/s3, aws/ebs...)</td>
+                            <td>Obrigatória a cada 1 ano</td>
+                            <td>Pode ver policy e auditar</td>
+                        </tr>
+                        <tr>
+                            <td><strong>AWS Owned Key</strong></td>
+                            <td>AWS usa internamente</td>
+                            <td>Varia</td>
+                            <td>Nenhuma (não pode ver/auditar)</td>
+                        </tr>
+                    </table>
+
+                    <h4>Key Types</h4>
+                    <ul>
+                        <li><strong>Symmetric (AES-256):</strong> uma chave para encrypt/decrypt. Usada por todos os serviços AWS integrados. Necessária para envelope encryption. Nunca exposta sem criptografia.</li>
+                        <li><strong>Asymmetric (RSA/ECC):</strong> par público/privado. Public key é downloadable. Use case: encrypt fora da AWS por quem não pode chamar a KMS API.</li>
+                    </ul>
+
+                    <h4>Key Material Origin</h4>
+                    <ul>
+                        <li><strong>KMS (AWS_KMS):</strong> padrão, AWS gera e gerencia</li>
+                        <li><strong>External (EXTERNAL):</strong> BYOK — você importa. Responsável pela segurança fora da AWS. Sem rotação automática.</li>
+                        <li><strong>Custom Key Store (AWS_CLOUDHSM):</strong> material armazenado em cluster CloudHSM que você gerencia. Precisa de pelo menos 2 HSMs ativos.</li>
+                    </ul>
+
+                    <h4>Multi-Region Keys</h4>
+                    <ul>
+                        <li>Mesmo key ID, key material e rotação em todas as regiões</li>
+                        <li>Encrypt em uma região, decrypt em outra (sem re-encrypt ou API cross-region)</li>
+                        <li>NÃO são globais — são Primary + Replicas gerenciadas independentemente</li>
+                        <li>Use cases: DR, DynamoDB Global Tables, Active-Active multi-region, distributed signing</li>
+                    </ul>
+
+                    <h4>Cross-Account KMS</h4>
+                    <p>Key Policy permite conta externa → Role na conta externa usa a chave. Ambos os lados precisam permitir.</p>
+
+                    <h4>AWS CloudHSM</h4>
+                    <ul>
+                        <li>Hardware dedicado (FIPS 140-2 Level 3)</li>
+                        <li>Você gerencia as chaves (AWS não tem acesso)</li>
+                        <li>Use quando: compliance requer HSM dedicado, SSL offloading, Oracle TDE</li>
+                        <li>Integra com KMS via Custom Key Store</li>
+                    </ul>
+
+                    <h4>Envelope Encryption</h4>
+                    <p>Data Key criptografa os dados → CMK criptografa a Data Key. Padrão usado pelo SDK da AWS. Necessário para arquivos > 4KB.</p>
+
+                    <a href="https://docs.aws.amazon.com/kms/latest/developerguide/overview.html" target="_blank" class="ref-link">AWS KMS</a>
+                    <a href="https://docs.aws.amazon.com/cloudhsm/latest/userguide/introduction.html" target="_blank" class="ref-link">CloudHSM</a>
+                    <a href="https://docs.aws.amazon.com/kms/latest/developerguide/multi-region-keys-overview.html" target="_blank" class="ref-link">Multi-Region Keys</a>
+                </div>
+            </details>
+
+            <details>
+                <summary>Serviços de Segurança e Compliance</summary>
+                <div class="content">
+                    <table>
+                        <tr><th>Serviço</th><th>Função</th><th>Escopo</th></tr>
+                        <tr>
+                            <td><strong>CloudTrail</strong></td>
+                            <td>Auditoria de chamadas de API (quem fez o quê)</td>
+                            <td>Organization trail para todas as contas</td>
+                        </tr>
+                        <tr>
+                            <td><strong>GuardDuty</strong></td>
+                            <td>Detecção de ameaças com ML (findings)</td>
+                            <td>Delegated admin na conta de segurança</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Security Hub</strong></td>
+                            <td>Visão consolidada de findings + compliance checks</td>
+                            <td>Agrega de GuardDuty, Inspector, Macie, etc.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>AWS Config</strong></td>
+                            <td>Avalia conformidade de recursos (regras)</td>
+                            <td>Aggregator para multi-account/region</td>
+                        </tr>
+                        <tr>
+                            <td><strong>IAM Access Analyzer</strong></td>
+                            <td>Identifica recursos compartilhados externamente</td>
+                            <td>Zone of trust = Organization ou conta</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Amazon Inspector</strong></td>
+                            <td>Scan de vulnerabilidades (EC2, ECR, Lambda)</td>
+                            <td>Automático com delegated admin</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Amazon Macie</strong></td>
+                            <td>Descobre dados sensíveis em S3 (PII)</td>
+                            <td>Multi-account com delegated admin</td>
+                        </tr>
+                    </table>
+
+                    <h4>CloudTrail — Detalhes importantes</h4>
+                    <ul>
+                        <li><strong>Tipos de eventos:</strong>
+                            <ul>
+                                <li>Management Events: operações em recursos (habilitado por padrão)</li>
+                                <li>Data Events: operações em dados — S3 GetObject/PutObject, Lambda Invoke (NÃO habilitado por padrão, alto volume)</li>
+                                <li>Insights Events: detecta atividade incomum (bursts de IAM, picos de API)</li>
+                            </ul>
+                        </li>
+                        <li><strong>Retenção:</strong> 90 dias no CloudTrail → para reter mais, envie para S3 + consulte com Athena</li>
+                        <li><strong>Organization Trail:</strong> trail único na management account captura logs de TODAS as contas-membro automaticamente</li>
+                        <li><strong>Log File Integrity:</strong> validação SHA-256 para hashing e signing</li>
+                        <li><strong>Tempo de entrega:</strong> até 15 minutos para entregar eventos</li>
+                    </ul>
+
+                    <h4>Reagir a eventos CloudTrail (do mais rápido ao mais lento):</h4>
+                    <ol>
+                        <li><strong>EventBridge:</strong> qualquer API call pode triggerar (mais rápido e reativo)</li>
+                        <li><strong>CloudWatch Logs:</strong> stream de eventos com metric filters para anomalias</li>
+                        <li><strong>S3 Delivery:</strong> a cada 5 minutos (análise de integridade, cross-account, long-term)</li>
+                    </ol>
+
+                    <h4>CloudTrail Solution Architectures (comuns na prova)</h4>
+                    <ul>
+                        <li><strong>Multi-Account Logging:</strong> S3 bucket centralizado com bucket policy para cross-account delivery</li>
+                        <li><strong>Alertas:</strong> CloudTrail → CloudWatch Logs → Metric Filter (ex: count TerminateInstances) → Alarm → SNS</li>
+                        <li><strong>S3 Security:</strong> Versioning + MFA Delete + Object Lock + SSE-KMS + Lifecycle para Glacier</li>
+                    </ul>
+
+                    <a href="https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-user-guide.html" target="_blank" class="ref-link">CloudTrail</a>
+                    <a href="https://docs.aws.amazon.com/guardduty/latest/ug/what-is-guardduty.html" target="_blank" class="ref-link">GuardDuty</a>
+                    <a href="https://docs.aws.amazon.com/securityhub/latest/userguide/what-is-securityhub.html" target="_blank" class="ref-link">Security Hub</a>
+                    <a href="https://docs.aws.amazon.com/config/latest/developerguide/WhatIsConfig.html" target="_blank" class="ref-link">AWS Config</a>
+                </div>
+            </details>
+        </section>
+
+        <!-- D1 Resilience -->
+        <section id="d1-resilience">
+            <h3>1.3 Arquiteturas Resilientes e Recuperação de Desastres</h3>
+
+            <details>
+                <summary>Estratégias de DR (Disaster Recovery)</summary>
+                <div class="content">
+                    <table>
+                        <tr><th>Estratégia</th><th>RTO</th><th>RPO</th><th>Custo</th><th>Descrição</th></tr>
+                        <tr>
+                            <td><strong>Backup & Restore</strong></td>
+                            <td>Horas</td>
+                            <td>Horas</td>
+                            <td>💰</td>
+                            <td>Backups em S3/outra região. Restaura quando necessário.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Pilot Light</strong></td>
+                            <td>10s min</td>
+                            <td>Minutos</td>
+                            <td>💰💰</td>
+                            <td>Core components mínimos rodando (ex: DB replicado). Escala no momento do DR.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Warm Standby</strong></td>
+                            <td>Minutos</td>
+                            <td>Segundos</td>
+                            <td>💰💰💰</td>
+                            <td>Versão reduzida do ambiente ativa. Escala para produção no failover.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Multi-Site / Hot Standby</strong></td>
+                            <td>Tempo real</td>
+                            <td>Zero/Segundos</td>
+                            <td>💰💰💰💰</td>
+                            <td>Ambiente completo ativo em 2+ regiões. Route 53 faz failover.</td>
+                        </tr>
+                    </table>
+
+                    <div class="info-box success">
+                        <strong>✅ Regra de ouro na prova</strong>
+                        Questão menciona "menor custo" + DR → Backup & Restore ou Pilot Light.<br>
+                        Questão menciona "RTO mínimo" ou "near-zero downtime" → Multi-Site ou Warm Standby.
+                    </div>
+
+                    <h4>Serviços-chave para DR</h4>
+                    <ul>
+                        <li><strong>AWS Elastic Disaster Recovery (DRS):</strong> replicação contínua block-level de servidores para região de DR. Agent-based. Failover em minutos. Suporta failback.</li>
+                        <li><strong>S3 Cross-Region Replication:</strong> replica objetos automaticamente entre regiões</li>
+                        <li><strong>RDS Multi-AZ:</strong> failover automático para standby (síncrono, 30-60s)</li>
+                        <li><strong>RDS Cross-Region Read Replicas:</strong> replicação assíncrona para outra região (pode ser promovida)</li>
+                        <li><strong>Aurora Global Database:</strong> replicação < 1 segundo entre regiões, failover em < 1 minuto</li>
+                        <li><strong>DynamoDB Global Tables:</strong> multi-region, multi-active com replicação automática</li>
+                    </ul>
+
+                    <h4>DR Tips (do PDF do Stephane Maarek)</h4>
+                    <ul>
+                        <li><strong>Backup:</strong> EBS Snapshots, RDS automated backups, S3 + Lifecycle + CRR, Storage Gateway, Snowball</li>
+                        <li><strong>HA:</strong> Route 53 failover, RDS Multi-AZ, ElastiCache Multi-AZ, EFS, S3. VPN como recovery do Direct Connect.</li>
+                        <li><strong>Replication:</strong> RDS Cross-Region, Aurora Global DB, DB replication on-prem → RDS, Storage Gateway</li>
+                        <li><strong>Automation:</strong> CloudFormation/Beanstalk para recriar ambientes, CloudWatch Alarms + recovery actions, Lambda automations</li>
+                        <li><strong>Chaos Engineering:</strong> AWS Fault Injection Simulator (FIS) — injeta falhas (CPU spike, terminate, network) em EC2, ECS, EKS, RDS. Usa templates pré-construídos.</li>
+                    </ul>
+
+                    <h4>AWS Backup</h4>
+                    <ul>
+                        <li>Gerenciamento centralizado de backups cross-service (EC2, EBS, S3, RDS, Aurora, DynamoDB, EFS, FSx, DocumentDB, Neptune, Storage Gateway)</li>
+                        <li>Cross-region e cross-account backups</li>
+                        <li>PITR (point-in-time recovery) para serviços suportados</li>
+                        <li>Tag-based backup policies, scheduling (cron), retention, transition to cold storage</li>
+                        <li><strong>Backup Vault Lock (WORM):</strong> backups não podem ser deletados — nem pelo root user! Proteção contra ransomware.</li>
+                    </ul>
+
+                    <a href="https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-options-in-the-cloud.html" target="_blank" class="ref-link">Whitepaper DR na AWS</a>
+                    <a href="https://docs.aws.amazon.com/drs/latest/userguide/what-is-drs.html" target="_blank" class="ref-link">Elastic Disaster Recovery</a>
+                    <a href="https://docs.aws.amazon.com/aws-backup/latest/devguide/whatisbackup.html" target="_blank" class="ref-link">AWS Backup</a>
+                    <a href="https://docs.aws.amazon.com/fis/latest/userguide/what-is.html" target="_blank" class="ref-link">Fault Injection Simulator</a>
+                </div>
+            </details>
+
+            <details>
+                <summary>Alta Disponibilidade e Auto Scaling</summary>
+                <div class="content">
+                    <h4>Padrões de Alta Disponibilidade</h4>
+                    <ul>
+                        <li><strong>Multi-AZ:</strong> mínimo para produção. Protege contra falha de um datacenter.</li>
+                        <li><strong>Multi-Region:</strong> protege contra falha regional. Mais complexo e caro.</li>
+                        <li><strong>ELB Cross-Zone:</strong> distribui tráfego uniformemente entre AZs</li>
+                        <li><strong>Auto Scaling Groups:</strong> min/max/desired capacity. Políticas: Target Tracking, Step, Scheduled, Predictive.</li>
+                    </ul>
+
+                    <h4>Route 53 Routing Policies para HA</h4>
+                    <ul>
+                        <li><strong>Failover:</strong> ativo/passivo com health checks</li>
+                        <li><strong>Latency-based:</strong> roteia para a região com menor latência</li>
+                        <li><strong>Weighted:</strong> distribui % do tráfego (blue/green, canary)</li>
+                        <li><strong>Geolocation/Geoproximity:</strong> roteia por localização do usuário</li>
+                        <li><strong>Multivalue Answer:</strong> retorna múltiplos IPs saudáveis</li>
+                    </ul>
+                    <a href="https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html" target="_blank" class="ref-link">Route 53 Routing</a>
+                    <a href="https://docs.aws.amazon.com/autoscaling/ec2/userguide/what-is-amazon-ec2-auto-scaling.html" target="_blank" class="ref-link">EC2 Auto Scaling</a>
+                </div>
+            </details>
+        </section>
+
+        <!-- D1 Multi-Account -->
+        <section id="d1-multi-account">
+            <h3>1.4 Ambiente Multi-Account</h3>
+
+            <details>
+                <summary>AWS Organizations</summary>
+                <div class="content">
+                    <p>Gerenciamento centralizado de múltiplas contas AWS em uma hierarquia de OUs (Organizational Units).</p>
+                    <ul>
+                        <li><strong>Management Account:</strong> conta raiz que cria a organização. NÃO use para workloads.</li>
+                        <li><strong>SCPs (Service Control Policies):</strong> guardrails que limitam o que contas/OUs PODEM fazer. Não concedem permissões, apenas restringem.</li>
+                        <li><strong>Consolidated Billing:</strong> uma fatura única, descontos por volume compartilhados</li>
+                        <li><strong>Delegated Admin:</strong> delega administração de serviços (Security Hub, GuardDuty) para conta membro</li>
+                    </ul>
+
+                    <h4>Estrutura Recomendada de OUs</h4>
+                    <ul>
+                        <li><strong>Security OU:</strong> Log Archive + Security Tooling</li>
+                        <li><strong>Infrastructure OU:</strong> Networking, Shared Services</li>
+                        <li><strong>Workloads OU:</strong> Production, Staging, Development</li>
+                        <li><strong>Sandbox OU:</strong> contas de experimentação com restrições</li>
+                    </ul>
+                    <a href="https://docs.aws.amazon.com/organizations/latest/userguide/orgs_introduction.html" target="_blank" class="ref-link">AWS Organizations</a>
+                    <a href="https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps.html" target="_blank" class="ref-link">SCPs</a>
+                </div>
+            </details>
+
+            <details>
+                <summary>AWS Control Tower</summary>
+                <div class="content">
+                    <p>Orquestra a criação e governança de um ambiente multi-account seguro (Landing Zone).</p>
+                    <ul>
+                        <li><strong>Landing Zone:</strong> ambiente pré-configurado com melhores práticas</li>
+                        <li><strong>Guardrails (Controls):</strong>
+                            <ul>
+                                <li>Preventive — SCPs que bloqueiam ações (ex: bloquear criação de access keys para root)</li>
+                                <li>Detective — AWS Config Rules que detectam não-conformidade (ex: detectar se MFA do root está habilitado)</li>
+                                <li>Proactive — CloudFormation hooks que validam antes do deploy</li>
+                            </ul>
+                        </li>
+                        <li><strong>Guardrail Levels:</strong>
+                            <ul>
+                                <li><strong>Mandatory:</strong> habilitados automaticamente (ex: bloquear leitura pública no Log Archive)</li>
+                                <li><strong>Strongly Recommended:</strong> best practices opcionais (ex: criptografia EBS)</li>
+                                <li><strong>Elective:</strong> comuns em enterprise (ex: bloquear delete sem MFA em S3)</li>
+                            </ul>
+                        </li>
+                        <li><strong>Account Factory:</strong> vending machine para criar novas contas padronizadas usando AWS Service Catalog</li>
+                        <li><strong>Customizations for Control Tower (CfCT):</strong> aplica templates CloudFormation automaticamente em novas contas</li>
+                    </ul>
+
+                    <h4>Detect and Remediate Policy Violations</h4>
+                    <p>Fluxo: Control Tower detecta non-compliance → SNS → EventBridge → Lambda executa remediação automática</p>
+                    <p><span class="tag tag-yellow">Cenário comum:</span> "Precisa provisionar novas contas automaticamente com baseline de segurança"</p>
+                    <a href="https://docs.aws.amazon.com/controltower/latest/userguide/what-is-control-tower.html" target="_blank" class="ref-link">Control Tower</a>
+                </div>
+            </details>
+
+            <details>
+                <summary>AWS Organizations — Policies Avançadas</summary>
+                <div class="content">
+                    <h4>Tipos de Policies além de SCPs</h4>
+                    <table>
+                        <tr><th>Policy</th><th>Função</th></tr>
+                        <tr><td><strong>Tag Policies</strong></td><td>Padronizar tags na organização. Validar valores permitidos. Gerar relatórios de compliance.</td></tr>
+                        <tr><td><strong>Backup Policies</strong></td><td>Backup Plans centralizados (JSON) aplicados a OUs/contas. Aparecem como imutáveis nas contas membro.</td></tr>
+                        <tr><td><strong>AI Services Opt-out</strong></td><td>Opt-out de ter conteúdo usado para melhorar serviços de AI/ML da AWS (Lex, Comprehend, Polly, etc.).</td></tr>
+                    </table>
+
+                    <h4>Detalhes importantes para a prova</h4>
+                    <ul>
+                        <li><strong>SCPs não afetam Management Account</strong> — nunca restringem a conta de gerenciamento</li>
+                        <li><strong>SCPs não afetam Service-Linked Roles</strong> — roles criadas por serviços AWS para integrações</li>
+                        <li><strong>SCP precisa de Allow explícito</strong> desde a root até o alvo na hierarquia</li>
+                        <li><strong>Reserved Instances são compartilhadas</strong> na organização (consolidated billing), mas pode desligar sharing por conta</li>
+                        <li><strong>OrganizationAccountAccessRole:</strong> role com full admin criada automaticamente em novas contas (deve ser criada manualmente se conta é convidada)</li>
+                        <li><strong>Restringir criação sem Tags:</strong> SCP pode bloquear ec2:RunInstances se não tiver tags específicas (usando aws:TagKeys)</li>
+                        <li><strong>Restringir por Região:</strong> SCP com condição aws:RequestedRegion para bloquear regiões não autorizadas</li>
+                    </ul>
+                    <a href="https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_tag-policies.html" target="_blank" class="ref-link">Tag Policies</a>
+                    <a href="https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_backup.html" target="_blank" class="ref-link">Backup Policies</a>
+                </div>
+            </details>
+
+            <details>
+                <summary>AWS Resource Access Manager (RAM)</summary>
+                <div class="content">
+                    <p>Compartilha recursos AWS entre contas sem duplicação.</p>
+                    <h4>Recursos compartilháveis via RAM:</h4>
+                    <ul>
+                        <li>VPC Subnets (permite lançar recursos em subnets compartilhadas)</li>
+                        <li>Transit Gateway</li>
+                        <li>Route 53 Resolver Rules</li>
+                        <li>License Manager configurations</li>
+                        <li>Aurora DB clusters</li>
+                        <li>AWS CodeBuild projects</li>
+                    </ul>
+                    <div class="info-box">
+                        <strong>💡 Dica importante</strong>
+                        VPC Subnet sharing permite que múltiplas contas lancem recursos na mesma subnet, mas cada conta gerencia seus próprios recursos. Ideal para centralizar networking.
+                    </div>
+                    <a href="https://docs.aws.amazon.com/ram/latest/userguide/what-is.html" target="_blank" class="ref-link">Resource Access Manager</a>
+                </div>
+            </details>
+        </section>
+
+        <!-- D1 Cost -->
+        <section id="d1-cost">
+            <h3>1.5 Otimização de Custos e Visibilidade</h3>
+
+            <details>
+                <summary>Ferramentas de Monitoramento de Custos</summary>
+                <div class="content">
+                    <table>
+                        <tr><th>Ferramenta</th><th>Para que serve</th></tr>
+                        <tr><td><strong>AWS Cost Explorer</strong></td><td>Visualizar e analisar custos/uso ao longo do tempo. Forecasting.</td></tr>
+                        <tr><td><strong>AWS Budgets</strong></td><td>Alertas quando custo/uso excede thresholds. Ações automáticas.</td></tr>
+                        <tr><td><strong>Cost and Usage Report (CUR)</strong></td><td>Relatório granular completo (para S3 → Athena/QuickSight).</td></tr>
+                        <tr><td><strong>AWS Trusted Advisor</strong></td><td>Recomendações de economia, segurança, performance, limites.</td></tr>
+                        <tr><td><strong>Compute Optimizer</strong></td><td>Recomendação de rightsizing para EC2, EBS, Lambda, ECS.</td></tr>
+                        <tr><td><strong>S3 Storage Lens</strong></td><td>Visibilidade de uso e otimização de storage S3 org-wide.</td></tr>
+                    </table>
+                    <a href="https://docs.aws.amazon.com/cost-management/latest/userguide/what-is-costmanagement.html" target="_blank" class="ref-link">AWS Cost Management</a>
+                    <a href="https://docs.aws.amazon.com/compute-optimizer/latest/ug/what-is-compute-optimizer.html" target="_blank" class="ref-link">Compute Optimizer</a>
+                </div>
+            </details>
+
+            <details>
+                <summary>Modelos de Compra</summary>
+                <div class="content">
+                    <table>
+                        <tr><th>Modelo</th><th>Economia</th><th>Compromisso</th><th>Flexibilidade</th></tr>
+                        <tr><td><strong>On-Demand</strong></td><td>0%</td><td>Nenhum</td><td>Total</td></tr>
+                        <tr><td><strong>Savings Plans (Compute)</strong></td><td>Até 66%</td><td>$/hora por 1 ou 3 anos</td><td>Qualquer instância/região/OS</td></tr>
+                        <tr><td><strong>Savings Plans (EC2 Instance)</strong></td><td>Até 72%</td><td>$/hora por 1 ou 3 anos</td><td>Família + Região fixa</td></tr>
+                        <tr><td><strong>Reserved Instances</strong></td><td>Até 72%</td><td>1 ou 3 anos</td><td>Tipo + Região (ou AZ) fixa</td></tr>
+                        <tr><td><strong>Spot Instances</strong></td><td>Até 90%</td><td>Nenhum (pode ser interrompida)</td><td>Workloads tolerantes a falha</td></tr>
+                    </table>
+
+                    <div class="info-box success">
+                        <strong>✅ Quando usar cada um</strong>
+                        <ul>
+                            <li><strong>Savings Plans Compute:</strong> quando você sabe o gasto total mas quer flexibilidade (pode mudar instância/região)</li>
+                            <li><strong>Reserved Instances:</strong> quando precisa de capacity reservation (garantia de capacidade em uma AZ específica)</li>
+                            <li><strong>Spot:</strong> batch processing, CI/CD, big data, workloads stateless</li>
+                        </ul>
+                    </div>
+                    <a href="https://docs.aws.amazon.com/savingsplans/latest/userguide/what-is-savings-plans.html" target="_blank" class="ref-link">Savings Plans</a>
+                </div>
+            </details>
+        </section>
+
+        <div class="section-divider"><span>DOMÍNIO 2</span></div>
+
+        <!-- DOMAIN 2 -->
+        <section id="d2">
+            <h2>Domínio 2: Design de Novas Soluções (29%)</h2>
+            <p>O domínio com maior peso. Testa sua capacidade de projetar soluções completas que atendem múltiplos requisitos simultaneamente: disponibilidade, segurança, performance e custo.</p>
+        </section>
+
+        <section id="d2-deploy">
+            <h3>2.1 Estratégias de Deploy</h3>
+
+            <details>
+                <summary>Modelos de Deployment</summary>
+                <div class="content">
+                    <table>
+                        <tr><th>Estratégia</th><th>Descrição</th><th>Risco</th><th>Rollback</th></tr>
+                        <tr>
+                            <td><strong>All-at-once</strong></td>
+                            <td>Atualiza tudo de uma vez</td>
+                            <td>Alto</td>
+                            <td>Re-deploy versão anterior</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Rolling</strong></td>
+                            <td>Atualiza em lotes (batch)</td>
+                            <td>Médio</td>
+                            <td>Rolling update reverso</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Blue/Green</strong></td>
+                            <td>Ambiente novo paralelo, switch via DNS/LB</td>
+                            <td>Baixo</td>
+                            <td>Instantâneo (volta o ponteiro)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Canary</strong></td>
+                            <td>% pequeno do tráfego para nova versão</td>
+                            <td>Muito baixo</td>
+                            <td>Redireciona 100% para old</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Immutable</strong></td>
+                            <td>Novo ASG completo, troca quando saudável</td>
+                            <td>Baixo</td>
+                            <td>Termina novo ASG</td>
+                        </tr>
+                    </table>
+
+                    <h4>Serviços para CI/CD</h4>
+                    <ul>
+                        <li><strong>AWS CodePipeline:</strong> orquestra o pipeline (source → build → test → deploy)</li>
+                        <li><strong>AWS CodeDeploy:</strong> deploy em EC2, ECS, Lambda com blue/green e canary</li>
+                        <li><strong>AWS CodeBuild:</strong> build + test serverless</li>
+                        <li><strong>CloudFormation StackSets:</strong> deploy de IaC em múltiplas contas/regiões</li>
+                    </ul>
+                    <a href="https://docs.aws.amazon.com/codedeploy/latest/userguide/welcome.html" target="_blank" class="ref-link">CodeDeploy</a>
+                    <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/what-is-cfnstacksets.html" target="_blank" class="ref-link">CloudFormation StackSets</a>
+                </div>
+            </details>
+
+            <details>
+                <summary>Infrastructure as Code (IaC)</summary>
+                <div class="content">
+                    <h4>AWS CloudFormation</h4>
+                    <ul>
+                        <li><strong>Stacks:</strong> unidade de deployment. Pode ter dependências entre stacks (cross-stack references via Export/Import)</li>
+                        <li><strong>StackSets:</strong> deploy em múltiplas contas e regiões simultaneamente</li>
+                        <li><strong>Drift Detection:</strong> detecta mudanças manuais fora do template</li>
+                        <li><strong>Change Sets:</strong> preview de mudanças antes de aplicar</li>
+                        <li><strong>Nested Stacks:</strong> reutilização de componentes (módulos)</li>
+                        <li><strong>DeletionPolicy:</strong> Retain, Snapshot, Delete — protege recursos na deleção da stack</li>
+                    </ul>
+
+                    <h4>AWS CDK (Cloud Development Kit)</h4>
+                    <ul>
+                        <li>Define infraestrutura em linguagens de programação (TypeScript, Python, Java, etc.)</li>
+                        <li>Sintetiza para CloudFormation templates</li>
+                        <li>Constructs: L1 (CFN resources), L2 (abstrações opinadas), L3 (patterns completos)</li>
+                    </ul>
+
+                    <h4>AWS Systems Manager</h4>
+                    <ul>
+                        <li><strong>Parameter Store:</strong> configurações e secrets (grátis para standard, $0.05/10k para advanced)</li>
+                        <li><strong>Session Manager:</strong> acesso remoto sem SSH/bastion (auditável)</li>
+                        <li><strong>Patch Manager:</strong> patching automatizado com baselines</li>
+                        <li><strong>Automation:</strong> runbooks para tarefas operacionais</li>
+                    </ul>
+                    <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html" target="_blank" class="ref-link">CloudFormation</a>
+                    <a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/what-is-systems-manager.html" target="_blank" class="ref-link">Systems Manager</a>
+                </div>
+            </details>
+        </section>
+
+        <!-- D2 Continuity -->
+        <section id="d2-continuity">
+            <h3>2.2 Continuidade de Negócio</h3>
+
+            <details>
+                <summary>Arquiteturas Multi-Region</summary>
+                <div class="content">
+                    <h4>Padrões Active-Active vs Active-Passive</h4>
+                    <table>
+                        <tr><th>Aspecto</th><th>Active-Active</th><th>Active-Passive</th></tr>
+                        <tr><td>Tráfego</td><td>Ambas regiões servem</td><td>Apenas primária serve</td></tr>
+                        <tr><td>Dados</td><td>Replicação bidirecional</td><td>Replicação unidirecional</td></tr>
+                        <tr><td>Failover</td><td>Automático / DNS</td><td>Manual ou semi-automático</td></tr>
+                        <tr><td>Custo</td><td>Alto (2x infra)</td><td>Médio (infra reduzida no DR)</td></tr>
+                        <tr><td>Complexidade</td><td>Alta (conflitos de dados)</td><td>Média</td></tr>
+                    </table>
+
+                    <h4>Serviços com suporte nativo Multi-Region</h4>
+                    <ul>
+                        <li><strong>DynamoDB Global Tables:</strong> multi-region, multi-active, replicação automática</li>
+                        <li><strong>Aurora Global Database:</strong> 1 primária + até 5 regiões secundárias. RPO < 1s, RTO < 1min</li>
+                        <li><strong>S3 Cross-Region Replication (CRR):</strong> replicação assíncrona de objetos</li>
+                        <li><strong>ElastiCache Global Datastore:</strong> Redis global com replicação cross-region</li>
+                    </ul>
+
+                    <div class="info-box">
+                        <strong>💡 Na prova</strong>
+                        Se a questão pede "active-active com dados consistentes globalmente" → DynamoDB Global Tables.<br>
+                        Se pede "menor RPO com banco relacional" → Aurora Global Database.
+                    </div>
+                    <a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GlobalTables.html" target="_blank" class="ref-link">DynamoDB Global Tables</a>
+                    <a href="https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-global-database.html" target="_blank" class="ref-link">Aurora Global Database</a>
+                </div>
+            </details>
+        </section>
+
+        <!-- D2 Security -->
+        <section id="d2-security">
+            <h3>2.3 Segurança para Novas Soluções</h3>
+
+            <details>
+                <summary>Proteção de Aplicações Web</summary>
+                <div class="content">
+                    <h4>AWS WAF (Web Application Firewall)</h4>
+                    <ul>
+                        <li>Protege contra: SQL injection, XSS, bots, rate limiting</li>
+                        <li><strong>Associado a:</strong> CloudFront, ALB, API Gateway, AppSync</li>
+                        <li><strong>Managed Rules:</strong> conjuntos de regras pré-configuradas (AWS, marketplace)</li>
+                        <li><strong>Rate-based Rules:</strong> bloqueia IPs que excedem threshold (ex: 2000 req/5min)</li>
+                    </ul>
+
+                    <h4>AWS Shield</h4>
+                    <ul>
+                        <li><strong>Standard:</strong> proteção automática contra DDoS na camada 3/4 (grátis)</li>
+                        <li><strong>Advanced ($3000/mês):</strong> proteção adicional camada 7, DRT team, cost protection, visibilidade avançada</li>
+                    </ul>
+
+                    <h4>Network Firewall</h4>
+                    <ul>
+                        <li>Firewall gerenciado na VPC (stateful/stateless)</li>
+                        <li>Inspeção de tráfego, IPS/IDS, filtragem de domínio</li>
+                        <li>Deploy em subnet dedicada, integra com Firewall Manager</li>
+                    </ul>
+                    <a href="https://docs.aws.amazon.com/waf/latest/developerguide/what-is-aws-waf.html" target="_blank" class="ref-link">AWS WAF</a>
+                    <a href="https://docs.aws.amazon.com/waf/latest/developerguide/shield-chapter.html" target="_blank" class="ref-link">AWS Shield</a>
+                    <a href="https://docs.aws.amazon.com/network-firewall/latest/developerguide/what-is-aws-network-firewall.html" target="_blank" class="ref-link">Network Firewall</a>
+                </div>
+            </details>
+
+            <details>
+                <summary>Criptografia em Trânsito e em Repouso</summary>
+                <div class="content">
+                    <h4>Em Trânsito</h4>
+                    <ul>
+                        <li><strong>TLS/SSL:</strong> ACM para certificados gerenciados (grátis para serviços AWS)</li>
+                        <li><strong>VPN:</strong> IPsec para conexões Site-to-Site</li>
+                        <li><strong>Client VPN:</strong> OpenVPN para acesso remoto de usuários</li>
+                    </ul>
+
+                    <h4>Em Repouso</h4>
+                    <ul>
+                        <li><strong>S3:</strong> SSE-S3 (padrão), SSE-KMS (auditável), SSE-C (você gerencia a chave)</li>
+                        <li><strong>EBS:</strong> criptografia com KMS (padrão habilitável por região)</li>
+                        <li><strong>RDS:</strong> criptografia no momento da criação (não pode habilitar depois sem snapshot/restore)</li>
+                        <li><strong>DynamoDB:</strong> criptografia padrão com AWS owned key ou CMK</li>
+                    </ul>
+
+                    <div class="info-box warning">
+                        <strong>⚠️ Pegadinha comum</strong>
+                        RDS não criptografado → não pode ser criptografado diretamente. Solução: snapshot → copy snapshot com criptografia → restore do snapshot criptografado.
+                    </div>
+                    <a href="https://docs.aws.amazon.com/acm/latest/userguide/acm-overview.html" target="_blank" class="ref-link">ACM</a>
+                </div>
+            </details>
+        </section>
+
+        <!-- D2 Reliability -->
+        <section id="d2-reliability">
+            <h3>2.4 Confiabilidade</h3>
+
+            <details>
+                <summary>Arquiteturas Desacopladas e Event-Driven</summary>
+                <div class="content">
+                    <h4>Serviços de Mensageria</h4>
+                    <table>
+                        <tr><th>Serviço</th><th>Modelo</th><th>Caso de uso</th></tr>
+                        <tr>
+                            <td><strong>SQS</strong></td>
+                            <td>Queue (pull-based)</td>
+                            <td>Desacoplamento, buffer, processamento assíncrono</td>
+                        </tr>
+                        <tr>
+                            <td><strong>SNS</strong></td>
+                            <td>Pub/Sub (push-based)</td>
+                            <td>Fan-out, notificações para múltiplos subscribers</td>
+                        </tr>
+                        <tr>
+                            <td><strong>EventBridge</strong></td>
+                            <td>Event bus</td>
+                            <td>Eventos entre serviços AWS / SaaS, regras de roteamento</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Kinesis Data Streams</strong></td>
+                            <td>Streaming (real-time)</td>
+                            <td>Ingestão de dados em tempo real, analytics</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Amazon MQ</strong></td>
+                            <td>Broker (ActiveMQ/RabbitMQ)</td>
+                            <td>Migração de apps que já usam protocolos MQTT/AMQP/STOMP</td>
+                        </tr>
+                    </table>
+
+                    <h4>Padrão Fan-Out</h4>
+                    <p>SNS Topic → múltiplas SQS Queues. Cada queue processa independentemente. Ideal para processamento paralelo com diferentes lógicas.</p>
+
+                    <h4>AWS Step Functions</h4>
+                    <ul>
+                        <li>Orquestração de workflows serverless (máquinas de estado)</li>
+                        <li><strong>Standard:</strong> até 1 ano de duração, exactly-once</li>
+                        <li><strong>Express:</strong> até 5 minutos, at-least-once, alto throughput</li>
+                        <li>Integração nativa com Lambda, ECS, SNS, SQS, DynamoDB, etc.</li>
+                    </ul>
+                    <a href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html" target="_blank" class="ref-link">SQS</a>
+                    <a href="https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-what-is.html" target="_blank" class="ref-link">EventBridge</a>
+                    <a href="https://docs.aws.amazon.com/step-functions/latest/dg/welcome.html" target="_blank" class="ref-link">Step Functions</a>
+                </div>
+            </details>
+        </section>
+
+        <!-- D2 Performance -->
+        <section id="d2-performance">
+            <h3>2.5 Performance</h3>
+
+            <details>
+                <summary>Estratégias de Cache</summary>
+                <div class="content">
+                    <table>
+                        <tr><th>Camada</th><th>Serviço</th><th>Caso de uso</th></tr>
+                        <tr>
+                            <td>CDN / Edge</td>
+                            <td><strong>CloudFront</strong></td>
+                            <td>Cache de conteúdo estático e dinâmico. Lambda@Edge para lógica no edge.</td>
+                        </tr>
+                        <tr>
+                            <td>API</td>
+                            <td><strong>API Gateway Cache</strong></td>
+                            <td>Cache de respostas da API (0.5GB a 237GB)</td>
+                        </tr>
+                        <tr>
+                            <td>Aplicação</td>
+                            <td><strong>ElastiCache Redis/Memcached</strong></td>
+                            <td>Session store, cache de queries, leaderboards</td>
+                        </tr>
+                        <tr>
+                            <td>Banco</td>
+                            <td><strong>DAX (DynamoDB Accelerator)</strong></td>
+                            <td>Cache in-memory para DynamoDB (microsegundos)</td>
+                        </tr>
+                    </table>
+
+                    <h4>ElastiCache: Redis vs Memcached</h4>
+                    <table>
+                        <tr><th>Feature</th><th>Redis</th><th>Memcached</th></tr>
+                        <tr><td>Multi-AZ</td><td>✅</td><td>❌</td></tr>
+                        <tr><td>Replicação</td><td>✅</td><td>❌</td></tr>
+                        <tr><td>Persistência</td><td>✅</td><td>❌</td></tr>
+                        <tr><td>Estruturas de dados</td><td>✅ (rich)</td><td>❌ (simples key-value)</td></tr>
+                        <tr><td>Multi-thread</td><td>❌</td><td>✅</td></tr>
+                        <tr><td>Backup</td><td>✅</td><td>❌</td></tr>
+                    </table>
+                    <p><span class="tag tag-green">Regra:</span> Se precisa de HA, persistência, ou tipos de dados complexos → Redis. Se precisa de cache simples com scaling horizontal → Memcached.</p>
+                    <a href="https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/WhatIs.html" target="_blank" class="ref-link">ElastiCache Redis</a>
+                    <a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DAX.html" target="_blank" class="ref-link">DAX</a>
+                </div>
+            </details>
+
+            <details>
+                <summary>Bancos de Dados - Escolha o Certo</summary>
+                <div class="content">
+                    <table>
+                        <tr><th>Tipo</th><th>Serviço</th><th>Caso de uso</th></tr>
+                        <tr><td>Relacional</td><td><strong>Aurora</strong></td><td>OLTP, compatível MySQL/PostgreSQL, 5x mais rápido</td></tr>
+                        <tr><td>Relacional</td><td><strong>RDS</strong></td><td>OLTP tradicional (MySQL, PostgreSQL, Oracle, SQL Server)</td></tr>
+                        <tr><td>Key-Value</td><td><strong>DynamoDB</strong></td><td>Baixa latência em qualquer escala, serverless</td></tr>
+                        <tr><td>Documento</td><td><strong>DocumentDB</strong></td><td>Compatível MongoDB, documentos JSON</td></tr>
+                        <tr><td>In-Memory</td><td><strong>ElastiCache</strong></td><td>Cache, sessions, real-time analytics</td></tr>
+                        <tr><td>Grafo</td><td><strong>Neptune</strong></td><td>Redes sociais, recomendações, detecção de fraude</td></tr>
+                        <tr><td>Time-series</td><td><strong>Timestream</strong></td><td>IoT, métricas operacionais, dados temporais</td></tr>
+                        <tr><td>Ledger</td><td><strong>QLDB</strong></td><td>Histórico imutável, audit trail criptográfico</td></tr>
+                        <tr><td>Wide-column</td><td><strong>Keyspaces</strong></td><td>Compatível Cassandra, workloads de larga escala</td></tr>
+                        <tr><td>Search</td><td><strong>OpenSearch</strong></td><td>Full-text search, log analytics, dashboards</td></tr>
+                    </table>
+
+                    <div class="info-box">
+                        <strong>💡 Dica para a prova</strong>
+                        A questão sempre dá pistas sobre o tipo de banco ideal: "milhões de requests por segundo com latência de milissegundos" → DynamoDB. "Consultas SQL complexas com joins" → Aurora/RDS. "Relações entre entidades" → Neptune.
+                    </div>
+                    <a href="https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/CHAP_AuroraOverview.html" target="_blank" class="ref-link">Aurora</a>
+                    <a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html" target="_blank" class="ref-link">DynamoDB</a>
+                </div>
+            </details>
+        </section>
+
+        <!-- D2 Cost -->
+        <section id="d2-cost">
+            <h3>2.6 Otimização de Custos para Novas Soluções</h3>
+
+            <details>
+                <summary>Storage Tiering e Lifecycle</summary>
+                <div class="content">
+                    <h4>Classes de Storage S3</h4>
+                    <table>
+                        <tr><th>Classe</th><th>Latência</th><th>Duração mín.</th><th>AZs</th><th>Caso de uso</th></tr>
+                        <tr><td><strong>S3 Standard</strong></td><td>ms</td><td>—</td><td>≥ 3</td><td>Dados frequentemente acessados</td></tr>
+                        <tr><td><strong>S3 Intelligent-Tiering</strong></td><td>ms</td><td>—</td><td>≥ 3</td><td>Padrão imprevisível (auto-move, sem retrieval fee)</td></tr>
+                        <tr><td><strong>S3 Standard-IA</strong></td><td>ms</td><td>30 dias</td><td>≥ 3</td><td>Backups, DR (acesso infrequente). Min 128KB.</td></tr>
+                        <tr><td><strong>S3 One Zone-IA</strong></td><td>ms</td><td>30 dias</td><td>1</td><td>Dados recriáveis, réplicas secundárias</td></tr>
+                        <tr><td><strong>Glacier Instant</strong></td><td>ms</td><td>90 dias</td><td>≥ 3</td><td>Archive com acesso raro mas imediato. Min 128KB.</td></tr>
+                        <tr><td><strong>Glacier Flexible</strong></td><td>1-12h</td><td>90 dias</td><td>≥ 3</td><td>Backups, archives. Expedited: 1-5min. Min 40KB.</td></tr>
+                        <tr><td><strong>Glacier Deep Archive</strong></td><td>12-48h</td><td>180 dias</td><td>≥ 3</td><td>Compliance, dados raramente acessados. Min 40KB.</td></tr>
+                    </table>
+                    <p><strong>Durabilidade:</strong> 99.999999999% (11 noves) para TODAS as classes.</p>
+
+                    <h4>S3 Performance</h4>
+                    <ul>
+                        <li><strong>Baseline:</strong> 3.500 PUT/COPY/POST/DELETE + 5.500 GET/HEAD por segundo <em>por prefix</em></li>
+                        <li><strong>Multi-Part Upload:</strong> recomendado > 100MB, obrigatório > 5GB. Paraleliza uploads.</li>
+                        <li><strong>S3 Transfer Acceleration:</strong> usa edge locations para upload mais rápido de qualquer lugar</li>
+                        <li><strong>Byte-Range Fetches:</strong> paraleliza downloads requisitando ranges específicos</li>
+                        <li><strong>S3 Select / Glacier Select:</strong> filtra dados server-side com SQL (reduz transferência)</li>
+                    </ul>
+
+                    <h4>S3 Replication</h4>
+                    <ul>
+                        <li><strong>CRR (Cross-Region):</strong> DR, redução de latência, compliance</li>
+                        <li><strong>SRR (Same-Region):</strong> log aggregation, replicação entre ambientes</li>
+                        <li><strong>S3 RTC (Replication Time Control):</strong> 99.99% dos objetos replicados em 15 minutos (para SLAs rígidos)</li>
+                        <li>Requer versionamento habilitado em source e destination</li>
+                    </ul>
+
+                    <h4>S3 Event Notifications</h4>
+                    <ul>
+                        <li>Eventos: ObjectCreated, ObjectRemoved, ObjectRestore, Replication</li>
+                        <li>Targets: SNS, SQS, Lambda (direto) ou EventBridge (avançado com 18+ destinos)</li>
+                        <li>EventBridge: filtering avançado (metadata, size, name), archive, replay</li>
+                    </ul>
+
+                    <h4>S3 Storage Lens</h4>
+                    <ul>
+                        <li>Análise organization-wide de uso de storage</li>
+                        <li>Métricas: Summary, Cost-Optimization, Data-Protection, Access-management, Event, Performance, Activity</li>
+                        <li>Free: 28 métricas, 14 dias. Paid: métricas avançadas + CloudWatch + prefix aggregation, 15 meses.</li>
+                    </ul>
+
+                    <h4>S3 Lifecycle Policies</h4>
+                    <ul>
+                        <li>Transition actions: mover objetos entre classes por idade</li>
+                        <li>Expiration actions: deletar objetos após X dias</li>
+                        <li>Combinar com versionamento: mover/deletar versões anteriores</li>
+                        <li><strong>S3 Analytics:</strong> recomenda transições Standard → Standard-IA (atualizado diariamente, 24-48h para iniciar)</li>
+                    </ul>
+
+                    <h4>S3 Solution Architectures (do PDF)</h4>
+                    <ul>
+                        <li><strong>Indexar objetos:</strong> S3 Event → Lambda → DynamoDB (busca por data, atributos, etc.)</li>
+                        <li><strong>Static + Dynamic:</strong> Route 53 → CloudFront (static do S3) + ALB/API Gateway (dynamic)</li>
+                        <li><strong>Pre-signed URLs:</strong> acesso temporário a objetos privados</li>
+                    </ul>
+
+                    <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-class-intro.html" target="_blank" class="ref-link">S3 Storage Classes</a>
+                    <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lifecycle-mgmt.html" target="_blank" class="ref-link">S3 Lifecycle</a>
+                    <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage_lens.html" target="_blank" class="ref-link">S3 Storage Lens</a>
+                </div>
+            </details>
+
+            <details>
+                <summary>Transferência de Dados - Custos</summary>
+                <div class="content">
+                    <h4>Regras gerais de data transfer</h4>
+                    <ul>
+                        <li>✅ <strong>Ingress (entrada na AWS):</strong> GRÁTIS</li>
+                        <li>💰 <strong>Egress (saída para internet):</strong> cobra por GB (varia por região)</li>
+                        <li>💰 <strong>Cross-Region:</strong> cobra (menor que egress para internet)</li>
+                        <li>✅ <strong>Mesma AZ:</strong> grátis (se usar IP privado)</li>
+                        <li>💰 <strong>Cross-AZ:</strong> $0.01/GB por direção (mesmo na mesma região)</li>
+                    </ul>
+
+                    <h4>Otimizações</h4>
+                    <ul>
+                        <li><strong>VPC Endpoints (Gateway):</strong> S3 e DynamoDB sem custo de NAT Gateway</li>
+                        <li><strong>CloudFront:</strong> reduz custo de egress do S3/ALB (preço menor que egress direto)</li>
+                        <li><strong>Direct Connect:</strong> preço de data transfer menor que internet</li>
+                        <li><strong>S3 Transfer Acceleration:</strong> usa edge locations para uploads mais rápidos</li>
+                    </ul>
+                    <a href="https://aws.amazon.com/s3/pricing/" target="_blank" class="ref-link">S3 Pricing</a>
+                </div>
+            </details>
+        </section>
+
+        <div class="section-divider"><span>DOMÍNIO 3</span></div>
+
+        <!-- DOMAIN 3 -->
+        <section id="d3">
+            <h2>Domínio 3: Melhoria Contínua para Soluções Existentes (25%)</h2>
+            <p>Foca em melhorar arquiteturas que já existem. Envolve identificar gargalos, pontos únicos de falha, oportunidades de automação e economia em soluções em produção.</p>
+        </section>
+
+        <section id="d3-operational">
+            <h3>3.1 Excelência Operacional</h3>
+
+            <details>
+                <summary>Monitoramento e Observabilidade</summary>
+                <div class="content">
+                    <table>
+                        <tr><th>Serviço</th><th>Tipo</th><th>Foco</th></tr>
+                        <tr><td><strong>CloudWatch Metrics</strong></td><td>Métricas</td><td>CPU, memória, custom metrics, anomaly detection</td></tr>
+                        <tr><td><strong>CloudWatch Logs</strong></td><td>Logs</td><td>Centralização de logs, Insights para queries</td></tr>
+                        <tr><td><strong>CloudWatch Alarms</strong></td><td>Alertas</td><td>Threshold / anomaly → ações (SNS, Auto Scaling, EC2)</td></tr>
+                        <tr><td><strong>CloudWatch Dashboards</strong></td><td>Visualização</td><td>Dashboards cross-account e cross-region</td></tr>
+                        <tr><td><strong>X-Ray</strong></td><td>Tracing</td><td>Rastreamento distribuído, análise de latência</td></tr>
+                        <tr><td><strong>CloudWatch Synthetics</strong></td><td>Canary</td><td>Monitora endpoints com scripts (antes do usuário reportar)</td></tr>
+                    </table>
+
+                    <h4>CloudWatch Cross-Account Observability</h4>
+                    <ul>
+                        <li>Conta de monitoramento central que visualiza métricas/logs/traces de outras contas</li>
+                        <li>Usa OAM (Observability Access Manager) para criar links entre contas</li>
+                    </ul>
+                    <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html" target="_blank" class="ref-link">CloudWatch</a>
+                    <a href="https://docs.aws.amazon.com/xray/latest/devguide/aws-xray.html" target="_blank" class="ref-link">X-Ray</a>
+                </div>
+            </details>
+
+            <details>
+                <summary>Automação e Remediação</summary>
+                <div class="content">
+                    <h4>Padrões de Automação na Prova</h4>
+                    <ul>
+                        <li><strong>EventBridge + Lambda:</strong> reação a eventos AWS (ex: security group aberto → Lambda fecha)</li>
+                        <li><strong>AWS Config Rules + Remediation:</strong> detecta não-conformidade → SSM Automation corrige</li>
+                        <li><strong>CloudWatch Alarm → Auto Scaling:</strong> escala baseado em métricas</li>
+                        <li><strong>GuardDuty → EventBridge → Lambda:</strong> resposta automática a ameaças</li>
+                        <li><strong>Systems Manager Automation:</strong> runbooks para tarefas operacionais recorrentes</li>
+                    </ul>
+
+                    <div class="info-box success">
+                        <strong>✅ Princípio-chave</strong>
+                        Na prova, a resposta que automatiza detecção + remediação geralmente é mais correta que a que requer intervenção manual. AWS favorece "automate everything".
+                    </div>
+                    <a href="https://docs.aws.amazon.com/config/latest/developerguide/remediation.html" target="_blank" class="ref-link">Config Remediation</a>
+                    <a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-automation.html" target="_blank" class="ref-link">SSM Automation</a>
+                </div>
+            </details>
+        </section>
+
+        <!-- D3 Security -->
+        <section id="d3-security">
+            <h3>3.2 Melhorar Segurança</h3>
+
+            <details>
+                <summary>Gestão de Secrets e Credenciais</summary>
+                <div class="content">
+                    <table>
+                        <tr><th>Aspecto</th><th>Secrets Manager</th><th>SSM Parameter Store (SecureString)</th></tr>
+                        <tr><td><strong>Custo</strong></td><td>$0.40/secret/mês + $0.05/10K API calls</td><td>Standard: grátis. Advanced: $0.05/parâmetro/mês</td></tr>
+                        <tr><td><strong>Rotação automática</strong></td><td>✅ Nativa (Lambda fornecida para RDS/Redshift/DocumentDB)</td><td>❌ Manual (via EventBridge → Lambda)</td></tr>
+                        <tr><td><strong>KMS Encryption</strong></td><td>Obrigatória</td><td>Opcional</td></tr>
+                        <tr><td><strong>Cross-Account</strong></td><td>✅ Resource-based Policy</td><td>❌ Precisa de IAM role</td></tr>
+                        <tr><td><strong>Max size</strong></td><td>64 KB</td><td>Standard: 4 KB / Advanced: 8 KB</td></tr>
+                        <tr><td><strong>Hierarquia</strong></td><td>Não</td><td>✅ Paths (/app/prod/db-password)</td></tr>
+                        <tr><td><strong>Integração</strong></td><td>RDS, Redshift, ECS, EKS, Fargate, CodeBuild, CloudFormation</td><td>Tudo acima + referência a Secrets Manager via SSM API</td></tr>
+                    </table>
+
+                    <h4>Parameter Store — Detalhes do PDF</h4>
+                    <ul>
+                        <li><strong>Hierarquia:</strong> /my-department/my-app/prod/db-password. GetParametersByPath para buscar sub-árvore.</li>
+                        <li><strong>Standard:</strong> 10.000 parâmetros, 4KB, grátis</li>
+                        <li><strong>Advanced:</strong> 100.000 parâmetros, 8KB, suporta Parameter Policies (TTL, notificações de expiração via EventBridge)</li>
+                        <li><strong>Public Parameters:</strong> /aws/service/ami-amazon-linux-latest/... — AMI IDs atualizados automaticamente</li>
+                    </ul>
+
+                    <h4>Secrets Manager — Sharing Cross-Account</h4>
+                    <p>Resource-based Policy no secret (secretsmanager:GetSecretValue) + KMS Key Policy (kms:Decrypt com kms:ViaService condition). Ambos necessários.</p>
+
+                    <div class="info-box">
+                        <strong>💡 Regra para a prova</strong>
+                        Se menciona "rotação automática de credenciais de banco" → Secrets Manager.<br>
+                        Se menciona "configurações de aplicação com hierarquia" → Parameter Store.<br>
+                        Se menciona "cross-account secret sharing" → Secrets Manager (resource-based policy).
+                    </div>
+
+                    <h4>Princípio do Menor Privilégio — Ferramentas</h4>
+                    <ul>
+                        <li><strong>IAM Access Analyzer Policy Generation:</strong> gera políticas baseadas em atividade real dos últimos 90 dias (CloudTrail)</li>
+                        <li><strong>IAM Access Analyzer Policy Validation:</strong> valida policy contra grammar e best practices</li>
+                        <li><strong>S3 Access Points:</strong> políticas granulares por caso de uso (simplifica bucket policies complexas)</li>
+                        <li><strong>VPC Endpoint Policies:</strong> restringe quais recursos podem ser acessados pelo endpoint</li>
+                    </ul>
+                    <a href="https://docs.aws.amazon.com/secretsmanager/latest/userguide/intro.html" target="_blank" class="ref-link">Secrets Manager</a>
+                    <a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html" target="_blank" class="ref-link">Parameter Store</a>
+                </div>
+            </details>
+        </section>
+
+        <!-- D3 Performance -->
+        <section id="d3-performance">
+            <h3>3.3 Melhorar Performance</h3>
+
+            <details>
+                <summary>Rightsizing e Otimização</summary>
+                <div class="content">
+                    <h4>Ferramentas de Análise</h4>
+                    <ul>
+                        <li><strong>AWS Compute Optimizer:</strong> analisa métricas históricas e recomenda instâncias ideais (EC2, EBS, Lambda, ECS)</li>
+                        <li><strong>CloudWatch:</strong> métricas de utilização (CPU, memória via agent, rede)</li>
+                        <li><strong>Trusted Advisor:</strong> identifica instâncias com baixa utilização</li>
+                    </ul>
+
+                    <h4>Estratégias de Performance</h4>
+                    <ul>
+                        <li><strong>Vertical Scaling:</strong> instância maior (limitado pelo tipo)</li>
+                        <li><strong>Horizontal Scaling:</strong> mais instâncias (Auto Scaling)</li>
+                        <li><strong>Caching:</strong> CloudFront, ElastiCache, DAX</li>
+                        <li><strong>Read Replicas:</strong> distribui leituras (Aurora até 15 réplicas)</li>
+                        <li><strong>Partitioning/Sharding:</strong> DynamoDB partition keys, Aurora Parallel Query</li>
+                    </ul>
+
+                    <h4>EC2 Placement Groups</h4>
+                    <ul>
+                        <li><strong>Cluster:</strong> mesmo rack, menor latência (HPC, big data)</li>
+                        <li><strong>Spread:</strong> hardware separado por instância (HA, máx 7/AZ)</li>
+                        <li><strong>Partition:</strong> grupos em racks separados (HDFS, Cassandra, Kafka)</li>
+                    </ul>
+                    <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/placement-groups.html" target="_blank" class="ref-link">Placement Groups</a>
+                </div>
+            </details>
+        </section>
+
+        <!-- D3 Reliability -->
+        <section id="d3-reliability">
+            <h3>3.4 Melhorar Confiabilidade</h3>
+
+            <details>
+                <summary>Eliminando Pontos Únicos de Falha</summary>
+                <div class="content">
+                    <h4>Checklist de Confiabilidade</h4>
+                    <ul>
+                        <li>✅ Multi-AZ para todos os componentes stateful (RDS, ElastiCache, EFS)</li>
+                        <li>✅ Auto Scaling com health checks adequados (ELB ou custom)</li>
+                        <li>✅ Loose coupling via SQS/SNS (se um componente falha, não derruba outros)</li>
+                        <li>✅ Idempotência em processadores de mensagens</li>
+                        <li>✅ Circuit breaker pattern para chamadas externas</li>
+                        <li>✅ Dead Letter Queues (DLQ) para mensagens que falham repetidamente</li>
+                        <li>✅ Graceful degradation (funcionalidades não-críticas podem falhar isoladamente)</li>
+                    </ul>
+
+                    <h4>Self-Healing Patterns</h4>
+                    <ul>
+                        <li><strong>ASG + Health Checks:</strong> instância unhealthy é terminada e substituída</li>
+                        <li><strong>ECS Service:</strong> task failure → scheduler lança nova task</li>
+                        <li><strong>Lambda:</strong> retry automático (async: 2 retries, sync: depende do caller)</li>
+                        <li><strong>RDS Multi-AZ:</strong> failover automático em ~30-60 segundos</li>
+                    </ul>
+
+                    <h4>Service Quotas</h4>
+                    <ul>
+                        <li>Monitore quotas com AWS Service Quotas + CloudWatch</li>
+                        <li>Request increase proativamente antes de scaling events</li>
+                        <li>Trusted Advisor alerta quando está perto do limite</li>
+                    </ul>
+                    <a href="https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/welcome.html" target="_blank" class="ref-link">Well-Architected Reliability Pillar</a>
+                </div>
+            </details>
+        </section>
+
+        <!-- D3 Cost -->
+        <section id="d3-cost">
+            <h3>3.5 Oportunidades de Redução de Custos</h3>
+
+            <details>
+                <summary>Identificando Desperdícios</summary>
+                <div class="content">
+                    <h4>Sinais de desperdício comuns</h4>
+                    <ul>
+                        <li><strong>EBS volumes não anexados:</strong> você paga por volumes detached</li>
+                        <li><strong>Elastic IPs não associados:</strong> cobra quando NÃO está em uso</li>
+                        <li><strong>Instâncias oversized:</strong> CPU média < 10% por semanas</li>
+                        <li><strong>Snapshots antigos:</strong> acumulam custo silenciosamente</li>
+                        <li><strong>NAT Gateway com muito tráfego:</strong> considerar VPC endpoints</li>
+                        <li><strong>S3 sem lifecycle policies:</strong> dados antigos na classe errada</li>
+                        <li><strong>RDS sem Read Replicas necessárias:</strong> Multi-AZ parado sem uso de DR</li>
+                    </ul>
+
+                    <h4>Automação de Custos</h4>
+                    <ul>
+                        <li><strong>Instance Scheduler:</strong> liga/desliga EC2/RDS em horário comercial</li>
+                        <li><strong>AWS Budgets Actions:</strong> aplica SCP ou para instâncias quando budget excede</li>
+                        <li><strong>Tagging obrigatório:</strong> SCP que bloqueia criação de recursos sem tags de custo</li>
+                    </ul>
+                    <a href="https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/budgets-managing-costs.html" target="_blank" class="ref-link">AWS Budgets</a>
+                </div>
+            </details>
+        </section>
+
+        <div class="section-divider"><span>DOMÍNIO 4</span></div>
+
+        <!-- DOMAIN 4 -->
+        <section id="d4">
+            <h2>Domínio 4: Migração e Modernização de Workloads (20%)</h2>
+            <p>Avalia conhecimento sobre estratégias de migração (7Rs), ferramentas de migração, e modernização de aplicações legadas para arquiteturas cloud-native.</p>
+        </section>
+
+        <section id="d4-assess">
+            <h3>4.1 Avaliação de Workloads para Migração</h3>
+
+            <details>
+                <summary>Os 7Rs da Migração</summary>
+                <div class="content">
+                    <table>
+                        <tr><th>Estratégia</th><th>Descrição</th><th>Quando usar</th></tr>
+                        <tr>
+                            <td><strong>Retire</strong></td>
+                            <td>Desligar/descontinuar</td>
+                            <td>Aplicações que não são mais necessárias</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Retain</strong></td>
+                            <td>Manter onde está</td>
+                            <td>Não é viável migrar agora (compliance, dependências)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Rehost</strong> (Lift & Shift)</td>
+                            <td>Mover como está para a cloud</td>
+                            <td>Migração rápida, sem mudança de código</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Relocate</strong></td>
+                            <td>Mover para outra plataforma na cloud</td>
+                            <td>VMware on AWS, containers sem refactor</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Replatform</strong> (Lift & Reshape)</td>
+                            <td>Migrar com otimizações mínimas</td>
+                            <td>Ex: MySQL on EC2 → RDS MySQL (sem mudar app)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Repurchase</strong></td>
+                            <td>Trocar por SaaS</td>
+                            <td>CRM próprio → Salesforce, email → SES/WorkMail</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Refactor / Re-architect</strong></td>
+                            <td>Redesenhar cloud-native</td>
+                            <td>Necessidade de escala, agilidade, serverless</td>
+                        </tr>
+                    </table>
+
+                    <div class="info-box warning">
+                        <strong>⚠️ Na prova</strong>
+                        Questões de migração sempre pedem "menor esforço", "menor tempo", ou "melhor uso da cloud". Rehost = menor esforço. Refactor = melhor uso da cloud mas mais tempo/custo.
+                    </div>
+                </div>
+            </details>
+
+            <details>
+                <summary>Ferramentas de Assessment</summary>
+                <div class="content">
+                    <ul>
+                        <li><strong>AWS Migration Hub:</strong> dashboard centralizado para acompanhar migrações de múltiplas ferramentas</li>
+                        <li><strong>AWS Application Discovery Service:</strong>
+                            <ul>
+                                <li>Agentless (via VMware vCenter): descobre VMs, config básica</li>
+                                <li>Agent-based: dados detalhados de processos, rede, dependências</li>
+                            </ul>
+                        </li>
+                        <li><strong>AWS Migration Evaluator:</strong> análise de TCO, business case para migração</li>
+                        <li><strong>TSO Logic:</strong> recomendação de instâncias baseada em usage real</li>
+                    </ul>
+                    <a href="https://docs.aws.amazon.com/migrationhub/latest/ug/whatishub.html" target="_blank" class="ref-link">Migration Hub</a>
+                    <a href="https://docs.aws.amazon.com/application-discovery/latest/userguide/what-is-appdiscovery.html" target="_blank" class="ref-link">Application Discovery Service</a>
+                </div>
+            </details>
+        </section>
+
+        <!-- D4 Migration -->
+        <section id="d4-migrate">
+            <h3>4.2 Abordagem de Migração</h3>
+
+            <details>
+                <summary>Migração de Dados</summary>
+                <div class="content">
+                    <table>
+                        <tr><th>Ferramenta</th><th>Cenário</th><th>Método</th></tr>
+                        <tr>
+                            <td><strong>AWS DataSync</strong></td>
+                            <td>Migrar dados NFS/SMB/HDFS/S3 API para AWS</td>
+                            <td>Agent on-prem, 10 Gbps por task, scheduling</td>
+                        </tr>
+                        <tr>
+                            <td><strong>AWS Transfer Family</strong></td>
+                            <td>SFTP/FTPS/FTP para S3 ou EFS</td>
+                            <td>Endpoint gerenciado, multi-AZ, integra com AD/LDAP/Cognito</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Snow Family</strong></td>
+                            <td>Migração offline de grandes volumes</td>
+                            <td>Snowcone (8-14TB), Snowball Edge (80TB+), Snowmobile (100PB)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>S3 Transfer Acceleration</strong></td>
+                            <td>Upload acelerado de qualquer lugar do mundo</td>
+                            <td>Edge locations como ponto de entrada</td>
+                        </tr>
+                    </table>
+
+                    <h4>Snow Family — Detalhes do Exame</h4>
+                    <table>
+                        <tr><th>Dispositivo</th><th>Storage</th><th>Compute</th><th>Uso</th></tr>
+                        <tr>
+                            <td><strong>Snowball Edge Storage Optimized</strong></td>
+                            <td>210 TB</td>
+                            <td>104 vCPUs, 416 GB RAM</td>
+                            <td>Migração em massa, edge computing</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Snowball Edge Compute Optimized</strong></td>
+                            <td>28 TB</td>
+                            <td>104 vCPUs, 416 GB RAM</td>
+                            <td>Edge computing dedicado (ML, video)</td>
+                        </tr>
+                    </table>
+
+                    <h4>Tabela de decisão por tempo de transferência</h4>
+                    <table>
+                        <tr><th>Volume</th><th>100 Mbps</th><th>1 Gbps</th><th>10 Gbps</th></tr>
+                        <tr><td>10 TB</td><td>12 dias</td><td>30 horas</td><td>3 horas</td></tr>
+                        <tr><td>100 TB</td><td>124 dias</td><td>12 dias</td><td>30 horas</td></tr>
+                        <tr><td>1 PB</td><td>3 anos</td><td>124 dias</td><td>12 dias</td></tr>
+                    </table>
+
+                    <div class="info-box success">
+                        <strong>✅ Regra do PDF</strong>
+                        "Se levar mais de 1 semana para transferir pela rede, use Snow Family!"<br><br>
+                        <strong>Performance tips:</strong> múltiplos terminais em paralelo, agrupar arquivos pequenos (min 1MB), usar S3 Adapter (250-400 MB/s) ao invés do file interface (25-40 MB/s).
+                    </div>
+
+                    <h4>DataSync — Conexão via Direct Connect</h4>
+                    <p>DataSync agent pode usar Private VIF + PrivateLink (Interface VPC Endpoint) para transferir dados sem passar pela internet pública.</p>
+
+                    <h4>Snowball + DMS (Combinação para migrações grandes)</h4>
+                    <ol>
+                        <li>SCT extrai dados localmente e move para o Snow device</li>
+                        <li>Ship o device para AWS</li>
+                        <li>Dados carregam automaticamente no S3</li>
+                        <li>DMS pega do S3 e migra para o target (com CDC para updates contínuos)</li>
+                    </ol>
+
+                    <a href="https://docs.aws.amazon.com/datasync/latest/userguide/what-is-datasync.html" target="_blank" class="ref-link">DataSync</a>
+                    <a href="https://docs.aws.amazon.com/snowball/latest/developer-guide/whatisedge.html" target="_blank" class="ref-link">Snow Family</a>
+                    <a href="https://docs.aws.amazon.com/transfer/latest/userguide/what-is-aws-transfer-family.html" target="_blank" class="ref-link">Transfer Family</a>
+                </div>
+            </details>
+
+            <details>
+                <summary>Migração de Banco de Dados</summary>
+                <div class="content">
+                    <h4>AWS DMS (Database Migration Service)</h4>
+                    <ul>
+                        <li><strong>Full Load:</strong> migra todos os dados existentes</li>
+                        <li><strong>CDC (Change Data Capture):</strong> replica mudanças contínuas (migração com downtime mínimo)</li>
+                        <li><strong>Full Load + CDC:</strong> combinação mais comum (migra tudo + mantém sincronizado)</li>
+                        <li><strong>Suporta:</strong> homogêneo (MySQL → MySQL) e heterogêneo (Oracle → Aurora)</li>
+                    </ul>
+
+                    <h4>AWS SCT (Schema Conversion Tool)</h4>
+                    <ul>
+                        <li>Converte schema de banco de origem para o de destino</li>
+                        <li>Necessário apenas para migrações heterogêneas</li>
+                        <li>Identifica código que não pode ser convertido automaticamente</li>
+                    </ul>
+
+                    <div class="info-box success">
+                        <strong>✅ Combinação típica na prova</strong>
+                        Oracle → Aurora PostgreSQL: SCT (converte schema) + DMS (migra dados com CDC para downtime mínimo)
+                    </div>
+                    <a href="https://docs.aws.amazon.com/dms/latest/userguide/Welcome.html" target="_blank" class="ref-link">AWS DMS</a>
+                    <a href="https://docs.aws.amazon.com/SchemaConversionTool/latest/userguide/CHAP_Welcome.html" target="_blank" class="ref-link">AWS SCT</a>
+                </div>
+            </details>
+
+            <details>
+                <summary>Migração de Servidores</summary>
+                <div class="content">
+                    <h4>AWS Application Migration Service (MGN)</h4>
+                    <ul>
+                        <li>Substitui o CloudEndure Migration e Server Migration Service</li>
+                        <li>Replicação contínua de servidores (agentless ou com agent)</li>
+                        <li><strong>Processo:</strong> instala agent → replicação contínua → test launch → cutover</li>
+                        <li>Suporta: VMs (VMware, Hyper-V), servidores físicos, outras clouds</li>
+                        <li>Ideal para: Rehost (lift & shift) em larga escala</li>
+                    </ul>
+
+                    <h4>VMware Cloud on AWS</h4>
+                    <ul>
+                        <li>Executa VMware vSphere em hardware dedicado na AWS</li>
+                        <li>Use quando: equipe já é expert em VMware e quer migrar sem re-architect</li>
+                        <li>Integração nativa com serviços AWS (S3, RDS, etc.)</li>
+                    </ul>
+                    <a href="https://docs.aws.amazon.com/mgn/latest/ug/what-is-application-migration-service.html" target="_blank" class="ref-link">Application Migration Service</a>
+                </div>
+            </details>
+        </section>
+
+        <!-- D4 Architecture -->
+        <section id="d4-architecture">
+            <h3>4.3 Nova Arquitetura para Workloads Existentes</h3>
+
+            <details>
+                <summary>Opções de Compute</summary>
+                <div class="content">
+                    <table>
+                        <tr><th>Plataforma</th><th>Quando usar</th><th>Gerenciamento</th></tr>
+                        <tr>
+                            <td><strong>EC2</strong></td>
+                            <td>Controle total sobre OS, apps legados, licenciamento específico</td>
+                            <td>Você gerencia tudo</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ECS on EC2</strong></td>
+                            <td>Containers com controle sobre infra subjacente</td>
+                            <td>Você gerencia instâncias</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ECS on Fargate</strong></td>
+                            <td>Containers serverless (sem gerenciar servidores)</td>
+                            <td>AWS gerencia infra</td>
+                        </tr>
+                        <tr>
+                            <td><strong>EKS</strong></td>
+                            <td>Kubernetes (equipe já usa K8s, portabilidade multi-cloud)</td>
+                            <td>Control plane gerenciado</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Lambda</strong></td>
+                            <td>Event-driven, curta duração (< 15min), scaling automático</td>
+                            <td>Totalmente serverless</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Elastic Beanstalk</strong></td>
+                            <td>Deploy rápido de web apps (PaaS)</td>
+                            <td>AWS gerencia infra, você controla app</td>
+                        </tr>
+                    </table>
+
+                    <h4>EC2 Auto Scaling Groups — Detalhes do Exame</h4>
+                    <ul>
+                        <li><strong>Scaling Policies:</strong>
+                            <ul>
+                                <li>Target Tracking: "manter CPU em 40%" (mais simples)</li>
+                                <li>Step Scaling: adiciona/remove baseado em CloudWatch Alarm + thresholds</li>
+                                <li>Scheduled: baseado em padrões conhecidos (ex: +10 às 17h sexta)</li>
+                                <li>Predictive: ML forecast de carga, agenda scaling antecipado</li>
+                            </ul>
+                        </li>
+                        <li><strong>Boas métricas para scaling:</strong> CPUUtilization, RequestCountPerTarget, Network In/Out, custom metrics</li>
+                        <li><strong>Health Checks:</strong> EC2 Status Checks, ELB Health Checks, Custom (via SDK set-instance-health)</li>
+                        <li><strong>Lifecycle Hooks:</strong> execute ações antes de in-service ou antes de terminate (cleanup, logs, health checks customizados)</li>
+                        <li><strong>Instance Refresh:</strong> feature nativa para atualizar launch template e recriar todas as EC2s (define min healthy %)</li>
+                        <li><strong>Scaling Processes:</strong> Launch, Terminate, HealthCheck, ReplaceUnhealthy, AZRebalance, etc. — podem ser SUSPENSOS!</li>
+                    </ul>
+
+                    <h4>EC2 Spot Instances e Spot Fleets</h4>
+                    <ul>
+                        <li>Até 90% de desconto. Instância interrompida com 2 minutos de aviso se preço > seu max.</li>
+                        <li><strong>Spot Fleet:</strong> conjunto de Spot + On-Demand. Define launch pools (tipo, AZ, OS).</li>
+                        <li><strong>Estratégias de alocação:</strong>
+                            <ul>
+                                <li><strong>lowestPrice:</strong> menor preço (short workloads, cost optimization)</li>
+                                <li><strong>diversified:</strong> distribuído entre pools (HA, long workloads)</li>
+                                <li><strong>capacityOptimized:</strong> pool com mais capacidade disponível</li>
+                                <li><strong>priceCapacityOptimized:</strong> melhor capacidade + menor preço (RECOMENDADO)</li>
+                            </ul>
+                        </li>
+                        <li>Use para: batch, CI/CD, big data, workloads stateless e tolerantes a interrupção</li>
+                    </ul>
+
+                    <a href="https://docs.aws.amazon.com/autoscaling/ec2/userguide/what-is-amazon-ec2-auto-scaling.html" target="_blank" class="ref-link">EC2 Auto Scaling</a>
+                    <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-spot-instances.html" target="_blank" class="ref-link">Spot Instances</a>
+                    <a href="https://docs.aws.amazon.com/lambda/latest/dg/welcome.html" target="_blank" class="ref-link">Lambda</a>
+                </div>
+            </details>
+
+            <details>
+                <summary>Opções de Storage</summary>
+                <div class="content">
+                    <table>
+                        <tr><th>Serviço</th><th>Tipo</th><th>Caso de uso</th></tr>
+                        <tr><td><strong>EBS</strong></td><td>Block (1 instância, 1 AZ)</td><td>Boot volumes, bancos, IO consistente</td></tr>
+                        <tr><td><strong>Instance Store</strong></td><td>Block (efêmero, físico)</td><td>Cache, buffer, temp data (milhões de IOPS)</td></tr>
+                        <tr><td><strong>EFS</strong></td><td>File (NFS, multi-AZ)</td><td>Compartilhado entre múltiplas instâncias Linux</td></tr>
+                        <tr><td><strong>FSx for Windows</strong></td><td>File (SMB)</td><td>Windows file shares, AD integration, DFS</td></tr>
+                        <tr><td><strong>FSx for Lustre</strong></td><td>File (HPC)</td><td>ML, HPC, vídeo. Integra com S3.</td></tr>
+                        <tr><td><strong>FSx for NetApp ONTAP</strong></td><td>File (NFS+SMB+iSCSI)</td><td>NAS enterprise multi-protocol, cloning</td></tr>
+                        <tr><td><strong>FSx for OpenZFS</strong></td><td>File (NFS)</td><td>Migração de ZFS, snapshots, 1M IOPS</td></tr>
+                        <tr><td><strong>S3</strong></td><td>Object</td><td>Data lake, backup, static hosting</td></tr>
+                        <tr><td><strong>Storage Gateway</strong></td><td>Hybrid</td><td>Integra on-prem com cloud storage</td></tr>
+                    </table>
+
+                    <h4>EBS — Detalhes do Exame (do PDF)</h4>
+                    <ul>
+                        <li><strong>Volume Types:</strong>
+                            <ul>
+                                <li>gp2/gp3 (SSD): uso geral, boot volumes. gp3: 3000 IOPS baseline, configurável até 16.000</li>
+                                <li>io1/io2 Block Express: mission-critical, até 256.000 IOPS. Suporta Multi-Attach na mesma AZ.</li>
+                                <li>st1 (HDD): throughput-intensive, frequentemente acessado (big data, log processing)</li>
+                                <li>sc1 (HDD): lowest cost, infrequente (cold data, archive)</li>
+                            </ul>
+                        </li>
+                        <li><strong>Snapshots:</strong> incrementais, armazenados no S3. FSR (Fast Snapshot Restore) para evitar latência de primeiro acesso.</li>
+                        <li><strong>Encryption:</strong> account-level setting por região para criptografar automaticamente novos volumes</li>
+                        <li><strong>Multi-Attach (io1/io2):</strong> mesmo volume em múltiplas EC2 na mesma AZ. Requer cluster-aware filesystem.</li>
+                        <li><strong>Data Lifecycle Manager:</strong> automatiza criação/retenção/deleção de snapshots por tags</li>
+                    </ul>
+
+                    <h4>Instance Store vs EBS</h4>
+                    <ul>
+                        <li>Instance Store: fisicamente no servidor, efêmero, milhões de IOPS, perdido no stop/terminate</li>
+                        <li>EBS: network drive, persistente, até 256K IOPS (io2 Block Express), sobrevive reboot</li>
+                    </ul>
+
+                    <h4>EFS — Detalhes do Exame (do PDF)</h4>
+                    <ul>
+                        <li>Managed NFS, multi-AZ, Linux only (POSIX), pay-per-use, escala para petabytes</li>
+                        <li><strong>Performance Modes:</strong> General Purpose (default, latência) vs Max I/O (throughput, paralelo)</li>
+                        <li><strong>Throughput Modes:</strong> Bursting | Provisioned | Elastic (auto-scale, até 3 GiB/s reads)</li>
+                        <li><strong>Storage Classes:</strong> Standard → Infrequent Access → Archive (50% mais barato). Lifecycle policies.</li>
+                        <li><strong>One Zone:</strong> 90%+ economia, bom para dev. Compatível com IA.</li>
+                        <li><strong>Access Points:</strong> restringem acesso a diretórios específicos com POSIX user/group enforcement</li>
+                        <li><strong>Cross-Region Replication:</strong> RPO/RTO de minutos para DR</li>
+                        <li><strong>On-premises access:</strong> via Direct Connect ou VPN (mount por IPv4, não DNS)</li>
+                    </ul>
+
+                    <h4>FSx — Detalhes do Exame (do PDF)</h4>
+                    <ul>
+                        <li><strong>FSx for Windows:</strong> SMB + NTFS + AD + DFS Namespaces. Multi-AZ. Backup daily para S3. Acessível via DX/VPN.</li>
+                        <li><strong>FSx for Lustre:</strong>
+                            <ul>
+                                <li>Scratch FS: temporário, sem replicação, burst 6x (short-term processing, cost optimized)</li>
+                                <li>Persistent FS: replicado na mesma AZ, self-healing (long-term, sensitive data)</li>
+                                <li><strong>Data Lazy Loading:</strong> só carrega do S3 os dados que realmente processa (reduz custo e latência)</li>
+                            </ul>
+                        </li>
+                        <li><strong>FSx for NetApp ONTAP:</strong> NFS + SMB + iSCSI, shrink/grow automático, snapshots, point-in-time cloning</li>
+                        <li><strong>Migrar Single-AZ → Multi-AZ:</strong> usar DataSync ou backup/restore</li>
+                        <li><strong>Reduzir volume size:</strong> criar novo FSx menor + DataSync para sync</li>
+                    </ul>
+
+                    <h4>Storage Gateway Types</h4>
+                    <ul>
+                        <li><strong>S3 File Gateway:</strong> NFS/SMB → S3 (Standard, IA, One Zone-IA, Intelligent-Tiering). Cache local. AD integration para SMB.</li>
+                        <li><strong>FSx File Gateway:</strong> cache local de FSx for Windows (para branches com latência)</li>
+                        <li><strong>Volume Gateway:</strong> iSCSI → EBS snapshots. Cached (low latency recent data) vs Stored (full dataset on-prem, scheduled backups)</li>
+                        <li><strong>Tape Gateway:</strong> VTL via iSCSI para S3 + Glacier (substitui fitas físicas)</li>
+                    </ul>
+                    <div class="info-box">
+                        <strong>💡 File Gateway: Object Lock + Versioning</strong>
+                        Habilita WORM data. Modificações criam nova versão sem afetar as anteriores. Use "RefreshCache" API para ser notificado de restores.
+                    </div>
+                    <a href="https://docs.aws.amazon.com/storagegateway/latest/userguide/WhatIsStorageGateway.html" target="_blank" class="ref-link">Storage Gateway</a>
+                    <a href="https://docs.aws.amazon.com/fsx/" target="_blank" class="ref-link">FSx</a>
+                    <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AmazonEBS.html" target="_blank" class="ref-link">EBS</a>
+                    <a href="https://docs.aws.amazon.com/efs/latest/ug/whatisefs.html" target="_blank" class="ref-link">EFS</a>
+                </div>
+            </details>
+        </section>
+
+        <!-- D4 Modernize -->
+        <section id="d4-modernize">
+            <h3>4.4 Modernização</h3>
+
+            <details>
+                <summary>Serverless e Event-Driven</summary>
+                <div class="content">
+                    <h4>Quando modernizar para Serverless?</h4>
+                    <ul>
+                        <li>Aplicação com tráfego variável / spiky</li>
+                        <li>Funções independentes que podem executar em paralelo</li>
+                        <li>Processamento de eventos (uploads S3, mensagens SQS, streams Kinesis)</li>
+                        <li>APIs com tráfego imprevisível</li>
+                    </ul>
+
+                    <h4>Stack Serverless Completa</h4>
+                    <table>
+                        <tr><th>Camada</th><th>Serviço</th></tr>
+                        <tr><td>API</td><td>API Gateway (REST/HTTP/WebSocket)</td></tr>
+                        <tr><td>Compute</td><td>Lambda</td></tr>
+                        <tr><td>Banco</td><td>DynamoDB / Aurora Serverless</td></tr>
+                        <tr><td>Storage</td><td>S3</td></tr>
+                        <tr><td>Auth</td><td>Cognito</td></tr>
+                        <tr><td>Orquestração</td><td>Step Functions</td></tr>
+                        <tr><td>Eventos</td><td>EventBridge</td></tr>
+                        <tr><td>Mensageria</td><td>SQS / SNS</td></tr>
+                    </table>
+
+                    <h4>Lambda — Limites Importantes</h4>
+                    <ul>
+                        <li>Timeout máximo: 15 minutos</li>
+                        <li>Memória: 128 MB a 10 GB</li>
+                        <li>Package size: 50 MB (zipped) / 250 MB (unzipped) — ou Container Image até 10 GB</li>
+                        <li>Concurrency padrão: 1000 por região (pode solicitar aumento)</li>
+                        <li>/tmp storage: até 10 GB</li>
+                    </ul>
+                    <a href="https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-limits.html" target="_blank" class="ref-link">Lambda Limits</a>
+                    <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html" target="_blank" class="ref-link">API Gateway</a>
+                </div>
+            </details>
+
+            <details>
+                <summary>Containers e Microsserviços</summary>
+                <div class="content">
+                    <h4>Decisão: ECS vs EKS</h4>
+                    <table>
+                        <tr><th>Fator</th><th>ECS</th><th>EKS</th></tr>
+                        <tr><td>Complexidade</td><td>Mais simples</td><td>Mais complexo</td></tr>
+                        <tr><td>Portabilidade</td><td>AWS-native</td><td>Multi-cloud / on-prem</td></tr>
+                        <tr><td>Ecossistema</td><td>Integração nativa AWS</td><td>Kubernetes ecosystem (Helm, etc.)</td></tr>
+                        <tr><td>Equipe</td><td>Familiar com AWS</td><td>Familiar com K8s</td></tr>
+                        <tr><td>Custo</td><td>Sem custo de control plane</td><td>$0.10/hr por cluster</td></tr>
+                    </table>
+
+                    <h4>Fargate vs EC2 Launch Type</h4>
+                    <ul>
+                        <li><strong>Fargate:</strong> serverless, paga por vCPU/memória/segundo. Ideal quando não quer gerenciar infra.</li>
+                        <li><strong>EC2:</strong> mais controle, GPU support, preços melhores com Spot/RI para workloads previsíveis.</li>
+                        <li><strong>Fargate Spot:</strong> tasks que podem ser reclamadas pela AWS (70% desconto). Especifique baseline on-demand + extra em Spot.</li>
+                    </ul>
+
+                    <h4>ECS — Conceitos-chave (do PDF)</h4>
+                    <ul>
+                        <li><strong>Task Definition:</strong> JSON que define container image, CPU, RAM, ports, IAM role</li>
+                        <li><strong>ECS Task:</strong> instância em execução de uma Task Definition</li>
+                        <li><strong>ECS Service:</strong> define quantas tasks rodar e como (desired count, deployment strategy)</li>
+                        <li><strong>EC2 Instance Profile:</strong> role da instância EC2 (faz API calls para ECS, envia logs)</li>
+                        <li><strong>Task IAM Role:</strong> role específica por task (acesso ao S3, DynamoDB, etc.)</li>
+                    </ul>
+
+                    <h4>ECS — ALB Integration e Dynamic Port Mapping</h4>
+                    <p>Permite múltiplas instâncias do mesmo container na mesma EC2. O ALB descobre a porta automaticamente. Aumenta resiliência e utilização de CPU.</p>
+
+                    <h4>ECS Networking Modes</h4>
+                    <table>
+                        <tr><th>Mode</th><th>Descrição</th><th>Uso</th></tr>
+                        <tr><td><strong>awsvpc</strong></td><td>Cada task ganha sua própria ENI + IP privado</td><td>Default no Fargate. Melhor segurança (SGs por task).</td></tr>
+                        <tr><td><strong>bridge</strong></td><td>Rede virtual do Docker (port mapping)</td><td>Compatibilidade com Docker padrão</td></tr>
+                        <tr><td><strong>host</strong></td><td>Usa rede do host diretamente</td><td>Performance máxima de rede</td></tr>
+                    </table>
+
+                    <h4>ECS Service Auto Scaling</h4>
+                    <ul>
+                        <li>Usa AWS Application Auto Scaling (não confundir com EC2 Auto Scaling)</li>
+                        <li>Métricas: CPU/RAM no CloudWatch no nível de ECS Service</li>
+                        <li>Target Tracking, Step Scaling, Scheduled Scaling</li>
+                        <li><strong>ECS Service Auto Scaling (tasks) ≠ EC2 Auto Scaling (instâncias)</strong></li>
+                    </ul>
+
+                    <h4>Amazon ECR (Elastic Container Registry)</h4>
+                    <ul>
+                        <li>Registry privado de imagens Docker + público (gallery.ecr.aws)</li>
+                        <li>Cross-Region e Cross-Account replication</li>
+                        <li>Image Scanning: Basic (CVE) ou Enhanced (Inspector — OS + linguagem)</li>
+                        <li>Scan results geram eventos no EventBridge</li>
+                    </ul>
+                    <a href="https://docs.aws.amazon.com/AmazonECS/latest/developerguide/Welcome.html" target="_blank" class="ref-link">ECS</a>
+                    <a href="https://docs.aws.amazon.com/eks/latest/userguide/what-is-eks.html" target="_blank" class="ref-link">EKS</a>
+                    <a href="https://docs.aws.amazon.com/AmazonECR/latest/userguide/what-is-ecr.html" target="_blank" class="ref-link">ECR</a>
+                </div>
+            </details>
+        </section>
+
+        <div class="section-divider"><span>EXTRAS</span></div>
+
+        <!-- Comparatives -->
+        <section id="comparativos">
+            <h2>Tabelas Comparativas Rápidas</h2>
+
+            <details>
+                <summary>Conectividade: Quando usar cada opção</summary>
+                <div class="content">
+                    <table>
+                        <tr><th>Cenário</th><th>Solução</th></tr>
+                        <tr><td>Conexão dedicada e consistente para produção</td><td>Direct Connect</td></tr>
+                        <tr><td>Conexão rápida enquanto DX é provisionado</td><td>Site-to-Site VPN</td></tr>
+                        <tr><td>Failover para Direct Connect</td><td>VPN como backup</td></tr>
+                        <tr><td>Conectar 50+ VPCs com roteamento centralizado</td><td>Transit Gateway</td></tr>
+                        <tr><td>Conectar 2-3 VPCs com baixo custo</td><td>VPC Peering</td></tr>
+                        <tr><td>Expor um serviço internamente para outras contas</td><td>PrivateLink</td></tr>
+                        <tr><td>Acessar S3 sem passar pela internet</td><td>VPC Gateway Endpoint</td></tr>
+                        <tr><td>Acessar serviço AWS via IP privado</td><td>VPC Interface Endpoint</td></tr>
+                        <tr><td>Usuários remotos acessando VPC</td><td>Client VPN</td></tr>
+                    </table>
+                </div>
+            </details>
+
+            <details>
+                <summary>Segurança: Serviço certo para cada necessidade</summary>
+                <div class="content">
+                    <table>
+                        <tr><th>Necessidade</th><th>Serviço</th></tr>
+                        <tr><td>Gerenciar acesso multi-account centralizado</td><td>IAM Identity Center</td></tr>
+                        <tr><td>Guardrails que limitam o que contas podem fazer</td><td>SCPs (Organizations)</td></tr>
+                        <tr><td>Criptografia de dados com auditoria de uso</td><td>KMS (CMK)</td></tr>
+                        <tr><td>HSM dedicado com compliance FIPS 140-2 L3</td><td>CloudHSM</td></tr>
+                        <tr><td>Rotação automática de credenciais de banco</td><td>Secrets Manager</td></tr>
+                        <tr><td>Detecção de ameaças com ML</td><td>GuardDuty</td></tr>
+                        <tr><td>Visão consolidada de findings de segurança</td><td>Security Hub</td></tr>
+                        <tr><td>Verificar conformidade de recursos</td><td>AWS Config</td></tr>
+                        <tr><td>Proteção DDoS avançada + suporte 24/7</td><td>Shield Advanced</td></tr>
+                        <tr><td>Firewall de aplicação web (SQLi, XSS)</td><td>WAF</td></tr>
+                        <tr><td>Inspeção de tráfego VPC (IDS/IPS)</td><td>Network Firewall</td></tr>
+                        <tr><td>Certificados TLS gerenciados</td><td>ACM</td></tr>
+                    </table>
+                </div>
+            </details>
+
+            <details>
+                <summary>Migração: Qual ferramenta usar</summary>
+                <div class="content">
+                    <table>
+                        <tr><th>O que migrar</th><th>Ferramenta</th></tr>
+                        <tr><td>Servidores (lift & shift)</td><td>Application Migration Service (MGN)</td></tr>
+                        <tr><td>Bancos de dados (mesmo engine)</td><td>DMS (Full Load + CDC)</td></tr>
+                        <tr><td>Bancos de dados (engine diferente)</td><td>SCT + DMS</td></tr>
+                        <tr><td>Dados de file system (NFS/SMB)</td><td>DataSync</td></tr>
+                        <tr><td>Dados em massa offline (>10TB)</td><td>Snow Family</td></tr>
+                        <tr><td>Workflows SFTP/FTP existentes</td><td>Transfer Family</td></tr>
+                        <tr><td>VMware VMs (sem mudança)</td><td>VMware Cloud on AWS</td></tr>
+                        <tr><td>Assessment de dependências</td><td>Application Discovery Service</td></tr>
+                        <tr><td>Tracking de progresso</td><td>Migration Hub</td></tr>
+                    </table>
+                </div>
+            </details>
+
+            <details>
+                <summary>Storage: Qual serviço para cada cenário</summary>
+                <div class="content">
+                    <table>
+                        <tr><th>Necessidade</th><th>Serviço</th></tr>
+                        <tr><td>Block storage para EC2 (boot/data)</td><td>EBS</td></tr>
+                        <tr><td>File system compartilhado Linux (multi-AZ)</td><td>EFS</td></tr>
+                        <tr><td>File system Windows com AD</td><td>FSx for Windows</td></tr>
+                        <tr><td>HPC / Machine Learning (alta performance)</td><td>FSx for Lustre</td></tr>
+                        <tr><td>NAS enterprise multi-protocol</td><td>FSx for NetApp ONTAP</td></tr>
+                        <tr><td>Object storage (ilimitado, barato)</td><td>S3</td></tr>
+                        <tr><td>Hybrid: NFS/SMB on-prem com S3 backend</td><td>Storage Gateway (File)</td></tr>
+                        <tr><td>Backup de fitas (VTL)</td><td>Storage Gateway (Tape)</td></tr>
+                        <tr><td>iSCSI volumes com snapshots na cloud</td><td>Storage Gateway (Volume)</td></tr>
+                    </table>
+                </div>
+            </details>
+        </section>
+
+        <!-- Tips -->
+        <section id="dicas">
+            <h2>Dicas para o Dia da Prova</h2>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="icon">🎯</span>
+                    <h4>Estratégia de Resolução</h4>
+                </div>
+                <ol>
+                    <li><strong>Leia a última frase primeiro</strong> — geralmente contém o que está sendo pedido (menor custo? menor esforço operacional? menor RTO?)</li>
+                    <li><strong>Identifique os requisitos</strong> — grife mentalmente: "multi-region", "compliance", "menor latência", etc.</li>
+                    <li><strong>Elimine opções absurdas</strong> — alternativas com serviços em contexto errado (ex: Glacier para dados acessados frequentemente)</li>
+                    <li><strong>Entre 2 opções válidas, escolha a mais AWS-native</strong> — managed services > self-managed</li>
+                    <li><strong>Menor esforço operacional</strong> = serverless, managed services, automação</li>
+                </ol>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="icon">⏱️</span>
+                    <h4>Gestão de Tempo</h4>
+                </div>
+                <ul>
+                    <li>75 questões em 180 minutos = <strong>2.4 minutos por questão</strong></li>
+                    <li>Questões longas (cenário grande): marque e volte depois</li>
+                    <li>Primeiro passe: responda tudo que sabe com confiança</li>
+                    <li>Segundo passe: revise as marcadas com mais calma</li>
+                    <li>NÃO gaste mais de 4 minutos em uma questão na primeira passada</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="icon">🧠</span>
+                    <h4>Padrões de Resposta Comuns</h4>
+                </div>
+                <ul>
+                    <li><strong>"Menor esforço operacional"</strong> → Prefira serviços gerenciados (Aurora > RDS MySQL > MySQL on EC2)</li>
+                    <li><strong>"Menor custo"</strong> → Cuidado: pode ser custo imediato OU TCO. Serverless geralmente vence em TCO.</li>
+                    <li><strong>"Tempo de migração mais curto"</strong> → Rehost > Replatform > Refactor</li>
+                    <li><strong>"Mínimo downtime na migração"</strong> → DMS com CDC, Blue/Green deploy</li>
+                    <li><strong>"Compliance / regulatório"</strong> → KMS CMK, CloudTrail, AWS Config, SCPs</li>
+                    <li><strong>"Multi-region active-active"</strong> → DynamoDB Global Tables, Aurora Global DB</li>
+                    <li><strong>"Loosely coupled"</strong> → SQS, SNS, EventBridge, Step Functions</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="icon">📚</span>
+                    <h4>Recursos Adicionais</h4>
+                </div>
+                <ul>
+                    <li><a href="https://aws.amazon.com/architecture/well-architected/" target="_blank">AWS Well-Architected Framework</a> — base conceitual do exame</li>
+                    <li><a href="https://aws.amazon.com/whitepapers/" target="_blank">AWS Whitepapers</a> — especialmente DR, Security, Migration</li>
+                    <li><a href="https://explore.skillbuilder.aws/" target="_blank">AWS Skill Builder</a> — cursos oficiais + practice exams</li>
+                    <li><a href="https://docs.aws.amazon.com/" target="_blank">AWS Documentation</a> — referência técnica completa</li>
+                    <li><a href="https://aws.amazon.com/blogs/architecture/" target="_blank">AWS Architecture Blog</a> — cenários reais de arquitetura</li>
+                </ul>
+            </div>
+
+            <div class="info-box success">
+                <strong>✅ Checklist Final de Preparação</strong>
+                <ul>
+                    <li>☐ Estudou todos os 4 domínios com profundidade</li>
+                    <li>☐ Fez pelo menos 3 simulados completos (75 questões, 180 min)</li>
+                    <li>☐ Score nos simulados acima de 75%</li>
+                    <li>☐ Revisou questões erradas e entendeu o porquê</li>
+                    <li>☐ Leu os whitepapers de DR e Well-Architected</li>
+                    <li>☐ Conhece as tabelas comparativas de serviços</li>
+                    <li>☐ Praticou gestão de tempo (2.4 min/questão)</li>
+                </ul>
+            </div>
+        </section>
+
+        <footer style="margin-top: 60px; padding: 30px 0; border-top: 1px solid var(--border); text-align: center; color: var(--text-secondary); font-size: 0.85rem;">
+            <p>Material de estudo compilado com base no <a href="https://docs.aws.amazon.com/aws-certification/latest/examguides/solutions-architect-professional-02.html" target="_blank">Guia Oficial do Exame SAP-C02</a></p>
+            <p style="margin-top: 8px;">Links de referência apontam para a documentação oficial da AWS. Atualizado em Julho 2026.</p>
+        </footer>
+    </main>
+
+    <!-- Scroll to top button -->
+    <a href="#visao-geral" class="scroll-top" id="scrollTop">↑</a>
+
+    <script>
+        // Scroll to top visibility
+        window.addEventListener('scroll', () => {
+            const btn = document.getElementById('scrollTop');
+            if (window.scrollY > 300) {
+                btn.classList.add('visible');
+            } else {
+                btn.classList.remove('visible');
+            }
+        });
+
+        // Active nav link highlighting
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                if (window.scrollY >= sectionTop) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Close mobile sidebar on link click
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                document.querySelector('.sidebar').classList.remove('open');
+            });
+        });
+    </script>
+</body>
+</html>

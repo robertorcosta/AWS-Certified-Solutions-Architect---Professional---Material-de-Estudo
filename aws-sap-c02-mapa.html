@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS SAP-C02 - Mapa Mental</title>
+    <style>
+        :root {
+            --bg: #1a1a2e;
+            --bg-node: #16213e;
+            --border: #0f3460;
+            --accent: #e94560;
+            --accent2: #533483;
+            --text: #eaeaea;
+            --text-dim: #a0a0b0;
+            --blue: #4fc3f7;
+            --green: #66bb6a;
+            --orange: #ffa726;
+            --purple: #ab47bc;
+            --pink: #ec407a;
+            --cyan: #26c6da;
+            --yellow: #ffee58;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: auto;
+        }
+
+        .header {
+            text-align: center;
+            padding: 30px 20px 10px;
+        }
+
+        .header h1 {
+            font-size: 1.6rem;
+            background: linear-gradient(135deg, var(--blue), var(--purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header p { color: var(--text-dim); font-size: 0.85rem; margin-top: 5px; }
+
+        /* Mind Map Container */
+        .mindmap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            gap: 0;
+        }
+
+        /* Central Node */
+        .central {
+            background: linear-gradient(135deg, #e94560, #533483);
+            padding: 18px 35px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(233, 69, 96, 0.3);
+            cursor: default;
+            margin-bottom: 30px;
+        }
+
+        /* Branch connector from center */
+        .connector-down {
+            width: 3px;
+            height: 30px;
+            background: linear-gradient(to bottom, var(--accent), var(--border));
+            margin-bottom: 0;
+        }
+
+        /* Domain Row */
+        .domains {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 1400px;
+            padding: 0 10px;
+        }
+
+        /* Domain Card */
+        .domain {
+            flex: 1;
+            min-width: 280px;
+            max-width: 340px;
+        }
+
+        .domain-header {
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .domain-header:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        }
+
+        .domain-header .weight {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: 400;
+            opacity: 0.8;
+            margin-top: 3px;
+        }
+
+        .domain-header::after {
+            content: "▼";
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.7rem;
+            opacity: 0.6;
+            transition: transform 0.3s;
+        }
+
+        .domain.open .domain-header::after {
+            transform: translateY(-50%) rotate(180deg);
+        }
+
+        .d1 .domain-header { background: linear-gradient(135deg, #1565c0, #0d47a1); }
+        .d2 .domain-header { background: linear-gradient(135deg, #2e7d32, #1b5e20); }
+        .d3 .domain-header { background: linear-gradient(135deg, #6a1b9a, #4a148c); }
+        .d4 .domain-header { background: linear-gradient(135deg, #e65100, #bf360c); }
+
+        /* Branch line from domain to topics */
+        .branch-line {
+            width: 3px;
+            height: 20px;
+            margin: 0 auto;
+        }
+        .d1 .branch-line { background: #1565c0; }
+        .d2 .branch-line { background: #2e7d32; }
+        .d3 .branch-line { background: #6a1b9a; }
+        .d4 .branch-line { background: #e65100; }
+
+        /* Topics container */
+        .topics {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            padding: 8px 0;
+        }
+
+        .domain.open .topics {
+            display: flex;
+        }
+
+        /* Topic node */
+        .topic {
+            background: var(--bg-node);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .topic:hover {
+            border-color: rgba(79, 195, 247, 0.4);
+        }
+
+        .topic-header {
+            padding: 10px 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.82rem;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .topic-header:hover {
+            background: rgba(79, 195, 247, 0.05);
+        }
+
+        .topic-header .icon {
+            font-size: 1rem;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        .topic-header .arrow {
+            margin-left: auto;
+            font-size: 0.6rem;
+            color: var(--text-dim);
+            transition: transform 0.3s;
+        }
+
+        .topic.open .topic-header .arrow {
+            transform: rotate(90deg);
+        }
+
+        /* Services inside topic */
+        .services {
+            display: none;
+            padding: 0 15px 12px;
+            gap: 5px;
+            flex-direction: column;
+        }
+
+        .topic.open .services {
+            display: flex;
+        }
+
+        .service {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+
+        .service:hover {
+            border-color: rgba(255,255,255,0.12);
+        }
+
+        .service-name {
+            padding: 8px 12px;
+            font-size: 0.78rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-dim);
+            transition: all 0.2s;
+        }
+
+        .service-name:hover {
+            color: var(--text);
+        }
+
+        .service-name .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            min-width: 6px;
+        }
+
+        .service-name .expand {
+            margin-left: auto;
+            font-size: 0.6rem;
+            opacity: 0.4;
+            transition: transform 0.3s;
+        }
+
+        .service.open .service-name .expand {
+            transform: rotate(45deg);
+        }
+
+        .service.open .service-name {
+            color: var(--blue);
+        }
+
+        /* Service detail */
+        .service-detail {
+            display: none;
+            padding: 8px 12px 12px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            line-height: 1.6;
+        }
+
+        .service.open .service-detail {
+            display: block;
+        }
+
+        .service-detail ul {
+            margin: 5px 0 5px 15px;
+        }
+
+        .service-detail li {
+            margin-bottom: 3px;
+        }
+
+        .service-detail strong {
+            color: var(--text);
+        }
+
+        .service-detail a {
+            color: var(--blue);
+            text-decoration: none;
+            font-size: 0.7rem;
+        }
+
+        .service-detail a:hover {
+            text-decoration: underline;
+        }
+
+        .service-detail .tip {
+            background: rgba(79, 195, 247, 0.08);
+            border-left: 3px solid var(--blue);
+            padding: 6px 10px;
+            margin-top: 8px;
+            border-radius: 0 6px 6px 0;
+            font-size: 0.72rem;
+        }
+
+        /* Color dots for categories */
+        .dot-blue { background: var(--blue); }
+        .dot-green { background: var(--green); }
+        .dot-orange { background: var(--orange); }
+        .dot-purple { background: var(--purple); }
+        .dot-pink { background: var(--pink); }
+        .dot-cyan { background: var(--cyan); }
+        .dot-yellow { background: var(--yellow); }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .domains { flex-direction: column; align-items: center; }
+            .domain { max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>☁️ AWS SAP-C02 — Mapa Mental Interativo</h1>
+        <p>Clique nos domínios → tópicos → serviços para expandir. Cada nó revela detalhes "bate-pronto" para revisão rápida.</p>
+        <p style="margin-top: 8px;"><a href="aws-sap-c02-guia.html" style="color: var(--blue); text-decoration: none; font-size: 0.85rem;">📖 Abrir Guia Completo (versão detalhada)</a></p>
+    </div>
+
+    <div class="mindmap">
+        <div class="central">AWS Solutions Architect Professional</div>
+        <div class="connector-down"></div>
+
+        <div class="domains">
+            <!-- DOMAIN 1 -->
+            <div class="domain d1 open">
+                <div class="domain-header" onclick="this.parentElement.classList.toggle('open')">
+                    Complexidade Organizacional
+                    <span class="weight">Domínio 1 — 26%</span>
+                </div>
+                <div class="branch-line"></div>
+                <div class="topics">
+                    <!-- Topic: Networking -->
+                    <div class="topic open">
+                        <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+                            <span class="icon">🌐</span>
+                            Conectividade de Rede
+                            <span class="arrow">▶</span>
+                        </div>
+                        <div class="services">
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-blue"></span>Transit Gateway<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>Hub central</strong> para conectar múltiplas VPCs e redes on-premises</li>
+                                        <li>Suporta peering inter-Region (tráfego criptografado)</li>
+                                        <li>Route Tables para segmentação de tráfego</li>
+                                        <li>Até 50 Gbps por attachment, suporta multicast</li>
+                                        <li>Transit VIF do Direct Connect conecta ao TGW</li>
+                                    </ul>
+                                    <div class="tip">💡 50+ VPCs com roteamento centralizado = Transit Gateway</div>
+                                    <a href="https://docs.aws.amazon.com/vpc/latest/tgw/what-is-transit-gateway.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-blue"></span>Direct Connect<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>Dedicated:</strong> 1/10/100 Gbps | <strong>Hosted:</strong> 50Mbps-10Gbps</li>
+                                        <li><strong>Private VIF:</strong> VPCs | <strong>Public VIF:</strong> serviços públicos | <strong>Transit VIF:</strong> TGW</li>
+                                        <li>LAG para agregar conexões, MACsec para criptografia L2</li>
+                                        <li>Resiliência: 2 conexões em locais diferentes + VPN fallback</li>
+                                    </ul>
+                                    <div class="tip">💡 Latência consistente + grande volume de dados = Direct Connect</div>
+                                    <a href="https://docs.aws.amazon.com/directconnect/latest/UserGuide/Welcome.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-blue"></span>Site-to-Site VPN<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li>IPsec via internet, ~1.25 Gbps por túnel (2 túneis/conexão)</li>
+                                        <li><strong>Accelerated VPN:</strong> usa Global Accelerator para melhor performance</li>
+                                        <li><strong>ECMP</strong> com Transit Gateway: agregar múltiplas VPNs para mais throughput</li>
+                                    </ul>
+                                    <div class="tip">💡 Backup do DX ou conexão rápida temporária = VPN</div>
+                                    <a href="https://docs.aws.amazon.com/vpn/latest/s2svpn/VPC_VPN.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-cyan"></span>VPC Peering<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li>1-para-1, cross-region, cross-account</li>
+                                        <li><strong>NÃO transitivo</strong> — não pode rotear por peering intermediário</li>
+                                        <li>Sem custo de hora, paga só transferência de dados</li>
+                                        <li>Pode referenciar Security Groups de VPC peerada (cross-account!)</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/vpc/latest/peering/what-is-vpc-peering.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-cyan"></span>PrivateLink<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li>Expõe um serviço para outras VPCs/contas sem expor na internet</li>
+                                        <li>Interface Endpoint (ENI + IP privado) na subnet do consumidor</li>
+                                        <li>Gateway Endpoint (S3 e DynamoDB): grátis, rota na route table</li>
+                                    </ul>
+                                    <div class="tip">💡 "Acessar S3 sem NAT Gateway" = VPC Gateway Endpoint (grátis!)</div>
+                                    <a href="https://docs.aws.amazon.com/vpc/latest/privatelink/what-is-privatelink.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-cyan"></span>Route 53 Resolver<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>Inbound Endpoint:</strong> on-prem resolve DNS na AWS</li>
+                                        <li><strong>Outbound Endpoint:</strong> AWS resolve DNS on-prem</li>
+                                        <li>Resolver Rules compartilháveis via RAM (multi-account)</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Topic: Security -->
+                    <div class="topic">
+                        <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+                            <span class="icon">🔒</span>
+                            Segurança & IAM
+                            <span class="arrow">▶</span>
+                        </div>
+                        <div class="services">
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-orange"></span>IAM Cross-Account<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>AssumeRole:</strong> método preferido (temporário, auditável)</li>
+                                        <li><strong>Resource-based Policy:</strong> sem perder permissões originais</li>
+                                        <li><strong>SCPs:</strong> guardrails no nível de Organization</li>
+                                        <li><strong>Permission Boundaries:</strong> teto máximo para roles/users</li>
+                                    </ul>
+                                    <div class="tip">💡 Deny explícito SEMPRE vence. Cross-account: ambos lados precisam Allow.</div>
+                                    <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-orange"></span>IAM Identity Center<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li>SSO para múltiplas contas + apps SAML 2.0 + EC2 Windows</li>
+                                        <li>Permission Sets atribuídos a users/groups por conta</li>
+                                        <li>ABAC: permissões baseadas em atributos (cost center, title)</li>
+                                        <li>Identity sources: built-in, AD, Okta, Azure AD</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/what-is.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-orange"></span>KMS<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>Symmetric (AES-256):</strong> encrypt/decrypt, envelope encryption</li>
+                                        <li><strong>Asymmetric (RSA/ECC):</strong> sign/verify, encrypt fora da AWS</li>
+                                        <li><strong>Multi-Region Keys:</strong> encrypt em uma região, decrypt em outra</li>
+                                        <li><strong>Custom Key Store:</strong> material no CloudHSM</li>
+                                        <li>Keys são REGIONAIS (exceto multi-region)</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/kms/latest/developerguide/overview.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-orange"></span>CloudTrail<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li>Auditoria de API calls (management events por padrão)</li>
+                                        <li>Data Events (S3/Lambda): opt-in, alto volume</li>
+                                        <li>Insights: detecta atividade incomum com ML</li>
+                                        <li>Retenção: 90 dias → S3 + Athena para long-term</li>
+                                        <li>Organization Trail: todas as contas, um trail</li>
+                                    </ul>
+                                    <div class="tip">💡 Reagir rápido a eventos: EventBridge (mais rápido) > CW Logs > S3</div>
+                                    <a href="https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-user-guide.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-orange"></span>GuardDuty / Security Hub<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>GuardDuty:</strong> detecção de ameaças com ML (findings)</li>
+                                        <li><strong>Security Hub:</strong> visão consolidada + compliance (CIS, PCI)</li>
+                                        <li><strong>Inspector:</strong> vulnerabilidades em EC2/ECR/Lambda</li>
+                                        <li><strong>Macie:</strong> dados sensíveis em S3 (PII)</li>
+                                        <li>Todos suportam delegated admin para conta de segurança</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/guardduty/latest/ug/what-is-guardduty.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Topic: Multi-Account -->
+                    <div class="topic">
+                        <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+                            <span class="icon">🏢</span>
+                            Multi-Account & Governança
+                            <span class="arrow">▶</span>
+                        </div>
+                        <div class="services">
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-purple"></span>Organizations + SCPs<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li>Hierarquia de OUs, consolidated billing, volume discounts</li>
+                                        <li><strong>SCPs:</strong> restringem o que contas PODEM fazer (não concedem)</li>
+                                        <li>NÃO afetam Management Account nem Service-Linked Roles</li>
+                                        <li>Precisam de Allow explícito da root até o alvo</li>
+                                        <li>Tag Policies, Backup Policies, AI Opt-out Policies</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/organizations/latest/userguide/orgs_introduction.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-purple"></span>Control Tower<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li>Landing Zone automatizada com best practices</li>
+                                        <li><strong>Guardrails:</strong> Preventive (SCPs) | Detective (Config) | Proactive (CFN hooks)</li>
+                                        <li><strong>Levels:</strong> Mandatory | Strongly Recommended | Elective</li>
+                                        <li>Account Factory: provisiona contas padronizadas</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/controltower/latest/userguide/what-is-control-tower.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-purple"></span>RAM (Resource Access Manager)<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li>Compartilha recursos entre contas sem duplicação</li>
+                                        <li>VPC Subnets, Transit Gateway, Route 53 Rules, Aurora, CodeBuild</li>
+                                        <li>Subnet sharing: cada conta gerencia seus recursos na subnet</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/ram/latest/userguide/what-is.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Topic: DR -->
+                    <div class="topic">
+                        <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+                            <span class="icon">🔄</span>
+                            Resiliência & DR
+                            <span class="arrow">▶</span>
+                        </div>
+                        <div class="services">
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-green"></span>Estratégias de DR<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>Backup & Restore:</strong> horas RTO, baixo custo</li>
+                                        <li><strong>Pilot Light:</strong> core mínimo rodando, escala no DR</li>
+                                        <li><strong>Warm Standby:</strong> sistema reduzido ativo, minutos RTO</li>
+                                        <li><strong>Multi-Site:</strong> full active-active, near-zero RTO</li>
+                                    </ul>
+                                    <div class="tip">💡 "Menor custo" + DR = Backup & Restore. "RTO mínimo" = Multi-Site.</div>
+                                    <a href="https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-options-in-the-cloud.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-green"></span>Aurora Global / DynamoDB Global<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>Aurora Global:</strong> RPO &lt; 1s, RTO &lt; 1min, até 5 regiões</li>
+                                        <li><strong>DynamoDB Global Tables:</strong> multi-region active-active, auto-replication</li>
+                                        <li><strong>ElastiCache Global Datastore:</strong> Redis cross-region</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-global-database.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-green"></span>Elastic Disaster Recovery<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li>Replicação contínua block-level de servidores para DR region</li>
+                                        <li>Failover em minutos, suporta failback</li>
+                                        <li>Substitui CloudEndure Disaster Recovery</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/drs/latest/userguide/what-is-drs.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-green"></span>Route 53 Routing Policies<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>Failover:</strong> ativo/passivo com health checks</li>
+                                        <li><strong>Latency-based:</strong> menor latência para o user</li>
+                                        <li><strong>Weighted:</strong> % do tráfego (blue/green, canary)</li>
+                                        <li><strong>Geolocation/Geoproximity:</strong> por localização</li>
+                                        <li><strong>Multivalue Answer:</strong> múltiplos IPs saudáveis</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-green"></span>AWS Backup / Vault Lock<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li>Centraliza backups cross-service (EC2, RDS, S3, EFS, DynamoDB...)</li>
+                                        <li>Cross-region e cross-account, PITR, tag-based policies</li>
+                                        <li><strong>Vault Lock (WORM):</strong> nem root user pode deletar backups!</li>
+                                        <li>Proteção contra ransomware e delete acidental</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/aws-backup/latest/devguide/whatisbackup.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-green"></span>Fault Injection Simulator<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li>Chaos Engineering gerenciado (injeta falhas controladas)</li>
+                                        <li>Suporta EC2, ECS, EKS, RDS</li>
+                                        <li>Templates pré-construídos, stop se alarm disparar</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/fis/latest/userguide/what-is.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Topic: Cost -->
+                    <div class="topic">
+                        <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+                            <span class="icon">💰</span>
+                            Custos & Visibilidade
+                            <span class="arrow">▶</span>
+                        </div>
+                        <div class="services">
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-yellow"></span>Modelos de Compra<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>On-Demand:</strong> sem compromisso, flexibilidade total</li>
+                                        <li><strong>Savings Plans (Compute):</strong> até 66%, qualquer instância/região</li>
+                                        <li><strong>Savings Plans (EC2):</strong> até 72%, família+região fixa</li>
+                                        <li><strong>Reserved Instances:</strong> até 72%, capacity reservation garantida</li>
+                                        <li><strong>Spot:</strong> até 90%, interruptível (2min aviso)</li>
+                                    </ul>
+                                    <div class="tip">💡 Precisa de capacity reservation = RI. Flexibilidade = Savings Plans Compute.</div>
+                                    <a href="https://docs.aws.amazon.com/savingsplans/latest/userguide/what-is-savings-plans.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-yellow"></span>Ferramentas de Custo<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>Cost Explorer:</strong> visualização + forecast</li>
+                                        <li><strong>AWS Budgets:</strong> alertas + ações automáticas (SCP, stop)</li>
+                                        <li><strong>CUR (Cost and Usage Report):</strong> granular → S3 → Athena</li>
+                                        <li><strong>Compute Optimizer:</strong> rightsizing EC2/EBS/Lambda/ECS</li>
+                                        <li><strong>S3 Storage Lens:</strong> análise org-wide de storage</li>
+                                        <li><strong>Trusted Advisor:</strong> economia, segurança, limites</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/cost-management/latest/userguide/what-is-costmanagement.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DOMAIN 2 -->
+            <div class="domain d2">
+                <div class="domain-header" onclick="this.parentElement.classList.toggle('open')">
+                    Design de Novas Soluções
+                    <span class="weight">Domínio 2 — 29%</span>
+                </div>
+                <div class="branch-line"></div>
+                <div class="topics">
+                    <div class="topic">
+                        <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+                            <span class="icon">🚀</span>
+                            Deploy & CI/CD
+                            <span class="arrow">▶</span>
+                        </div>
+                        <div class="services">
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-green"></span>Estratégias de Deploy<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>Blue/Green:</strong> ambiente paralelo, switch instantâneo</li>
+                                        <li><strong>Canary:</strong> % pequeno do tráfego para nova versão</li>
+                                        <li><strong>Rolling:</strong> atualiza em lotes</li>
+                                        <li><strong>Immutable:</strong> novo ASG, troca quando saudável</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/codedeploy/latest/userguide/welcome.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-green"></span>CloudFormation<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>StackSets:</strong> deploy multi-account/multi-region</li>
+                                        <li><strong>Nested Stacks:</strong> reutilização de componentes</li>
+                                        <li><strong>Drift Detection:</strong> detecta mudanças manuais</li>
+                                        <li><strong>DeletionPolicy:</strong> Retain/Snapshot/Delete</li>
+                                        <li><strong>Change Sets:</strong> preview antes de aplicar</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-green"></span>Auto Scaling Groups<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>Policies:</strong> Target Tracking | Step | Scheduled | Predictive (ML)</li>
+                                        <li><strong>Métricas:</strong> CPU, RequestCountPerTarget, Network, Custom</li>
+                                        <li><strong>Health Checks:</strong> EC2 | ELB | Custom (SDK)</li>
+                                        <li><strong>Lifecycle Hooks:</strong> ações antes de in-service/terminate</li>
+                                        <li><strong>Instance Refresh:</strong> atualiza launch template, recria EC2s</li>
+                                        <li><strong>Scaling Processes:</strong> podem ser suspensos individualmente</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/autoscaling/ec2/userguide/what-is-amazon-ec2-auto-scaling.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-green"></span>Systems Manager<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>Session Manager:</strong> acesso remoto sem SSH/bastion</li>
+                                        <li><strong>Patch Manager:</strong> patching automatizado</li>
+                                        <li><strong>Automation:</strong> runbooks operacionais</li>
+                                        <li><strong>Parameter Store:</strong> configs e secrets com hierarquia</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/what-is-systems-manager.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="topic">
+                        <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+                            <span class="icon">⚡</span>
+                            Performance & Cache
+                            <span class="arrow">▶</span>
+                        </div>
+                        <div class="services">
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-cyan"></span>CloudFront<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li>CDN global (HTTP/HTTPS), cache de static + dynamic</li>
+                                        <li>Lambda@Edge / CloudFront Functions para lógica no edge</li>
+                                        <li>Origin failover para HA</li>
+                                        <li>Custo egress menor que direto do S3/ALB</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-cyan"></span>ElastiCache (Redis/Memcached)<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>Redis:</strong> Multi-AZ, replicação, persistência, rich data types, Global Datastore</li>
+                                        <li><strong>Memcached:</strong> simples, multi-thread, sem HA/replicação</li>
+                                    </ul>
+                                    <div class="tip">💡 Precisa de HA/persistência = Redis. Cache simples horizontal = Memcached.</div>
+                                    <a href="https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/WhatIs.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-cyan"></span>Global Accelerator<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li>Anycast IPs (2 estáticos), camada 4 (TCP/UDP)</li>
+                                        <li>Failover instantâneo entre regiões via health checks</li>
+                                        <li>Ideal para: gaming, IoT, VoIP, apps que precisam de IP fixo</li>
+                                    </ul>
+                                    <div class="tip">💡 vs CloudFront: GA = sem cache, TCP/UDP, IP fixo. CF = cache HTTP, DNS.</div>
+                                    <a href="https://docs.aws.amazon.com/global-accelerator/latest/dg/what-is-global-accelerator.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="topic">
+                        <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+                            <span class="icon">🗄️</span>
+                            Databases
+                            <span class="arrow">▶</span>
+                        </div>
+                        <div class="services">
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-pink"></span>Aurora<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li>MySQL/PostgreSQL compatível, 5x mais rápido</li>
+                                        <li>Storage auto-scales até 128TB, 6 cópias em 3 AZs</li>
+                                        <li>Até 15 Read Replicas, Global Database, Serverless v2</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/CHAP_AuroraOverview.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-pink"></span>DynamoDB<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li>Key-value, serverless, single-digit ms em qualquer escala</li>
+                                        <li>Global Tables: multi-region active-active</li>
+                                        <li>DAX: cache in-memory (microsegundos)</li>
+                                        <li>Streams + Lambda para event-driven processing</li>
+                                    </ul>
+                                    <div class="tip">💡 "Milhões de req/s com ms de latência" = DynamoDB</div>
+                                    <a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-pink"></span>Outros DBs<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>Neptune:</strong> grafo (redes sociais, fraude)</li>
+                                        <li><strong>DocumentDB:</strong> compatível MongoDB</li>
+                                        <li><strong>Keyspaces:</strong> compatível Cassandra</li>
+                                        <li><strong>Timestream:</strong> time-series (IoT, métricas)</li>
+                                        <li><strong>QLDB:</strong> ledger imutável</li>
+                                        <li><strong>OpenSearch:</strong> full-text search, logs</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="topic">
+                        <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+                            <span class="icon">📨</span>
+                            Mensageria & Event-Driven
+                            <span class="arrow">▶</span>
+                        </div>
+                        <div class="services">
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-yellow"></span>SQS / SNS / EventBridge<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>SQS:</strong> queue pull-based, desacoplamento, buffering</li>
+                                        <li><strong>SNS:</strong> pub/sub push-based, fan-out</li>
+                                        <li><strong>EventBridge:</strong> event bus, regras de roteamento, 18+ targets</li>
+                                        <li><strong>Kinesis:</strong> real-time streaming, analytics</li>
+                                        <li><strong>Fan-out:</strong> SNS → múltiplas SQS (processamento paralelo)</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-what-is.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-yellow"></span>Step Functions<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li>Orquestração de workflows (máquinas de estado)</li>
+                                        <li><strong>Standard:</strong> até 1 ano, exactly-once</li>
+                                        <li><strong>Express:</strong> até 5 min, at-least-once, alto throughput</li>
+                                        <li>Integração nativa com Lambda, ECS, DynamoDB, SNS, SQS</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/step-functions/latest/dg/welcome.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-yellow"></span>Amazon MQ<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li>Broker gerenciado (ActiveMQ/RabbitMQ)</li>
+                                        <li>Para apps que já usam MQTT/AMQP/STOMP</li>
+                                        <li>Migração de messaging on-prem sem mudar código</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Topic: Security for new solutions -->
+                    <div class="topic">
+                        <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+                            <span class="icon">🛡️</span>
+                            Proteção & Criptografia
+                            <span class="arrow">▶</span>
+                        </div>
+                        <div class="services">
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-orange"></span>WAF / Shield / Network Firewall<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>WAF:</strong> SQLi, XSS, rate-limiting. Em CloudFront/ALB/API GW.</li>
+                                        <li><strong>Shield Standard:</strong> DDoS L3/L4 grátis</li>
+                                        <li><strong>Shield Advanced:</strong> $3000/mês, DRT team, L7, cost protection</li>
+                                        <li><strong>Network Firewall:</strong> IPS/IDS gerenciado na VPC, filtragem de domínio</li>
+                                        <li><strong>Firewall Manager:</strong> gerencia WAF/Shield/NFW/SGs org-wide</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/waf/latest/developerguide/what-is-aws-waf.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-orange"></span>Criptografia em Trânsito<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>ACM:</strong> certificados TLS gerenciados (grátis para serviços AWS)</li>
+                                        <li><strong>VPN:</strong> IPsec para Site-to-Site</li>
+                                        <li><strong>Client VPN:</strong> OpenVPN para acesso remoto de users</li>
+                                        <li>Tudo entre AWS e internet = TLS por padrão</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/acm/latest/userguide/acm-overview.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-orange"></span>Criptografia em Repouso<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>S3:</strong> SSE-S3 (padrão) | SSE-KMS (auditável) | SSE-C (sua chave)</li>
+                                        <li><strong>EBS:</strong> KMS, habilitável por região (account-level setting)</li>
+                                        <li><strong>RDS:</strong> criptografa na criação (snapshot → copy encrypted → restore)</li>
+                                        <li><strong>DynamoDB:</strong> AWS owned key ou CMK</li>
+                                    </ul>
+                                    <div class="tip">💡 RDS não criptografado → snapshot → copy com encryption → restore</div>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-orange"></span>Secrets Manager vs Parameter Store<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>Secrets Manager:</strong> $0.40/mês, rotação automática (Lambda), KMS obrigatório, cross-account via resource policy</li>
+                                        <li><strong>Parameter Store:</strong> grátis (standard), hierarquia (/app/prod/key), sem rotação nativa, 4KB max</li>
+                                    </ul>
+                                    <div class="tip">💡 "Rotação automática de DB creds" = Secrets Manager. "Config com hierarquia" = Parameter Store.</div>
+                                    <a href="https://docs.aws.amazon.com/secretsmanager/latest/userguide/intro.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Topic: Storage & Cost -->
+                    <div class="topic">
+                        <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+                            <span class="icon">💾</span>
+                            Storage & Custos de Dados
+                            <span class="arrow">▶</span>
+                        </div>
+                        <div class="services">
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-blue"></span>S3 Classes & Lifecycle<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>Standard → Standard-IA → Glacier Instant → Glacier Flexible → Deep Archive</strong></li>
+                                        <li><strong>Intelligent-Tiering:</strong> auto-move sem retrieval fee</li>
+                                        <li><strong>One Zone-IA:</strong> dados recriáveis (1 AZ só)</li>
+                                        <li>Lifecycle: transition + expiration rules por idade</li>
+                                        <li>S3 Analytics: recomenda transições (atualizado diário)</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-class-intro.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-blue"></span>Data Transfer Costs<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li>✅ <strong>Ingress:</strong> GRÁTIS</li>
+                                        <li>💰 <strong>Egress internet:</strong> cobra por GB</li>
+                                        <li>💰 <strong>Cross-AZ:</strong> $0.01/GB por direção</li>
+                                        <li>✅ <strong>Mesma AZ (IP privado):</strong> grátis</li>
+                                        <li><strong>Otimizações:</strong> VPC Gateway Endpoint (S3/DDB grátis), CloudFront (egress menor), DX (preço menor)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-blue"></span>EBS / EFS / FSx<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>EBS:</strong> gp3 (16K IOPS), io2 (256K IOPS, Multi-Attach)</li>
+                                        <li><strong>EFS:</strong> NFS multi-AZ Linux, Elastic throughput, Access Points</li>
+                                        <li><strong>FSx Lustre:</strong> HPC, S3 integration, lazy loading</li>
+                                        <li><strong>FSx Windows:</strong> SMB + AD + DFS</li>
+                                        <li><strong>FSx ONTAP:</strong> NFS+SMB+iSCSI, cloning</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/fsx/" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-blue"></span>Storage Gateway<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>S3 File GW:</strong> NFS/SMB → S3 (cache local, AD integration)</li>
+                                        <li><strong>Volume GW:</strong> iSCSI → EBS snapshots (Cached vs Stored)</li>
+                                        <li><strong>Tape GW:</strong> VTL → S3 + Glacier (substitui fitas)</li>
+                                        <li><strong>FSx File GW:</strong> cache local de FSx Windows</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/storagegateway/latest/userguide/WhatIsStorageGateway.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DOMAIN 3 -->
+            <div class="domain d3">
+                <div class="domain-header" onclick="this.parentElement.classList.toggle('open')">
+                    Melhoria Contínua
+                    <span class="weight">Domínio 3 — 25%</span>
+                </div>
+                <div class="branch-line"></div>
+                <div class="topics">
+                    <div class="topic">
+                        <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+                            <span class="icon">📊</span>
+                            Monitoramento & Automação
+                            <span class="arrow">▶</span>
+                        </div>
+                        <div class="services">
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-purple"></span>CloudWatch<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>Metrics:</strong> CPU, custom metrics, anomaly detection</li>
+                                        <li><strong>Logs:</strong> centralização, Insights para queries</li>
+                                        <li><strong>Alarms:</strong> threshold → SNS/Auto Scaling/EC2 actions</li>
+                                        <li><strong>Synthetics:</strong> canary scripts (monitora antes do user reportar)</li>
+                                        <li><strong>Cross-Account:</strong> OAM para observabilidade centralizada</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-purple"></span>X-Ray<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li>Tracing distribuído, análise visual de latência</li>
+                                        <li>Identifica gargalos entre microserviços</li>
+                                        <li>Integra com Lambda, ECS, EC2, API Gateway</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/xray/latest/devguide/aws-xray.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-purple"></span>Config + Remediation<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li>Config Rules avaliam conformidade de recursos</li>
+                                        <li>Remediation: SSM Automation corrige automaticamente</li>
+                                        <li>Aggregator: visão multi-account e multi-region</li>
+                                        <li>Padrão: Config detecta → EventBridge → Lambda/SSM fix</li>
+                                    </ul>
+                                    <div class="tip">💡 Na prova: automatizar detecção + remediação > intervenção manual</div>
+                                    <a href="https://docs.aws.amazon.com/config/latest/developerguide/WhatIsConfig.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="topic">
+                        <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+                            <span class="icon">💰</span>
+                            Otimizar Custos
+                            <span class="arrow">▶</span>
+                        </div>
+                        <div class="services">
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-yellow"></span>Identificar Desperdícios<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li>EBS volumes não anexados (você paga!)</li>
+                                        <li>Elastic IPs não associados (cobra quando NÃO está em uso)</li>
+                                        <li>Instâncias oversized (CPU < 10%)</li>
+                                        <li>NAT Gateway com muito tráfego → VPC Endpoints</li>
+                                        <li>S3 sem lifecycle policies → dados na classe errada</li>
+                                        <li>Snapshots/AMIs antigos acumulando custo</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-yellow"></span>Automação de Custos<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>Instance Scheduler:</strong> liga/desliga EC2/RDS em horário comercial</li>
+                                        <li><strong>Budgets Actions:</strong> aplica SCP ou para instâncias ao exceder budget</li>
+                                        <li><strong>Tagging obrigatório:</strong> SCP bloqueia criação sem tags de custo</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/budgets-managing-costs.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Topic: Security Improvement -->
+                    <div class="topic">
+                        <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+                            <span class="icon">🔐</span>
+                            Melhorar Segurança
+                            <span class="arrow">▶</span>
+                        </div>
+                        <div class="services">
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-orange"></span>Least Privilege & Auditoria<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>Access Analyzer Policy Generation:</strong> gera policy baseada em 90 dias de CloudTrail</li>
+                                        <li><strong>Access Analyzer Findings:</strong> identifica recursos expostos externamente</li>
+                                        <li><strong>CloudTrail + Athena:</strong> auditar APIs que cada role usa</li>
+                                        <li><strong>S3 Access Points:</strong> simplifica bucket policies complexas</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-orange"></span>Patching & Compliance<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>SSM Patch Manager:</strong> patching automatizado com baselines</li>
+                                        <li><strong>Inspector:</strong> scan contínuo de vulnerabilidades</li>
+                                        <li><strong>Config Rules:</strong> detecta não-conformidade + auto-remediation</li>
+                                        <li><strong>GuardDuty → EventBridge → Lambda:</strong> resposta automática a ameaças</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Topic: Performance -->
+                    <div class="topic">
+                        <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+                            <span class="icon">🏎️</span>
+                            Melhorar Performance
+                            <span class="arrow">▶</span>
+                        </div>
+                        <div class="services">
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-cyan"></span>Rightsizing & Scaling<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>Compute Optimizer:</strong> recomenda instância ideal (métricas históricas)</li>
+                                        <li><strong>Vertical:</strong> instância maior (limitado)</li>
+                                        <li><strong>Horizontal:</strong> Auto Scaling Groups</li>
+                                        <li><strong>Caching:</strong> CloudFront, ElastiCache, DAX</li>
+                                        <li><strong>Read Replicas:</strong> Aurora até 15 réplicas</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/compute-optimizer/latest/ug/what-is-compute-optimizer.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-cyan"></span>Placement Groups<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>Cluster:</strong> mesmo rack, menor latência (HPC)</li>
+                                        <li><strong>Spread:</strong> hardware separado (HA, max 7/AZ)</li>
+                                        <li><strong>Partition:</strong> racks separados (HDFS, Kafka, Cassandra)</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/placement-groups.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Topic: Reliability -->
+                    <div class="topic">
+                        <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+                            <span class="icon">🔧</span>
+                            Melhorar Confiabilidade
+                            <span class="arrow">▶</span>
+                        </div>
+                        <div class="services">
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-green"></span>Eliminar SPOFs<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li>✅ Multi-AZ para stateful (RDS, ElastiCache, EFS)</li>
+                                        <li>✅ Auto Scaling com health checks adequados</li>
+                                        <li>✅ Loose coupling via SQS/SNS</li>
+                                        <li>✅ Dead Letter Queues para mensagens que falham</li>
+                                        <li>✅ Idempotência em processadores</li>
+                                        <li>✅ Circuit breaker para chamadas externas</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-green"></span>Self-Healing Patterns<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>ASG + Health Checks:</strong> unhealthy → terminated → replaced</li>
+                                        <li><strong>ECS Service:</strong> task fail → new task launched</li>
+                                        <li><strong>Lambda:</strong> retry automático (2x async)</li>
+                                        <li><strong>RDS Multi-AZ:</strong> failover 30-60s automático</li>
+                                        <li><strong>Service Quotas:</strong> monitore com CloudWatch, request increase proativo</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/welcome.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DOMAIN 4 -->
+            <div class="domain d4">
+                <div class="domain-header" onclick="this.parentElement.classList.toggle('open')">
+                    Migração & Modernização
+                    <span class="weight">Domínio 4 — 20%</span>
+                </div>
+                <div class="branch-line"></div>
+                <div class="topics">
+                    <div class="topic">
+                        <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+                            <span class="icon">✈️</span>
+                            Estratégias de Migração
+                            <span class="arrow">▶</span>
+                        </div>
+                        <div class="services">
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-orange"></span>7Rs da Migração<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>Retire:</strong> desligar o que não precisa</li>
+                                        <li><strong>Retain:</strong> manter onde está (por enquanto)</li>
+                                        <li><strong>Rehost:</strong> lift & shift (MGN)</li>
+                                        <li><strong>Relocate:</strong> VMware → VMware on AWS</li>
+                                        <li><strong>Replatform:</strong> lift & reshape (MySQL → RDS)</li>
+                                        <li><strong>Repurchase:</strong> trocar por SaaS</li>
+                                        <li><strong>Refactor:</strong> redesenhar cloud-native</li>
+                                    </ul>
+                                    <div class="tip">💡 "Menor esforço" = Rehost. "Melhor uso da cloud" = Refactor.</div>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-orange"></span>MGN (App Migration Service)<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li>Rehost em larga escala (substitui CloudEndure + SMS)</li>
+                                        <li>Replicação contínua → test launch → cutover</li>
+                                        <li>Suporta: VMs, físicos, qualquer cloud → AWS</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/mgn/latest/ug/what-is-application-migration-service.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-orange"></span>DMS + SCT<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>DMS:</strong> Full Load + CDC para mínimo downtime</li>
+                                        <li><strong>SCT:</strong> converte schema (só para heterogêneo)</li>
+                                        <li><strong>Snowball + DMS:</strong> SCT extrai → Snow → S3 → DMS migra</li>
+                                        <li>Suporta Oracle, SQL Server, MySQL, PostgreSQL, MongoDB → AWS</li>
+                                    </ul>
+                                    <div class="tip">💡 Oracle → Aurora: SCT (schema) + DMS (dados com CDC)</div>
+                                    <a href="https://docs.aws.amazon.com/dms/latest/userguide/Welcome.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="topic">
+                        <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+                            <span class="icon">📦</span>
+                            Transferência de Dados
+                            <span class="arrow">▶</span>
+                        </div>
+                        <div class="services">
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-blue"></span>DataSync / Snow / Transfer<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>DataSync:</strong> NFS/SMB/HDFS → AWS (10Gbps/task, scheduling)</li>
+                                        <li><strong>Snow Family:</strong> offline, > 1 semana pela rede = use Snow</li>
+                                        <li><strong>Transfer Family:</strong> SFTP/FTPS/FTP gerenciado → S3/EFS</li>
+                                        <li><strong>S3 Transfer Acceleration:</strong> upload via edge locations</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/datasync/latest/userguide/what-is-datasync.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="topic">
+                        <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+                            <span class="icon">⚙️</span>
+                            Modernização
+                            <span class="arrow">▶</span>
+                        </div>
+                        <div class="services">
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-pink"></span>Serverless Stack<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>API Gateway</strong> → <strong>Lambda</strong> → <strong>DynamoDB</strong></li>
+                                        <li><strong>Cognito:</strong> auth | <strong>S3:</strong> storage | <strong>Step Functions:</strong> orquestração</li>
+                                        <li>Lambda: max 15min, 10GB mem, 1000 concurrent (default)</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/lambda/latest/dg/welcome.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-pink"></span>Containers (ECS/EKS/Fargate)<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>ECS:</strong> AWS-native, mais simples, sem custo control plane</li>
+                                        <li><strong>EKS:</strong> Kubernetes, portável, ecossistema K8s</li>
+                                        <li><strong>Fargate:</strong> serverless containers (ECS ou EKS)</li>
+                                        <li><strong>awsvpc mode:</strong> ENI por task (SGs por task, default Fargate)</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/AmazonECS/latest/developerguide/Welcome.html" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-pink"></span>Storage (EBS/EFS/FSx/S3)<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>EBS:</strong> block, 1 AZ, io2 até 256K IOPS, Multi-Attach</li>
+                                        <li><strong>EFS:</strong> NFS multi-AZ, Linux, auto-scale, Access Points</li>
+                                        <li><strong>FSx Lustre:</strong> HPC, integra com S3, lazy loading</li>
+                                        <li><strong>FSx Windows:</strong> SMB + AD + DFS Namespaces</li>
+                                        <li><strong>FSx ONTAP:</strong> NFS+SMB+iSCSI, cloning, shrink/grow</li>
+                                    </ul>
+                                    <a href="https://docs.aws.amazon.com/fsx/" target="_blank">📖 Docs</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- end .domains -->
+    </div><!-- end .mindmap -->
+
+    <script>
+        // Allow expanding all on double-click of domain header
+        document.querySelectorAll('.domain-header').forEach(header => {
+            header.addEventListener('dblclick', (e) => {
+                const domain = header.parentElement;
+                const topics = domain.querySelectorAll('.topic');
+                const allOpen = [...topics].every(t => t.classList.contains('open'));
+                topics.forEach(t => {
+                    if (allOpen) {
+                        t.classList.remove('open');
+                    } else {
+                        t.classList.add('open');
+                    }
+                });
+                e.stopPropagation();
+            });
+        });
+    </script>
+</body>
+</html>

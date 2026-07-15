@@ -27,6 +27,34 @@ Material de estudo completo em **Português do Brasil** para a certificação AW
 
 ---
 
+## ⚡ Recursos Interativos
+
+### 🔍 Busca
+Ambos os HTMLs possuem campo de busca em tempo real. Digite o nome de um serviço ou tópico e o material automaticamente:
+- Destaca os resultados em amarelo
+- Abre a seção que contém o resultado
+- Faz scroll até o primeiro match
+
+### 📊 Progresso de Estudo (Guia)
+Cada seção do guia possui um checkbox. Marque conforme for estudando:
+- A barra de progresso na sidebar mostra sua evolução (%)
+- O progresso é salvo no navegador (localStorage) — não perde ao fechar
+- Seções concluídas ficam com opacidade reduzida
+
+### 📂 Expandir / Colapsar Tudo (Mapa)
+Botões na toolbar do mapa mental para:
+- **Expandir tudo** — visualizar todo o conteúdo de uma vez
+- **Colapsar tudo** — fechar todos os nós para navegar limpo
+
+### 🖨️ Impressão / PDF
+Botão "Imprimir" disponível em ambos os materiais. O CSS é otimizado para impressão:
+- Fundo branco, cores adaptadas
+- Sidebar, botões e checkboxes são ocultados automaticamente
+- Tabelas e cards não quebram entre páginas
+- Pode usar "Salvar como PDF" no diálogo de impressão do navegador
+
+---
+
 ## 📋 Sobre o Exame
 
 | Item | Detalhe |

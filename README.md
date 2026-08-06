@@ -4,7 +4,7 @@
   <img src="0_WN1yxw4ekEwhf_JM.png" alt="AWS Solutions Architect Professional" width="300">
 </p>
 
-Material de estudo completo em **Português do Brasil** para a certificação AWS Solutions Architect Professional (SAP-C02). Conteúdo baseado no guia oficial do exame, documentação AWS e material complementar.
+Material de estudo completo em **Português do Brasil** para a certificação AWS Solutions Architect Professional (SAP-C02). Conteúdo baseado no guia oficial do exame, documentação AWS e material complementar, com foco em estudo imersivo, roadmap, quiz rápido e cheatsheets de arquitetura.
 
 ---
 
@@ -24,6 +24,15 @@ Material de estudo completo em **Português do Brasil** para a certificação AW
 **Sugestão de estudo:**
 - Use o **Guia Completo** para estudo aprofundado de cada domínio
 - Use o **Mapa Mental** para revisões rápidas antes da prova ou entre sessões de estudo
+
+---
+
+## 🌐 GitHub Pages
+
+O material agora também está preparado para publicação com GitHub Pages usando a pasta `docs/`.
+- Abra `docs/index.html` como página inicial local
+- No GitHub Pages, a URL do site será o ponto de entrada do guia
+- Mantém todos os arquivos estáticos: `HTML`, `CSS`, `JS` e imagens
 
 ---
 

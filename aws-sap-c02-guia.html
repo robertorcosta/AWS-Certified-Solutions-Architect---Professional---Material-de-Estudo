@@ -856,6 +856,8 @@
             <div class="nav-section-title">Extras</div>
             <a href="#comparativos" class="nav-link">Tabelas Comparativas</a>
             <a href="#dicas" class="nav-link">Dicas para a Prova</a>
+            <a href="#novidades" class="nav-link">Novidades 2025-2026</a>
+            <a href="#plano-10-dias" class="nav-link">Plano de 10 Dias</a>
         </div>
     </nav>
 
@@ -3001,6 +3003,177 @@
                     <li>☐ Leu os whitepapers de DR e Well-Architected</li>
                     <li>☐ Conhece as tabelas comparativas de serviços</li>
                     <li>☐ Praticou gestão de tempo (2.4 min/questão)</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="section-divider"><span>NOVIDADES E PLANO</span></div>
+
+        <!-- Novidades 2025-2026 -->
+        <section id="novidades">
+            <h2>Novidades AWS 2025-2026 (Contexto)</h2>
+
+            <div class="info-box warning">
+                <strong>⚠️ O guia oficial do SAP-C02 NÃO mudou</strong>
+                Os 4 domínios e pesos continuam iguais. O foco principal do estudo deve ser o conteúdo core acima. Esta seção lista lançamentos recentes (re:Invent 2025 e 2026) que tocam temas cobrados e podem aparecer como opções em cenários. Trate como conhecimento de contexto, não como o centro da preparação. Recursos em <em>preview</em> raramente são a resposta correta na prova.
+            </div>
+
+            <h3>Networking e Content Delivery</h3>
+            <details>
+                <summary>Route 53 Global Resolver <span class="tag tag-yellow">preview</span></summary>
+                <div class="content">
+                    <p>Resolução DNS anycast segura e unificada para domínios públicos e privados globalmente, reduzindo overhead operacional em DNS híbrido.</p>
+                    <p><span class="tag tag-blue">Conecta com:</span> Route 53 Resolver / DNS Híbrido. Em cenários de "DNS híbrido global com menor esforço operacional", é o candidato moderno.</p>
+                </div>
+            </details>
+            <details>
+                <summary>AWS Interconnect — multicloud com Microsoft Azure <span class="tag tag-yellow">preview</span></summary>
+                <div class="content">
+                    <p>Conectividade gerenciada entre AWS e Azure. Relevante em cenários de arquitetura multicloud (antes resolvidos com Direct Connect + parceiros/VPN).</p>
+                </div>
+            </details>
+
+            <h3>Segurança, Identidade e Compliance</h3>
+            <details>
+                <summary>AWS Security Hub (nova versão, GA)</summary>
+                <div class="content">
+                    <p>Correlação de sinais de segurança em <strong>near real-time</strong> com priorização de risco. Evolução da visão consolidada de findings.</p>
+                    <p><span class="tag tag-yellow">Cenário:</span> "resposta mais rápida a riscos correlacionados entre o ambiente AWS".</p>
+                </div>
+            </details>
+            <details>
+                <summary>Amazon GuardDuty Extended Threat Detection (EC2 e ECS)</summary>
+                <div class="content">
+                    <p>Detecta ataques <strong>multi-stage</strong> com visibilidade unificada entre VMs e containers. Reforça o padrão "GuardDuty detecta ameaça → EventBridge → resposta automática".</p>
+                </div>
+            </details>
+            <details>
+                <summary>Network Scanning no Security Hub</summary>
+                <div class="content">
+                    <p>Descoberta de exposição de rede. Complementa Inspector e IAM Access Analyzer na identificação de superfície exposta.</p>
+                </div>
+            </details>
+
+            <h3>Custos</h3>
+            <details>
+                <summary>Database Savings Plans</summary>
+                <div class="content">
+                    <p>Novo modelo de compra que estende o conceito de Savings Plans para serviços de banco de dados, com flexibilidade de serviço/deployment.</p>
+                    <p><span class="tag tag-yellow">Cenário:</span> "reduzir custo de fleet de bancos com flexibilidade" — some ao mapa mental de Savings Plans (Compute/EC2) e RIs.</p>
+                </div>
+            </details>
+
+            <h3>Serverless e Orquestração</h3>
+            <details>
+                <summary>AWS Lambda Durable Functions</summary>
+                <div class="content">
+                    <p>Coordena múltiplos passos de forma confiável por períodos longos (segundos até 1 ano) sem pagar por tempo ocioso esperando eventos externos ou decisões humanas.</p>
+                    <p><span class="tag tag-blue">Compare com:</span> Step Functions em workflows de longa duração — agora dá pra orquestrar dentro do próprio Lambda.</p>
+                </div>
+            </details>
+            <details>
+                <summary>AWS Lambda Managed Instances</summary>
+                <div class="content">
+                    <p>Roda funções Lambda sobre compute EC2 mantendo a simplicidade serverless — acesso a hardware especializado e modelos de preço de EC2, com a AWS gerenciando a infraestrutura.</p>
+                </div>
+            </details>
+
+            <h3>IaC / Deploy</h3>
+            <details>
+                <summary>AWS CloudFormation Express mode</summary>
+                <div class="content">
+                    <p>Confirmação de deploy em segundos para iteração mais rápida. Encaixa na seção de CloudFormation e estratégias de deploy.</p>
+                </div>
+            </details>
+
+            <h3>Storage e Dados</h3>
+            <details>
+                <summary>S3 Tables, FSx ONTAP + S3, S3 Storage Lens, S3 Vectors</summary>
+                <div class="content">
+                    <ul>
+                        <li><strong>S3 Tables:</strong> agora com replicação cross-region/cross-account e Intelligent-Tiering (otimização automática de custo). Relevante para data lakes analíticos.</li>
+                        <li><strong>FSx for NetApp ONTAP integra com S3:</strong> acessa dados do file system via S3 para analytics/ML/IA sem mover ou copiar dados. Reforça FSx ONTAP como escolha multiprotocolo.</li>
+                        <li><strong>S3 Storage Lens:</strong> métricas de performance, suporte a bilhões de prefixos e export para S3 Tables.</li>
+                        <li><strong>Amazon S3 Vectors (GA):</strong> armazenamento e consulta de vetores em escala com custo bem menor que bancos vetoriais dedicados (cenários de busca semântica / RAG).</li>
+                    </ul>
+                </div>
+            </details>
+
+            <h3>Compute / Database (menções rápidas)</h3>
+            <details>
+                <summary>Graviton5, EKS Capabilities, Aurora Serverless</summary>
+                <div class="content">
+                    <ul>
+                        <li><strong>Graviton5:</strong> melhor price-performance em EC2 — reforça o padrão "usar Graviton para reduzir custo/energia".</li>
+                        <li><strong>Amazon EKS Capabilities:</strong> orquestração de workloads gerenciada, reduz manutenção de infraestrutura K8s.</li>
+                        <li><strong>Aurora Serverless:</strong> ~30% melhor performance e scaling mais inteligente em mais regiões.</li>
+                    </ul>
+                </div>
+            </details>
+
+            <div class="info-box">
+                <strong>📌 Fontes</strong>
+                <a href="https://aws.amazon.com/blogs/aws/top-announcements-of-aws-reinvent-2025/" target="_blank">Top announcements re:Invent 2025</a> |
+                <a href="https://aws.amazon.com/about-aws/whats-new/" target="_blank">What's New with AWS</a>. Conteúdo resumido e reescrito para fins de estudo.
+            </div>
+        </section>
+
+        <!-- Plano de 10 dias -->
+        <section id="plano-10-dias">
+            <h2>Plano de Estudo — 10 Dias</h2>
+
+            <div class="info-box success">
+                <strong>🎯 Estratégia</strong>
+                Priorizar por peso de domínio (D2 29% &gt; D1 26% &gt; D3 25% &gt; D4 20%) e reservar os últimos dias para simulados e revisão. Use este Guia para aprofundar e o <a href="aws-sap-c02-mapa.html">Mapa Mental</a> para revisão bate-pronto.
+            </div>
+
+            <div class="card">
+                <div class="card-header"><span class="icon">1️⃣</span><h4>Dia 1 — Domínio 1 (A): Networking</h4></div>
+                <p>Transit Gateway, Direct Connect, VPN, VPC Peering vs PrivateLink vs Gateway/Interface Endpoints, Route 53 Resolver / DNS Híbrido, Global Accelerator vs CloudFront. Revisar novidade: Route 53 Global Resolver, AWS Interconnect multicloud.</p>
+            </div>
+            <div class="card">
+                <div class="card-header"><span class="icon">2️⃣</span><h4>Dia 2 — Domínio 1 (B): Segurança e Identidade</h4></div>
+                <p>IAM avançado (ordem de avaliação, cross-account), SCP vs Permission Boundary, IAM Identity Center, Federation/STS, Directory Services, KMS/CloudHSM, CloudTrail, Secrets Manager vs Parameter Store. Revisar novidade: Security Hub GA, GuardDuty Extended Threat Detection.</p>
+            </div>
+            <div class="card">
+                <div class="card-header"><span class="icon">3️⃣</span><h4>Dia 3 — Domínio 1 (C): Multi-account, DR e Custos</h4></div>
+                <p>Organizations, Control Tower, RAM; estratégias de DR (4 tipos) + serviços (DRS, Aurora Global, DynamoDB Global Tables, AWS Backup + Vault Lock); modelos de compra e ferramentas de custo. Revisar novidade: Database Savings Plans.</p>
+            </div>
+            <div class="card">
+                <div class="card-header"><span class="icon">4️⃣</span><h4>Dia 4 — Domínio 2 (A): Deploy, ASG e Continuidade</h4></div>
+                <p>Blue/Green, Canary, Rolling, Immutable; CI/CD; CloudFormation (StackSets, Nested, Drift, Change Sets); Auto Scaling policies e lifecycle; Spot/Spot Fleet; active-active vs active-passive. Revisar novidade: CloudFormation Express mode.</p>
+            </div>
+            <div class="card">
+                <div class="card-header"><span class="icon">5️⃣</span><h4>Dia 5 — Domínio 2 (B): Segurança de apps, Confiabilidade e Mensageria</h4></div>
+                <p>WAF/Shield/Network Firewall/Firewall Manager; criptografia em trânsito e repouso; SQS/SNS/EventBridge/Kinesis/MQ; fan-out; Step Functions (Standard vs Express). Revisar novidade: Lambda Durable Functions vs Step Functions.</p>
+            </div>
+            <div class="card">
+                <div class="card-header"><span class="icon">6️⃣</span><h4>Dia 6 — Domínio 2 (C): Performance, Databases e Cache</h4></div>
+                <p>Escolha de banco (Aurora, DynamoDB, DocumentDB, Neptune, Timestream, QLDB, Keyspaces, OpenSearch); cache (CloudFront, ElastiCache Redis/Memcached, DAX); S3 storage classes; custos de data transfer.</p>
+            </div>
+            <div class="card">
+                <div class="card-header"><span class="icon">7️⃣</span><h4>Dia 7 — Domínio 3: Melhoria Contínua</h4></div>
+                <p>Monitoramento (CloudWatch, X-Ray, Synthetics, OAM); automação/remediação (Config Rules + SSM Automation, EventBridge + Lambda); least privilege (Access Analyzer); rightsizing (Compute Optimizer); self-healing; identificação de desperdício de custo.</p>
+            </div>
+            <div class="card">
+                <div class="card-header"><span class="icon">8️⃣</span><h4>Dia 8 — Domínio 4: Migração e Modernização</h4></div>
+                <p>7Rs; assessment (Migration Hub, Discovery Service, Migration Evaluator); MGN; DMS + SCT; DataSync, Snow Family, Transfer Family; storage (EBS, EFS, FSx, Storage Gateway); serverless e containers (ECS/EKS/Fargate/ECR). Revisar novidade: FSx ONTAP + S3, EKS Capabilities.</p>
+            </div>
+            <div class="card">
+                <div class="card-header"><span class="icon">9️⃣</span><h4>Dia 9 — Simulado completo + revisão de erros</h4></div>
+                <p>1 simulado cronometrado (75 questões / 180 min). Revisar TODAS as erradas identificando o padrão (serviço errado? requisito ignorado?). Reforçar tabelas comparativas "quando usar X vs Y".</p>
+            </div>
+            <div class="card">
+                <div class="card-header"><span class="icon">🔟</span><h4>Dia 10 — Revisão final e véspera</h4></div>
+                <p>Passar o Mapa Mental inteiro (bate-pronto). Reler "Dicas para a Prova" e "Padrões de Resposta". Segundo simulado leve se sobrar energia. Descansar antes da prova.</p>
+            </div>
+
+            <div class="info-box">
+                <strong>⏰ Rotina diária sugerida</strong>
+                <ul>
+                    <li><strong>Manhã:</strong> estudo aprofundado do tópico do dia (este Guia).</li>
+                    <li><strong>Tarde:</strong> 15-25 questões práticas do domínio estudado + revisão dos erros.</li>
+                    <li><strong>Noite:</strong> revisão rápida no Mapa Mental dos tópicos do dia + do dia anterior (repetição espaçada).</li>
                 </ul>
             </div>
         </section>

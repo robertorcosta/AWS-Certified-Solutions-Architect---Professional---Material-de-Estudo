@@ -570,3 +570,88 @@
 - "Rotação de secrets" → Secrets Manager
 - "Sem SSH/bastion" → Systems Manager Session Manager
 - "Dados > 1 semana pela rede" → Snow Family
+
+---
+
+## NOVIDADES AWS 2025-2026 (CONTEXTO)
+
+> ⚠️ IMPORTANTE: O guia oficial do exame SAP-C02 NÃO mudou. Os 4 domínios e pesos continuam iguais. O foco principal do estudo deve ser o conteúdo core acima. Esta seção lista lançamentos recentes (re:Invent 2025 e 2026) que tocam temas cobrados no exame e podem aparecer como opções em cenários. Trate como conhecimento de contexto, não como o centro da preparação.
+> Conteúdo resumido e reescrito a partir de anúncios oficiais da AWS para fins de estudo.
+
+### Networking e Content Delivery
+- **Amazon Route 53 Global Resolver (preview)**: resolução DNS anycast segura e unificada para domínios públicos e privados globalmente. Simplifica DNS híbrido reduzindo overhead operacional. Conecta com a seção de Route 53 Resolver / DNS Híbrido — em cenários de "DNS híbrido global com menor esforço operacional", é o candidato moderno.
+- **AWS Interconnect – multicloud com Microsoft Azure (preview)**: conectividade gerenciada entre AWS e Azure. Relevante em cenários de arquitetura multicloud (antes resolvidos com Direct Connect + parceiros/VPN).
+
+### Segurança, Identidade e Compliance
+- **AWS Security Hub (nova versão, GA)**: correlação de sinais de segurança em near real-time com priorização de risco. Evolução da visão consolidada de findings — em cenários de "resposta mais rápida a riscos correlacionados", pense nesta versão.
+- **Amazon GuardDuty Extended Threat Detection (EC2 e ECS)**: detecta ataques multi-stage com visibilidade unificada entre VMs e containers. Reforça o padrão "GuardDuty detecta ameaça → EventBridge → resposta automática".
+- **Network Scanning no Security Hub**: descoberta de exposição de rede. Complementa Inspector/Access Analyzer.
+
+### Custos
+- **Database Savings Plans**: novo modelo de compra que estende o conceito de Savings Plans para serviços de banco de dados, com flexibilidade de serviço/deployment. Some ao seu mapa mental de Savings Plans (Compute/EC2) e RIs — em cenários de "reduzir custo de fleet de bancos com flexibilidade", é opção nova.
+
+### Serverless e Orquestração
+- **AWS Lambda Durable Functions**: coordena múltiplos passos de forma confiável por períodos longos (segundos até 1 ano) sem pagar por tempo ocioso esperando eventos externos ou decisões humanas. Concorre com Step Functions em workflows de longa duração dentro do próprio Lambda.
+- **AWS Lambda Managed Instances**: roda funções Lambda sobre compute EC2 mantendo a simplicidade serverless — acesso a hardware especializado e modelos de preço de EC2, com a AWS gerenciando a infraestrutura.
+
+### IaC / Deploy
+- **AWS CloudFormation Express mode**: confirmação de deploy em segundos para iteração mais rápida. Encaixa na seção de CloudFormation / estratégias de deploy.
+
+### Storage e Dados
+- **S3 Tables**: agora com replicação cross-region/cross-account e Intelligent-Tiering (otimização automática de custo). Relevante para data lakes analíticos.
+- **FSx for NetApp ONTAP integra com S3**: acessa dados do file system via S3 para analytics/ML/IA sem mover ou copiar dados. Reforça FSx ONTAP como escolha multiprotocolo em cenários de dados compartilhados.
+- **S3 Storage Lens**: agora com métricas de performance, suporte a bilhões de prefixos e export para S3 Tables — mais profundidade em análise de custo/uso org-wide.
+- **Amazon S3 Vectors (GA)**: armazenamento e consulta de vetores em escala com custo bem menor que bancos vetoriais dedicados. Aparece em cenários de busca semântica / RAG.
+
+### Compute / Database (menções rápidas)
+- **Graviton5**: melhor price-performance em EC2 — reforça o padrão "usar Graviton para reduzir custo/energia".
+- **Amazon EKS Capabilities**: orquestração de workloads gerenciada, reduz manutenção de infraestrutura K8s.
+- **Aurora Serverless**: ~30% melhor performance e scaling mais inteligente em mais regiões.
+
+---
+
+## PLANO DE ESTUDO — 10 DIAS (SAP-C02)
+
+> Estratégia: priorizar por peso de domínio (D2 29% > D1 26% > D3 25% > D4 20%), reservar os últimos dias para simulados e revisão do mapa mental. Use o Guia (HTML) para aprofundar e o Mapa Mental para revisão bate-pronto.
+
+- **Dia 1 — Domínio 1 (parte A): Networking**
+  - Transit Gateway, Direct Connect, VPN, VPC Peering vs PrivateLink vs Gateway/Interface Endpoints, Route 53 Resolver / DNS Híbrido, Global Accelerator vs CloudFront.
+  - Revisar novidade: Route 53 Global Resolver, AWS Interconnect multicloud.
+
+- **Dia 2 — Domínio 1 (parte B): Segurança e Identidade**
+  - IAM avançado (ordem de avaliação, cross-account), SCP vs Permission Boundary, IAM Identity Center, Federation/STS, Directory Services, KMS/CloudHSM, CloudTrail, Secrets Manager vs Parameter Store.
+  - Revisar novidade: Security Hub GA, GuardDuty Extended Threat Detection.
+
+- **Dia 3 — Domínio 1 (parte C): Multi-account, DR e Custos**
+  - Organizations, Control Tower, RAM; estratégias de DR (4 tipos) + serviços (DRS, Aurora Global, DynamoDB Global Tables, AWS Backup + Vault Lock); modelos de compra e ferramentas de custo.
+  - Revisar novidade: Database Savings Plans.
+
+- **Dia 4 — Domínio 2 (parte A): Deploy, ASG e Continuidade**
+  - Blue/Green, Canary, Rolling, Immutable; CI/CD; CloudFormation (StackSets, Nested, Drift, Change Sets); Auto Scaling policies e lifecycle; Spot/Spot Fleet; active-active vs active-passive.
+  - Revisar novidade: CloudFormation Express mode.
+
+- **Dia 5 — Domínio 2 (parte B): Segurança de apps, Confiabilidade e Mensageria**
+  - WAF/Shield/Network Firewall/Firewall Manager; criptografia em trânsito e repouso; SQS/SNS/EventBridge/Kinesis/MQ; fan-out; Step Functions (Standard vs Express).
+  - Revisar novidade: Lambda Durable Functions vs Step Functions.
+
+- **Dia 6 — Domínio 2 (parte C): Performance, Databases e Cache**
+  - Escolha de banco (Aurora, DynamoDB, DocumentDB, Neptune, Timestream, QLDB, Keyspaces, OpenSearch); cache (CloudFront, ElastiCache Redis/Memcached, DAX); S3 storage classes; custos de data transfer.
+
+- **Dia 7 — Domínio 3: Melhoria Contínua**
+  - Monitoramento (CloudWatch, X-Ray, Synthetics, OAM); automação/remediação (Config Rules + SSM Automation, EventBridge + Lambda); least privilege (Access Analyzer); rightsizing (Compute Optimizer); self-healing; identificação de desperdício de custo.
+
+- **Dia 8 — Domínio 4: Migração e Modernização**
+  - 7Rs; assessment (Migration Hub, Discovery Service, Migration Evaluator); MGN; DMS + SCT; DataSync, Snow Family, Transfer Family; storage (EBS, EFS, FSx, Storage Gateway); serverless e containers (ECS/EKS/Fargate/ECR).
+  - Revisar novidade: FSx ONTAP + S3, EKS Capabilities.
+
+- **Dia 9 — Simulado completo + revisão de erros**
+  - Fazer 1 simulado cronometrado (75 questões / 180 min). Revisar TODAS as erradas identificando o padrão (serviço errado? requisito ignorado?).
+  - Reforçar tabelas comparativas "quando usar X vs Y".
+
+- **Dia 10 — Revisão final e véspera**
+  - Passar o Mapa Mental inteiro (bate-pronto). Reler a seção "Dicas para a Prova" e "Padrões de Resposta". Segundo simulado leve se sobrar energia. Descansar antes da prova.
+
+### Rotina diária sugerida
+- Manhã: estudo aprofundado do tópico do dia (Guia HTML).
+- Tarde: 15-25 questões práticas do domínio estudado + revisão dos erros.
+- Noite: revisão rápida no Mapa Mental dos tópicos do dia + do dia anterior (repetição espaçada).

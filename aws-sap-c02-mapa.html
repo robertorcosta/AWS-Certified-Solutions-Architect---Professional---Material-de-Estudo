@@ -1589,7 +1589,7 @@
                                         <li>Cache de conteúdo estático/dinâmico → <strong>CloudFront</strong></li>
                                         <li>Acesso privado a serviço/SaaS sem internet → <strong>Interface VPC Endpoint (PrivateLink)</strong></li>
                                         <li>Alta banda a S3/DynamoDB → <strong>Gateway Endpoint</strong></li>
-                                        <li>VPN HA automático → 2 túneis para <strong>TGW + BGP + ECMP</strong></li>
+                                        <li>VPN com alta disponibilidade automática → 2 túneis para o <strong>Transit Gateway</strong> com <strong>BGP + ECMP</strong> (rotas equivalentes em paralelo)</li>
                                         <li>Failover em latency routing → precisa de <strong>health check + Evaluate Target Health</strong></li>
                                     </ul>
                                     <div class="tip">💡 Direct Connect é lento de provisionar e não é criptografado por padrão</div>
@@ -1633,9 +1633,9 @@
                                 </div>
                                 <div class="service-detail">
                                     <ul>
-                                        <li>HA + read scaling de RDS → <strong>Multi-AZ DB cluster</strong> (standby legível)</li>
-                                        <li>Query em atributo não-chave do DynamoDB → <strong>GSI</strong>; busca rica → <strong>OpenSearch</strong></li>
-                                        <li>DR com RPO segundos / RTO minutos → <strong>AWS DRS</strong> (Backup não atinge)</li>
+                                        <li>Alta disponibilidade + escala de leitura no RDS → <strong>Multi-AZ DB cluster</strong> (standby legível)</li>
+                                        <li>Query em atributo não-chave do DynamoDB → <strong>GSI</strong> (Global Secondary Index); busca/filtro rico → <strong>OpenSearch</strong></li>
+                                        <li>Recuperação de desastre com perda/parada de segundos a minutos → <strong>AWS DRS</strong> (o AWS Backup não atinge)</li>
                                         <li>Replicação contínua de DB (CDC) → <strong>DMS</strong> (+ SCT se heterogêneo)</li>
                                         <li>Migrar PB offline → <strong>Snow Family</strong> (Snowmobile só &gt; 10 PB)</li>
                                         <li>Ingestão SFTP → <strong>Transfer Family</strong> (DataSync não suporta SFTP)</li>

@@ -3030,7 +3030,22 @@
 
             <div class="info-box">
                 <strong>📌 Como usar esta seção</strong>
-                As questões do SAP-C02 raramente perguntam "o que é o serviço X". Elas descrevem um cenário com múltiplos requisitos (custo, latência, RTO/RPO, esforço operacional, compliance) e pedem a melhor combinação. Leia cada bloco como um par <em>gatilho → decisão</em>, prestando atenção nos limites numéricos e nas condições exatas que invalidam as demais opções.
+                As questões do SAP-C02 raramente perguntam "o que é o serviço X". Elas descrevem um cenário com múltiplos requisitos (custo, latência, tempo de recuperação, esforço operacional, conformidade) e pedem a melhor combinação. Leia cada bloco como um par <em>gatilho → decisão</em>, prestando atenção nos limites numéricos e nas condições exatas que invalidam as demais opções.
+            </div>
+
+            <div class="info-box">
+                <strong>🔤 Siglas usadas nesta seção</strong>
+                <ul>
+                    <li><strong>DR</strong> (Disaster Recovery) — recuperação de desastres</li>
+                    <li><strong>RTO</strong> (Recovery Time Objective) — tempo máximo aceitável para voltar ao ar</li>
+                    <li><strong>RPO</strong> (Recovery Point Objective) — perda de dados máxima aceitável (em tempo)</li>
+                    <li><strong>HA</strong> (High Availability) — alta disponibilidade</li>
+                    <li><strong>CDC</strong> (Change Data Capture) — replicação contínua das mudanças de um banco</li>
+                    <li><strong>GSI</strong> (Global Secondary Index) — índice secundário do DynamoDB para consultar por outro atributo</li>
+                    <li><strong>DX</strong> (Direct Connect) — link de rede dedicado e privado até a AWS</li>
+                    <li><strong>CI/CD</strong> — integração e entrega contínuas (pipeline de build/deploy)</li>
+                    <li><strong>PB</strong> — petabytes; <strong>NLP</strong> — processamento de linguagem natural</li>
+                </ul>
             </div>
 
             <h3 id="extra-redes">1. Redes e Conectividade Híbrida</h3>
@@ -3274,7 +3289,7 @@
             <div class="topic-card">
                 <ul>
                     <li><strong>Rekognition</strong> consome direto de <strong>Kinesis Video Streams</strong> para face/objeto em tempo real (stream processor via <code>CreateStreamProcessor</code>, envio com <code>PutMedia</code>). Use <code>RecognizeCelebrities</code> para celebridades; <code>DetectFaces</code> é só imagem única. Rode a partir de <strong>Lambda</strong> para autoescala e custo.</li>
-                    <li><strong>Fronteiras de serviço (pegadinha frequente):</strong> <strong>Textract</strong> = texto de documentos · <strong>Transcribe</strong> = fala→texto (com custom vocabulary) · <strong>Polly</strong> = texto→fala · <strong>Translate</strong> = tradução · <strong>Comprehend</strong> = NLP.</li>
+                    <li><strong>Fronteiras de serviço (pegadinha frequente):</strong> <strong>Textract</strong> = texto de documentos · <strong>Transcribe</strong> = fala→texto (com custom vocabulary) · <strong>Polly</strong> = texto→fala · <strong>Translate</strong> = tradução · <strong>Comprehend</strong> = NLP (análise de linguagem natural).</li>
                     <li><strong>Pipeline de mídia gerenciado:</strong> Step Functions + <strong>MediaConvert</strong> (arquivo) evita EC2 para transcode; MediaLive é para ao vivo; Elastic Transcoder é legado.</li>
                 </ul>
             </div>

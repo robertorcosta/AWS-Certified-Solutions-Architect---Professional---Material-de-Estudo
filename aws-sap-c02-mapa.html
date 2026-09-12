@@ -1561,6 +1561,138 @@
                 </div>
             </div>
 
+            <!-- DOMAIN EXTRA: Armadilhas & Decisões -->
+            <div class="domain d2 open">
+                <div class="domain-header" onclick="this.parentElement.classList.toggle('open')">
+                    🎯 Armadilhas &amp; Decisões-Chave
+                    <span class="weight">Revisão bate-pronto</span>
+                </div>
+                <div class="branch-line"></div>
+                <div class="topics">
+
+                    <div class="topic open">
+                        <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+                            <span class="icon">⚡</span>
+                            Gatilho → Serviço
+                            <span class="arrow">▶</span>
+                        </div>
+                        <div class="services">
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-blue"></span>Rede &amp; Conectividade<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li>Menor latência de rede + failover cross-region, <strong>sem cache</strong> → <strong>Global Accelerator</strong></li>
+                                        <li>Cache de conteúdo estático/dinâmico → <strong>CloudFront</strong></li>
+                                        <li>Acesso privado a serviço/SaaS sem internet → <strong>Interface VPC Endpoint (PrivateLink)</strong></li>
+                                        <li>Alta banda a S3/DynamoDB → <strong>Gateway Endpoint</strong></li>
+                                        <li>VPN HA automático → 2 túneis para <strong>TGW + BGP + ECMP</strong></li>
+                                        <li>Failover em latency routing → precisa de <strong>health check + Evaluate Target Health</strong></li>
+                                    </ul>
+                                    <div class="tip">💡 Direct Connect é lento de provisionar e não é criptografado por padrão</div>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-purple"></span>Governança &amp; Config<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li>Bloquear ação perigosa na org → <strong>SCP com Deny no root</strong></li>
+                                        <li>Serviços permitidos mas nunca usados → <strong>IAM › Organization activity</strong></li>
+                                        <li>Compliance org-wide (regras + remediação) → <strong>Config Conformance Packs</strong></li>
+                                        <li>Compartilhar recipes/images do Image Builder → <strong>RAM resource share</strong></li>
+                                        <li>Restringir parâmetro de CloudFormation por time → <strong>Service Catalog Template Constraint</strong></li>
+                                        <li>Impedir lançamento acima do orçamento → <strong>Budgets action que aplica SCP</strong></li>
+                                    </ul>
+                                    <div class="tip">💡 Deny explícito sempre vence; permissão = SCP ∩ boundary ∩ IAM policy</div>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-orange"></span>Identidade &amp; Segurança<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li>SAML corporativo → <strong>STS AssumeRoleWithSAML</strong> (Web Identity só p/ IdP social)</li>
+                                        <li>Guest no Cognito → <strong>Identity Pool</strong> (GetId); papéis → <strong>groups no User Pool</strong></li>
+                                        <li>EC2 acessa serviço AWS → <strong>IAM role na instância</strong> (nunca access keys)</li>
+                                        <li>Dados sensíveis em S3 → <strong>Macie</strong>; recursos expostos → <strong>Access Analyzer</strong></li>
+                                        <li>Investigar findings → <strong>Detective</strong>; ameaças → <strong>GuardDuty</strong>; vulnerabilidades → <strong>Inspector</strong></li>
+                                        <li>Reduzir custo KMS com muitos objetos S3 → <strong>S3 Bucket Keys</strong></li>
+                                    </ul>
+                                    <div class="tip">💡 AD sem cache = AD Connector; com cache = Managed Microsoft AD</div>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-green"></span>Dados, DR &amp; Migração<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li>HA + read scaling de RDS → <strong>Multi-AZ DB cluster</strong> (standby legível)</li>
+                                        <li>Query em atributo não-chave do DynamoDB → <strong>GSI</strong>; busca rica → <strong>OpenSearch</strong></li>
+                                        <li>DR com RPO segundos / RTO minutos → <strong>AWS DRS</strong> (Backup não atinge)</li>
+                                        <li>Replicação contínua de DB (CDC) → <strong>DMS</strong> (+ SCT se heterogêneo)</li>
+                                        <li>Migrar PB offline → <strong>Snow Family</strong> (Snowmobile só &gt; 10 PB)</li>
+                                        <li>Ingestão SFTP → <strong>Transfer Family</strong> (DataSync não suporta SFTP)</li>
+                                    </ul>
+                                    <div class="tip">💡 Aurora Global DR = detach do secundário (promove writer); snapshot não é failover</div>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-cyan"></span>Serverless, Containers &amp; Edge<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li>Web app sem gerir LB/cluster + CI/CD de repo → <strong>App Runner</strong></li>
+                                        <li>Broker WebSocket/JMS/AMQP lift-and-shift → <strong>Amazon MQ</strong></li>
+                                        <li>Log analytics open-source near-real-time → <strong>Firehose → OpenSearch</strong></li>
+                                        <li>Tarefa longa não-idempotente → <strong>Step Functions Standard</strong>; alto volume idempotente → <strong>Express</strong></li>
+                                        <li>Edge de rede 5G, latência mínima → <strong>Wavelength</strong> (Carrier Gateway, não NAT)</li>
+                                        <li>ECS resiliente e barato → <strong>ASG EC2 + ECS capacity provider</strong></li>
+                                    </ul>
+                                    <div class="tip">💡 API Gateway corta em 29s mesmo com Lambda de 15 min (HTTP 504)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="topic">
+                        <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+                            <span class="icon">🚫</span>
+                            Distratores Clássicos
+                            <span class="arrow">▶</span>
+                        </div>
+                        <div class="services">
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-pink"></span>Respostas que parecem certas mas não são<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>Security Group para negar IP</strong> → SG só faz allow; use <strong>NACL</strong></li>
+                                        <li><strong>Converter fila Standard em FIFO</strong> ou <strong>DLQ de tipo diferente</strong> → inválido</li>
+                                        <li><strong>NAT Gateway para IPv6</strong> → é IPv4-only; use <strong>egress-only IGW</strong></li>
+                                        <li><strong>FreeLocalStorage no RDS</strong> → é métrica de Aurora; use <strong>FreeStorageSpace</strong></li>
+                                        <li><strong>CloudEndure com launch templates padrão</strong> → use <strong>DRS</strong></li>
+                                        <li><strong>DAX/ElastiCache para busca complexa</strong> → são cache, não motor de busca</li>
+                                        <li><strong>Adicionar LB ao App Runner</strong> → redundante (load balancing nativo)</li>
+                                        <li><strong>Root sempre recupera chave KMS</strong> → se não está na key policy, só o AWS Support</li>
+                                        <li><strong>Redshift/EMR para logs em tempo real</strong> → use Kinesis</li>
+                                        <li><strong>Snowmobile para dezenas de TB</strong> → só acima de 10 PB</li>
+                                    </ul>
+                                    <div class="tip">💡 Detective/GuardDuty/Inspector ≠ descoberta de dados sensíveis (isso é Macie)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
         </div><!-- end .domains -->
     </div><!-- end .mindmap -->
 

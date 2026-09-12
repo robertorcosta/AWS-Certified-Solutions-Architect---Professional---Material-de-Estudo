@@ -4,7 +4,7 @@
   <img src="0_WN1yxw4ekEwhf_JM.png" alt="AWS Solutions Architect Professional" width="300">
 </p>
 
-Material de estudo completo em **Português do Brasil** para a certificação AWS Solutions Architect Professional (SAP-C02). Conteúdo baseado no guia oficial do exame, documentação AWS e material complementar, com foco em estudo imersivo, roadmap, quiz rápido e cheatsheets de arquitetura.
+Material de estudo completo em **Português do Brasil** para a certificação AWS Solutions Architect Professional (SAP-C02). Conteúdo baseado no guia oficial do exame, documentação AWS e na análise de centenas de questões de cenário no nível Professional, com foco em **julgamento arquitetural**: qual serviço escolher diante de cada gatilho, os detalhes que definem a resposta certa e os distratores que mais derrubam candidatos.
 
 ---
 
@@ -116,6 +116,7 @@ Botão "Imprimir" disponível em ambos os materiais. O CSS é otimizado para imp
 - ✅ Custos (Savings Plans, Reserved Instances, Spot, Compute Optimizer)
 - ✅ Tabelas comparativas (quando usar X vs Y)
 - ✅ Dicas e estratégias para o dia da prova
+- ✅ **Aprofundamento**: 10 blocos de decisão arquitetural (redes, governança/Config, identidade, segurança/KMS, dados/analytics, serverless/containers, migração/DR/edge, IA/ML), tabela **gatilho → serviço** e **distratores clássicos** derivados da análise de cenários reais
 
 ### Mapa Mental (`aws-sap-c02-mapa.html`)
 
@@ -141,7 +142,7 @@ Botão "Imprimir" disponível em ambos os materiais. O CSS é otimizado para imp
 
 ## ⚠️ Aviso
 
-Este material foi criado para fins de estudo pessoal. Os links de referência apontam para a documentação oficial da AWS. Não substitui a prática hands-on nem simulados completos.
+Este material foi criado para fins de estudo pessoal. Os links de referência apontam para a documentação oficial da AWS. Não substitui a prática hands-on.
 
 ---
 

@@ -852,12 +852,28 @@
             <a href="#d4-modernize" class="nav-link">Modernização</a>
         </div>
 
-        <div class="nav-section">
+                <div class="nav-section">
             <div class="nav-section-title">Extras</div>
             <a href="#comparativos" class="nav-link">Tabelas Comparativas</a>
             <a href="#dicas" class="nav-link">Dicas para a Prova</a>
         </div>
-    </nav>
+
+        <div class="nav-section">
+            <div class="nav-section-title">🚀 Aprofundamento</div>
+            <a href="#extra-content" class="nav-link">Visão Geral</a>
+            <a href="#extra-redes" class="nav-link">Redes Híbridas</a>
+            <a href="#extra-governanca" class="nav-link">Governança e Config</a>
+            <a href="#extra-identidade" class="nav-link">Identidade e Federação</a>
+            <a href="#extra-seguranca" class="nav-link">Segurança e KMS</a>
+            <a href="#extra-dados" class="nav-link">Dados e Analytics</a>
+            <a href="#extra-serverless" class="nav-link">Serverless e Containers</a>
+            <a href="#extra-migracao" class="nav-link">Migração, DR e Edge</a>
+            <a href="#extra-ia" class="nav-link">IA/ML Aplicada</a>
+            <a href="#extra-gatilhos" class="nav-link">Gatilho → Serviço</a>
+            <a href="#extra-armadilhas" class="nav-link">Distratores Clássicos</a>
+        </div>
+
+</nav>
 
     <!-- Main Content -->
     <main class="main-content" id="conteudo-principal">
@@ -911,8 +927,8 @@
                 </div>
                 <div class="roadmap-card">
                     <div class="phase-pill">Fase 4</div>
-                    <h3>Simulados e revisão</h3>
-                    <p>Reveja erros, registre padrões e refaça os cenários até conseguir explicar por que sua solução é a melhor.</p>
+                    <h3>Padrões e revisão ativa</h3>
+                    <p>Domine os pares gatilho → serviço e os distratores clássicos da seção de Aprofundamento até conseguir explicar por que sua solução é a melhor.</p>
                 </div>
             </div>
 
@@ -943,7 +959,7 @@
                         <li>Você consegue explicar quando usar cada serviço?</li>
                         <li>Você sabe justificar custo, segurança e disponibilidade?</li>
                         <li>Você consegue comparar soluções alternativas em um cenário real?</li>
-                        <li>Você revisou os erros dos simulados e não repetiu os mesmos?</li>
+                        <li>Você reconhece os distratores clássicos e sabe por que estão errados?</li>
                     </ul>
                 </div>
             </div>
@@ -2995,15 +3011,325 @@
                 <strong>✅ Checklist Final de Preparação</strong>
                 <ul>
                     <li>☐ Estudou todos os 4 domínios com profundidade</li>
-                    <li>☐ Fez pelo menos 3 simulados completos (75 questões, 180 min)</li>
-                    <li>☐ Score nos simulados acima de 75%</li>
-                    <li>☐ Revisou questões erradas e entendeu o porquê</li>
+                    <li>☐ Domina os pares gatilho → serviço da seção de Aprofundamento</li>
+                    <li>☐ Reconhece os distratores clássicos e sabe justificar a eliminação</li>
+                    <li>☐ Sabe explicar trade-offs de custo, latência, RTO/RPO e esforço operacional</li>
                     <li>☐ Leu os whitepapers de DR e Well-Architected</li>
                     <li>☐ Conhece as tabelas comparativas de serviços</li>
                     <li>☐ Praticou gestão de tempo (2.4 min/questão)</li>
                 </ul>
             </div>
         </section>
+
+                <div class="section-divider"><span>APROFUNDAMENTO</span></div>
+
+        <section id="extra-content">
+            <h2>🚀 Aprofundamento: Decisões de Arquitetura e Armadilhas Recorrentes</h2>
+            <p>Seção consolidada a partir do cruzamento entre os slides oficiais do curso, a documentação da AWS e a análise de centenas de questões de cenário no nível Professional. O foco aqui é <strong>julgamento arquitetural</strong>: qual serviço escolher diante de cada gatilho, os detalhes que definem a resposta certa e os distratores que mais derrubam candidatos.</p>
+
+            <div class="info-box">
+                <strong>📌 Como usar esta seção</strong>
+                As questões do SAP-C02 raramente perguntam "o que é o serviço X". Elas descrevem um cenário com múltiplos requisitos (custo, latência, RTO/RPO, esforço operacional, compliance) e pedem a melhor combinação. Leia cada bloco como um par <em>gatilho → decisão</em>, prestando atenção nos limites numéricos e nas condições exatas que invalidam as demais opções.
+            </div>
+
+            <h3 id="extra-redes">1. Redes e Conectividade Híbrida</h3>
+            <div class="topic-card">
+                <div class="service-grid">
+                    <div class="service-card">
+                        <h4>Route 53 — Roteamento e Resolver</h4>
+                        <ul>
+                            <li><strong>Failover sobre latency routing:</strong> só funciona se você anexar <strong>health checks HTTP/TCP</strong> aos records E ativar <strong>Evaluate Target Health</strong> no alias. Sem isso, o Route 53 assume tudo saudável e continua roteando para a região morta. Reduzir o <em>weight</em> da região com falha NÃO redireciona.</li>
+                            <li><strong>Distribuir leitura entre read replicas:</strong> use <strong>weighted records com peso igual</strong>, um por endpoint. ELB não aponta para réplica RDS.</li>
+                            <li><strong>Resolver INBOUND</strong> = on-prem resolve nomes na AWS (encaminha para o IP do endpoint). <strong>Resolver OUTBOUND + forwarding rules</strong> = AWS resolve nomes on-prem. Para milhões de QPS, endpoints inbound e outbound <strong>em cada AZ</strong>.</li>
+                        </ul>
+                    </div>
+                    <div class="service-card">
+                        <h4>Direct Connect vs VPN</h4>
+                        <ul>
+                            <li>DX é <strong>lento de provisionar (semanas)</strong> e <strong>não é criptografado por padrão</strong>. Descarte-o quando o requisito for "rápido de implantar", "proteção fim-a-fim" ou migração urgente.</li>
+                            <li><strong>Conectividade rápida agora, DX depois:</strong> suba uma <strong>VPN</strong> e faça cutover para o DX quando ele ficar pronto.</li>
+                            <li><strong>DX HA:</strong> redundância vem de <strong>múltiplos DX locations</strong> distintos, não de AZs. Um <em>private VIF</em> serve a um único VPC (use DX Gateway para vários).</li>
+                            <li><strong>VPN HA sem intervenção:</strong> duas VPN connections de Customer Gateways distintos para um <strong>único Transit Gateway</strong>, com <strong>BGP + ECMP</strong> (reroute e balanceamento automáticos).</li>
+                        </ul>
+                    </div>
+                    <div class="service-card">
+                        <h4>PrivateLink e VPC Endpoints</h4>
+                        <ul>
+                            <li><strong>Interface Endpoint (PrivateLink):</strong> acesso privado a um serviço específico ou SaaS de terceiro — cria uma ENI com IP privado, sem internet/VPN/DX.</li>
+                            <li><strong>Gateway Endpoint:</strong> existe apenas para <strong>S3 e DynamoDB</strong>. Ótimo para alta banda a S3 (mais barato/seguro que NAT), mas mantenha o NAT se as instâncias ainda precisam baixar patches de fora.</li>
+                        </ul>
+                    </div>
+                    <div class="service-card">
+                        <h4>Global Accelerator vs CloudFront</h4>
+                        <ul>
+                            <li><strong>Global Accelerator:</strong> IPs anycast estáticos, caminho ótimo até a região saudável mais próxima e <strong>failover cross-region instantâneo</strong>. Escolha quando o gatilho é latência de rede + failover multi-região, <em>sem</em> cache.</li>
+                            <li><strong>CloudFront:</strong> CDN com cache no edge (estático + dinâmico/API); <strong>signed URLs</strong> para conteúdo restrito. Colocá-lo na frente derruba os logs da origem — habilite <strong>CloudFront access logs</strong>.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="info-box warning" style="margin-top:16px;">
+                    <strong>⚠️ Armadilhas de rede</strong>
+                    <ul>
+                        <li><strong>Security Group não faz "deny".</strong> Para bloquear um IP/porta específico use <strong>NACL</strong> (deny em nível de subnet).</li>
+                        <li><strong>NAT Gateway é IPv4-only.</strong> Para saída IPv6 use <strong>egress-only Internet Gateway</strong>.</li>
+                        <li><strong>CIDR do VPC e DHCP option set são imutáveis</strong> (adicione CIDR secundário / crie novo option set). O VPC aceita até 4 CIDRs IPv4 secundários.</li>
+                        <li><strong>S3 Transfer Acceleration não funciona com Glacier.</strong></li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3 id="extra-governanca">2. Multi-Account, Governança e Config</h3>
+            <div class="topic-card">
+                <div class="service-grid">
+                    <div class="service-card">
+                        <h4>Organizations e SCP</h4>
+                        <ul>
+                            <li><strong>Deny explícito sempre vence</strong> e é herdado descendo a árvore. Permissão efetiva = interseção de <strong>SCP ∩ permissions boundary ∩ IAM policy</strong>.</li>
+                            <li>Para bloquear ações perigosas de forma uniforme (ex.: <code>cloudtrail:StopLogging</code>, <code>s3:DeleteBucket</code>): prefira um <strong>Deny no root</strong> (exige <em>All features</em>).</li>
+                            <li>Restringir região: <strong>um único SCP</strong> negando <code>ec2:RunInstances</code> exceto quando <code>region = X</code> (evite pares allow+deny conflitantes).</li>
+                            <li>SCPs <strong>não concedem</strong> permissão — funcionam como guardrail máximo.</li>
+                        </ul>
+                    </div>
+                    <div class="service-card">
+                        <h4>Refinar SCPs com dados reais</h4>
+                        <ul>
+                            <li>Para descobrir <strong>serviços permitidos mas nunca usados</strong> (e então restringi-los): <strong>IAM → Access reports → Organization activity</strong> (service last-accessed org-wide).</li>
+                            <li>IAM Access Analyzer <em>não</em> faz isso — ele acha recursos compartilhados <strong>externamente</strong>. Access Advisor é por-entidade, não org-wide.</li>
+                        </ul>
+                    </div>
+                    <div class="service-card">
+                        <h4>AWS Config (muito cobrado)</h4>
+                        <ul>
+                            <li><strong>Conformance Packs:</strong> empacotam regras de compliance + ações de <strong>remediação</strong> como uma unidade, implantável org-wide (contas/regiões) com monitoramento contínuo.</li>
+                            <li><strong>Remediação automática:</strong> regras do Config disparam <strong>SSM Automation documents</strong> para corrigir recursos fora de conformidade.</li>
+                            <li>É pré-requisito obrigatório do <strong>Firewall Manager</strong> em cada conta-membro.</li>
+                        </ul>
+                    </div>
+                    <div class="service-card">
+                        <h4>RAM, Service Catalog e Budgets</h4>
+                        <ul>
+                            <li><strong>RAM:</strong> compartilha recursos específicos (subnets, Transit Gateway, regras de Network Firewall/DNS Firewall e <strong>components/recipes/images do EC2 Image Builder</strong>) via <em>resource share</em> + principals. Não gerencia roles IAM.</li>
+                            <li><strong>Service Catalog Template Constraint:</strong> forma correta de restringir valores de parâmetro do CloudFormation (ex.: limitar o InstanceType permitido por time).</li>
+                            <li><strong>Budgets actions:</strong> ao cruzar o threshold, aplica <strong>SCP</strong>, IAM policy ou para EC2/RDS. Para impedir <em>lançamento</em> de instâncias acima do orçamento, use a ação que aplica <strong>SCP</strong> (parar EC2 só afeta o que já roda).</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <h3 id="extra-identidade">3. Identidade e Federação</h3>
+            <div class="topic-card">
+                <div class="service-grid">
+                    <div class="service-card">
+                        <h4>Cognito — User Pool vs Identity Pool</h4>
+                        <ul>
+                            <li><strong>User Pool = autenticação</strong> (diretório + federação com Google/Facebook/SAML). <strong>Identity Pool = autorização</strong> (entrega credenciais AWS temporárias).</li>
+                            <li><strong>Acesso guest/unauthenticated</strong> habilita-se no <strong>Identity Pool</strong> (identidade via <code>GetId</code>).</li>
+                            <li>Permissões por papel: crie <strong>groups no User Pool</strong> e anexe uma IAM role a cada group — nunca policy direto no usuário.</li>
+                            <li><strong>User Pool authorizer</strong> é a melhor forma de autenticar muitos clientes num REST API no API Gateway.</li>
+                        </ul>
+                    </div>
+                    <div class="service-card">
+                        <h4>STS e SAML</h4>
+                        <ul>
+                            <li><strong>SAML → console/S3:</strong> o usuário autentica no IdP, recebe a <em>assertion</em> e chama <strong><code>AssumeRoleWithSAML</code></strong> no STS. O IdP não chama o STS pelo usuário.</li>
+                            <li><strong><code>AssumeRoleWithWebIdentity</code></strong> só para IdP público/social (OIDC). Para SSO corporativo SAML use SAML federation + IAM Identity Center.</li>
+                            <li><strong>Broker de identidade legado:</strong> autentica e chama <strong><code>GetFederationToken</code></strong> ou <code>AssumeRole</code>.</li>
+                        </ul>
+                    </div>
+                    <div class="service-card">
+                        <h4>IAM roles e boundaries</h4>
+                        <ul>
+                            <li><strong>EC2 acessa serviço AWS:</strong> sempre via <strong>IAM role anexada à instância</strong> — nunca access keys embutidas. A policy vai na role, não no recurso alvo.</li>
+                            <li><strong>Cross-account:</strong> a role é criada na <strong>conta dona dos recursos</strong>; a conta chamadora recebe permissão de <code>AssumeRole</code>. Consolidated billing sozinho não dá acesso.</li>
+                            <li><strong>Permissions boundary é teto:</strong> ação precisa estar na identity policy E no boundary. Para delegar criação de role forçando boundary, use <code>iam:CreateRole</code> com condition <code>iam:PermissionsBoundary</code>.</li>
+                            <li><strong>AD Connector</strong> = gateway ao AD on-prem <strong>sem cache</strong> (use quando "no caching" for requisito); Managed Microsoft AD faz cache.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <h3 id="extra-seguranca">4. Segurança e Criptografia</h3>
+            <div class="topic-card">
+                <div class="service-grid">
+                    <div class="service-card">
+                        <h4>KMS</h4>
+                        <ul>
+                            <li><strong>Cross-account:</strong> a <strong>key policy da chave dona</strong> autoriza o principal externo com ações mínimas (<code>Encrypt, Decrypt, ReEncrypt*, GenerateDataKey*, DescribeKey</code>) — nunca <code>kms:*</code>.</li>
+                            <li><strong>S3 Bucket Keys:</strong> forma mais barata de cortar custo quando milhões de objetos geram chamadas KMS por objeto.</li>
+                            <li><strong>Ler SecureString (SSM):</strong> basta <code>kms:Decrypt</code> (não Encrypt/GenerateDataKey).</li>
+                            <li><strong>Lockout:</strong> se a key policy não inclui o root nem outro admin e o único principal é removido, só o <strong>AWS Support</strong> recupera a chave. Deleção tem janela de 7–30 dias (default 30).</li>
+                        </ul>
+                    </div>
+                    <div class="service-card">
+                        <h4>Detecção e postura (não confundir escopo)</h4>
+                        <ul>
+                            <li><strong>Macie:</strong> descobre <strong>dados sensíveis em S3</strong>. Org-wide: Auto-enable ON + <code>kms:Decrypt</code> na service-linked role (sem isso, só reporta metadados).</li>
+                            <li><strong>GuardDuty:</strong> detecção de ameaças. <strong>Detective:</strong> investigação de findings (multi-account, <strong>por-região</strong>). <strong>Inspector:</strong> vulnerabilidades de EC2/software.</li>
+                            <li><strong>IAM Access Analyzer:</strong> acha recursos expostos a entidades externas.</li>
+                            <li><strong>Firewall Manager</strong> exige Organizations <em>All features</em> + admin account + <strong>Config</strong> em cada membro.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <h3 id="extra-dados">5. Bancos de Dados e Analytics</h3>
+            <div class="topic-card">
+                <div class="service-grid">
+                    <div class="service-card">
+                        <h4>Aurora, RDS e DynamoDB</h4>
+                        <ul>
+                            <li><strong>Aurora Global Database (DR):</strong> na falha da região primária, faça <strong>detach do secundário</strong> (promove a writable) e aponte o app para o novo writer. Restaurar snapshot NÃO é failover.</li>
+                            <li><strong>RDS Multi-AZ</strong> = standby síncrono, não legível, alvo de failover (re-aponta o CNAME). <strong>Multi-AZ DB cluster</strong> = standbys <strong>legíveis</strong> + failover: HA e read scaling na mesma região.</li>
+                            <li><strong>DynamoDB:</strong> query em atributo não-chave → <strong>GSI</strong>; picos de escrita → <strong>Auto Scaling</strong>; busca/filtro rico → replicar para <strong>OpenSearch</strong> (DAX e ElastiCache são cache, não busca).</li>
+                            <li><strong>Trocar instance class do RDS causa reboot</strong> mesmo sem Apply Immediately → aplique na janela de manutenção.</li>
+                        </ul>
+                    </div>
+                    <div class="service-card">
+                        <h4>DMS, Redshift e Timestream</h4>
+                        <ul>
+                            <li><strong>DMS</strong> faz replicação contínua (CDC); migração heterogênea usa <strong>SCT</strong> antes. Read replica não é DR para on-prem.</li>
+                            <li><strong>Redshift Spectrum</strong> consulta dados direto no S3, reduzindo o tamanho do cluster.</li>
+                            <li><strong>Timestream</strong> (série temporal serverless): memory store (writes rápidos) + magnetic store (analítico/retenção longa).</li>
+                        </ul>
+                    </div>
+                    <div class="service-card">
+                        <h4>Analytics e Observabilidade</h4>
+                        <ul>
+                            <li><strong>Log analytics open-source near-real-time:</strong> <strong>Kinesis Firehose → OpenSearch → Dashboards</strong> (VPC Flow Logs vão direto ao Firehose).</li>
+                            <li><strong>Athena Federated Query</strong> usa conectores Lambda para RDS/Redshift/on-prem; otimize com Glue, partition pruning e predicate pushdown.</li>
+                            <li><strong>CloudWatch Synthetics Canaries</strong> para heartbeat + GET/POST; dashboards podem exibir métricas <strong>cross-account e cross-region</strong>.</li>
+                            <li><strong>X-Ray</strong> para tracing distribuído com correlação automática.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <h3 id="extra-serverless">6. Serverless, Integração e Containers</h3>
+            <div class="topic-card">
+                <div class="service-grid">
+                    <div class="service-card">
+                        <h4>Lambda e API Gateway</h4>
+                        <ul>
+                            <li><strong>Lambda timeout máx 15 min</strong>, mas o <strong>API Gateway corta em 29 s</strong> (não aumentável) → HTTP 504 mesmo com Lambda longa.</li>
+                            <li><strong>Tuning de memória:</strong> leia "max memory used" no CloudWatch Logs; subir memória também sobe vCPU.</li>
+                            <li><strong>Lambda Proxy integration</strong> com método <strong>ANY</strong> passa o request cru e evita re-deploy ao mudar a função.</li>
+                        </ul>
+                    </div>
+                    <div class="service-card">
+                        <h4>Step Functions e Mensageria</h4>
+                        <ul>
+                            <li><strong>Standard</strong> (até 1 ano, exactly-once) para tarefas não-idempotentes (pagamento). <strong>Express</strong> (≤5 min): Sync = at-most-once; Async = at-least-once (alto volume idempotente).</li>
+                            <li><strong>SQS FIFO</strong> garante ordem + dedup, mas <strong>não se converte</strong> de Standard (recrie). <strong>DLQ</strong> precisa ser do mesmo tipo do source.</li>
+                            <li><strong>KDS:</strong> retenção default 24h, até 7 dias (ou 365 long-term), com replay. <strong>Firehose</strong> entrega a S3/Redshift/OpenSearch.</li>
+                            <li><strong>Amazon MQ</strong> para lift-and-shift de broker JMS/AMQP/MQTT/<strong>WebSocket</strong> sem mudar código.</li>
+                        </ul>
+                    </div>
+                    <div class="service-card">
+                        <h4>Containers e Compute</h4>
+                        <ul>
+                            <li><strong>ECS Fargate</strong> = containers serverless. Prefira <strong>ECS</strong> a EKS quando não precisar da API Kubernetes.</li>
+                            <li><strong>App Runner:</strong> load balancing e scaling <strong>nativos</strong> (não adicione LB), CI/CD direto de GitHub/Bitbucket, VPC Connector para recursos privados. Mais simples que Fargate/EKS/Lambda para web apps.</li>
+                            <li><strong>ECS resiliente e barato:</strong> ASG de EC2 + <strong>ECS capacity provider</strong> (auto-substitui instância). Fargate Spot é interrompível → impróprio para crítico.</li>
+                            <li><strong>Elastic Beanstalk:</strong> update de plataforma via <strong>blue/green + swap de CNAME</strong>; worker environment + SQS desacopla jobs longos.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <h3 id="extra-migracao">7. Migração, DR e Serviços de Edge</h3>
+            <div class="topic-card">
+                <div class="service-grid">
+                    <div class="service-card">
+                        <h4>DR e Migração de Workload</h4>
+                        <ul>
+                            <li><strong>AWS Elastic Disaster Recovery (DRS):</strong> DR barato com <strong>RPO em segundos / RTO em minutos</strong> via replicação block-level; use launch templates padrão e faça <em>DR drills</em>. AWS Backup não atinge esses valores.</li>
+                            <li><strong>AWS MGN:</strong> replicação contínua do workload completo + teste + cutover em janela de baixo tráfego; combine <strong>pilot light</strong> para críticos e <strong>bandwidth throttling</strong> sob restrição de rede.</li>
+                            <li><strong>Application Discovery Service:</strong> descoberta agentless, precisa de HTTPS outbound (443).</li>
+                        </ul>
+                    </div>
+                    <div class="service-card">
+                        <h4>Snow, DataSync e Transfer</h4>
+                        <ul>
+                            <li><strong>Snow Family</strong> para PB offline (limite de rede/compliance). <strong>Snowmobile só acima de 10 PB.</strong> Snowball Edge Compute Optimized quando precisa processar (ML) no edge antes de enviar.</li>
+                            <li><strong>DataSync</strong> migra NFS/SMB/HDFS online, mas <strong>não suporta SFTP como source</strong> → use <strong>Transfer Family</strong> para ingestão SFTP.</li>
+                        </ul>
+                    </div>
+                    <div class="service-card">
+                        <h4>Edge: Wavelength, Local Zones, Outposts</h4>
+                        <ul>
+                            <li><strong>Wavelength Zone:</strong> compute no edge da rede 5G do telco (latência mínima para devices 5G). Acesso à internet via <strong>Carrier Gateway</strong> (não NAT); inter-zona via Transit Gateway.</li>
+                            <li><strong>Local Zone:</strong> extensão da região num metrô (mais perto de usuários), não é edge-5G.</li>
+                            <li><strong>Outposts:</strong> serviços AWS on-premises. <strong>S3 on Outposts</strong> exige access points + VPC endpoint + conexão ativa com a Region.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="info-box success" style="margin-top:16px;">
+                    <strong>✅ 7 Rs — leitura rápida</strong>
+                    Rehost (lift &amp; shift, MGN, ideal para piloto) · Replatform (lift, tinker &amp; shift — ex.: DB → RDS) · Refactor (decompor monólito em microservices) · Relocate (VMware/containers as-is) · Repurchase · Retain · Retire.
+                </div>
+            </div>
+
+            <h3 id="extra-ia">8. IA/ML Aplicada em Arquitetura</h3>
+            <div class="topic-card">
+                <ul>
+                    <li><strong>Rekognition</strong> consome direto de <strong>Kinesis Video Streams</strong> para face/objeto em tempo real (stream processor via <code>CreateStreamProcessor</code>, envio com <code>PutMedia</code>). Use <code>RecognizeCelebrities</code> para celebridades; <code>DetectFaces</code> é só imagem única. Rode a partir de <strong>Lambda</strong> para autoescala e custo.</li>
+                    <li><strong>Fronteiras de serviço (pegadinha frequente):</strong> <strong>Textract</strong> = texto de documentos · <strong>Transcribe</strong> = fala→texto (com custom vocabulary) · <strong>Polly</strong> = texto→fala · <strong>Translate</strong> = tradução · <strong>Comprehend</strong> = NLP.</li>
+                    <li><strong>Pipeline de mídia gerenciado:</strong> Step Functions + <strong>MediaConvert</strong> (arquivo) evita EC2 para transcode; MediaLive é para ao vivo; Elastic Transcoder é legado.</li>
+                </ul>
+            </div>
+
+            <h3 id="extra-gatilhos">9. Gatilho → Serviço (referência rápida)</h3>
+            <div class="topic-card">
+                <table class="comparison-table">
+                    <thead>
+                        <tr><th>Quando o cenário pede…</th><th>Escolha</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Compartilhar recipes/images do EC2 Image Builder entre contas</td><td><strong>RAM resource share</strong></td></tr>
+                        <tr><td>Achar serviços permitidos mas nunca usados (afinar SCP)</td><td><strong>IAM → Organization activity</strong> (last-accessed)</td></tr>
+                        <tr><td>Bloquear ação perigosa em toda a org</td><td><strong>SCP com Deny no root</strong></td></tr>
+                        <tr><td>Log analytics open-source em near-real-time</td><td><strong>Firehose → OpenSearch → Dashboards</strong></td></tr>
+                        <tr><td>Menor latência de rede + failover cross-region (sem cache)</td><td><strong>Global Accelerator</strong></td></tr>
+                        <tr><td>Acesso privado a serviço/SaaS sem internet</td><td><strong>Interface VPC Endpoint (PrivateLink)</strong></td></tr>
+                        <tr><td>Migrar PB com limite de rede/compliance</td><td><strong>Snow Family</strong> (Snowmobile só &gt; 10 PB)</td></tr>
+                        <tr><td>Bloquear IP/porta específicos</td><td><strong>NACL deny</strong> (SG não nega)</td></tr>
+                        <tr><td>Query em atributo não-chave do DynamoDB</td><td><strong>GSI</strong>; busca rica → OpenSearch</td></tr>
+                        <tr><td>HA + read scaling de RDS na mesma região</td><td><strong>Multi-AZ DB cluster</strong> (standby legível)</td></tr>
+                        <tr><td>DR com RPO em segundos / RTO em minutos</td><td><strong>AWS DRS</strong></td></tr>
+                        <tr><td>Deploy de container sem gerir LB/cluster + CI/CD de repo</td><td><strong>App Runner</strong></td></tr>
+                        <tr><td>Federação SAML corporativa para AWS</td><td><strong>STS AssumeRoleWithSAML</strong></td></tr>
+                        <tr><td>Compliance org-wide (regras + remediação)</td><td><strong>Config Conformance Packs</strong></td></tr>
+                        <tr><td>Restringir valores de parâmetro do CloudFormation por time</td><td><strong>Service Catalog Template Constraint</strong></td></tr>
+                        <tr><td>Reduzir custo de KMS com milhões de objetos S3</td><td><strong>S3 Bucket Keys</strong></td></tr>
+                        <tr><td>Descobrir dados sensíveis em S3 org-wide</td><td><strong>Macie</strong></td></tr>
+                        <tr><td>Broker de mensagens WebSocket/JMS/AMQP lift-and-shift</td><td><strong>Amazon MQ</strong></td></tr>
+                        <tr><td>Edge de rede 5G com latência mínima</td><td><strong>Wavelength Zone</strong> (Carrier Gateway)</td></tr>
+                        <tr><td>Rightsizing de compute / insight de custo de S3 / dataset de custo</td><td><strong>Compute Optimizer / Storage Lens / CUR</strong></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 id="extra-armadilhas">10. Distratores Clássicos (por que estão errados)</h3>
+            <div class="topic-card">
+                <div class="info-box warning">
+                    <ul>
+                        <li><strong>CloudFront</strong> para "menor latência global com failover" → é <strong>Global Accelerator</strong>.</li>
+                        <li><strong>Security Group para negar IP</strong> → SG só faz allow; use <strong>NACL</strong>.</li>
+                        <li><strong>Converter fila Standard em FIFO</strong> ou <strong>DLQ de tipo diferente</strong> → inválido.</li>
+                        <li><strong>FreeLocalStorage para RDS</strong> → é métrica de Aurora; use <strong>FreeStorageSpace</strong>.</li>
+                        <li><strong>Direct Connect</strong> para prazo curto / "rápido e criptografado" → lento e não criptografado por padrão.</li>
+                        <li><strong>CloudEndure com launch templates padrão</strong> → use <strong>DRS</strong>.</li>
+                        <li><strong>Detective / GuardDuty / Inspector</strong> para descoberta de dados sensíveis → é <strong>Macie</strong>.</li>
+                        <li><strong>Root sempre recupera chave KMS</strong> → se não estiver na key policy, só o AWS Support.</li>
+                        <li><strong>DAX / ElastiCache para busca complexa</strong> → são cache, não motor de busca.</li>
+                        <li><strong>Adicionar LB ao App Runner</strong> → redundante (load balancing nativo).</li>
+                        <li><strong>Redshift/EMR para logs em tempo real</strong> → Redshift é query analítica; EMR é batch; use Kinesis.</li>
+                        <li><strong>Snowmobile para dezenas de TB</strong> → só acima de 10 PB.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
 
         <footer style="margin-top: 60px; padding: 30px 0; border-top: 1px solid var(--border); text-align: center; color: var(--text-secondary); font-size: 0.85rem;">
             <p><button onclick="window.print()" style="background: var(--bg-tertiary); border: 1px solid var(--border); color: var(--text-primary); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; margin-bottom: 15px;">🖨️ Imprimir / Salvar como PDF</button></p>

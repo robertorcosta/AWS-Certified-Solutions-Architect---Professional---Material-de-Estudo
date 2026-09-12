@@ -138,6 +138,7 @@
         .d2 .domain-header { background: linear-gradient(135deg, #2e7d32, #1b5e20); }
         .d3 .domain-header { background: linear-gradient(135deg, #6a1b9a, #4a148c); }
         .d4 .domain-header { background: linear-gradient(135deg, #e65100, #bf360c); }
+        .d5 .domain-header { background: linear-gradient(135deg, #00838f, #4527a0); }
 
         /* Branch line from domain to topics */
         .branch-line {
@@ -149,6 +150,7 @@
         .d2 .branch-line { background: #2e7d32; }
         .d3 .branch-line { background: #6a1b9a; }
         .d4 .branch-line { background: #e65100; }
+        .d5 .branch-line { background: #00838f; }
 
         /* Topics container */
         .topics {
@@ -1690,6 +1692,99 @@
                         </div>
                     </div>
 
+                </div>
+            </div>
+
+            <!-- NOVIDADES 2025-2026 (contexto) -->
+            <div class="domain d5">
+                <div class="domain-header" onclick="this.parentElement.classList.toggle('open')">
+                    🆕 Novidades AWS 2025-2026
+                    <span class="weight">Extra — contexto, não muda o exame</span>
+                </div>
+                <div class="branch-line"></div>
+                <div class="topics">
+                    <div class="topic">
+                        <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+                            <span class="icon">🆕</span>
+                            Novidades AWS (contexto)
+                            <span class="arrow">▶</span>
+                        </div>
+                        <div class="services">
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-blue"></span>Networking<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>Route 53 Global Resolver (preview):</strong> DNS anycast unificado público+privado, DNS híbrido com menos overhead</li>
+                                        <li><strong>AWS Interconnect multicloud (preview):</strong> conectividade gerenciada AWS ↔ Azure</li>
+                                    </ul>
+                                    <div class="tip">💡 Recurso em preview raramente é a resposta correta na prova</div>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-orange"></span>Segurança<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>Security Hub (GA):</strong> correlação de sinais near real-time + priorização de risco</li>
+                                        <li><strong>GuardDuty Extended Threat Detection:</strong> ataques multi-stage entre EC2 e ECS</li>
+                                        <li><strong>Network Scanning no Security Hub:</strong> descoberta de exposição de rede</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-green"></span>Custos<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>Database Savings Plans:</strong> Savings Plans agora para serviços de banco, com flexibilidade de serviço/deployment</li>
+                                    </ul>
+                                    <div class="tip">💡 Some ao trio Savings Plans (Compute/EC2) + RIs + Spot</div>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-purple"></span>Serverless / IaC<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>Lambda Durable Functions:</strong> orquestra passos por até 1 ano sem pagar idle — concorre com Step Functions</li>
+                                        <li><strong>Lambda Managed Instances:</strong> Lambda sobre compute EC2 (hardware especializado + preço EC2)</li>
+                                        <li><strong>CloudFormation Express mode:</strong> confirmação de deploy em segundos</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-cyan"></span>Storage / Dados<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>S3 Tables:</strong> replicação cross-region/account + Intelligent-Tiering</li>
+                                        <li><strong>FSx ONTAP + S3:</strong> acessa dados do file system via S3 sem mover/copiar</li>
+                                        <li><strong>S3 Storage Lens:</strong> métricas de performance, bilhões de prefixos, export p/ S3 Tables</li>
+                                        <li><strong>S3 Vectors (GA):</strong> vetores em escala, custo menor que bancos vetoriais dedicados</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="service">
+                                <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
+                                    <span class="dot dot-yellow"></span>Compute / DB<span class="expand">+</span>
+                                </div>
+                                <div class="service-detail">
+                                    <ul>
+                                        <li><strong>Graviton5:</strong> melhor price-performance em EC2</li>
+                                        <li><strong>EKS Capabilities:</strong> orquestração gerenciada, menos manutenção de infra K8s</li>
+                                        <li><strong>Aurora Serverless:</strong> ~30% mais performance e scaling mais inteligente</li>
+                                    </ul>
+                                    <div class="tip">💡 Foco: o núcleo do SAP-C02 não mudou. Isto é conhecimento de contexto.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 

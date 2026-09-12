@@ -856,6 +856,7 @@
             <div class="nav-section-title">Extras</div>
             <a href="#comparativos" class="nav-link">Tabelas Comparativas</a>
             <a href="#dicas" class="nav-link">Dicas para a Prova</a>
+            <a href="#novidades" class="nav-link">Novidades 2025-2026</a>
         </div>
 
         <div class="nav-section">
@@ -3330,6 +3331,116 @@
             </div>
         </section>
 
+        <div class="section-divider"><span>NOVIDADES</span></div>
+
+        <!-- Novidades 2025-2026 -->
+        <section id="novidades">
+            <h2>Novidades AWS 2025-2026 (Contexto)</h2>
+
+            <div class="info-box warning">
+                <strong>⚠️ O guia oficial do SAP-C02 NÃO mudou</strong>
+                Os 4 domínios e pesos continuam iguais. O foco principal do estudo deve ser o conteúdo core acima. Esta seção lista lançamentos recentes (re:Invent 2025 e 2026) que tocam temas cobrados e podem aparecer como opções em cenários. Trate como conhecimento de contexto, não como o centro da preparação. Recursos em <em>preview</em> raramente são a resposta correta na prova.
+            </div>
+
+            <h3>Networking e Content Delivery</h3>
+            <details>
+                <summary>Route 53 Global Resolver <span class="tag tag-yellow">preview</span></summary>
+                <div class="content">
+                    <p>Resolução DNS anycast segura e unificada para domínios públicos e privados globalmente, reduzindo overhead operacional em DNS híbrido.</p>
+                    <p><span class="tag tag-blue">Conecta com:</span> Route 53 Resolver / DNS Híbrido. Em cenários de "DNS híbrido global com menor esforço operacional", é o candidato moderno.</p>
+                </div>
+            </details>
+            <details>
+                <summary>AWS Interconnect — multicloud com Microsoft Azure <span class="tag tag-yellow">preview</span></summary>
+                <div class="content">
+                    <p>Conectividade gerenciada entre AWS e Azure. Relevante em cenários de arquitetura multicloud (antes resolvidos com Direct Connect + parceiros/VPN).</p>
+                </div>
+            </details>
+
+            <h3>Segurança, Identidade e Compliance</h3>
+            <details>
+                <summary>AWS Security Hub (nova versão, GA)</summary>
+                <div class="content">
+                    <p>Correlação de sinais de segurança em <strong>near real-time</strong> com priorização de risco. Evolução da visão consolidada de findings.</p>
+                    <p><span class="tag tag-yellow">Cenário:</span> "resposta mais rápida a riscos correlacionados entre o ambiente AWS".</p>
+                </div>
+            </details>
+            <details>
+                <summary>Amazon GuardDuty Extended Threat Detection (EC2 e ECS)</summary>
+                <div class="content">
+                    <p>Detecta ataques <strong>multi-stage</strong> com visibilidade unificada entre VMs e containers. Reforça o padrão "GuardDuty detecta ameaça → EventBridge → resposta automática".</p>
+                </div>
+            </details>
+            <details>
+                <summary>Network Scanning no Security Hub</summary>
+                <div class="content">
+                    <p>Descoberta de exposição de rede. Complementa Inspector e IAM Access Analyzer na identificação de superfície exposta.</p>
+                </div>
+            </details>
+
+            <h3>Custos</h3>
+            <details>
+                <summary>Database Savings Plans</summary>
+                <div class="content">
+                    <p>Novo modelo de compra que estende o conceito de Savings Plans para serviços de banco de dados, com flexibilidade de serviço/deployment.</p>
+                    <p><span class="tag tag-yellow">Cenário:</span> "reduzir custo de fleet de bancos com flexibilidade" — some ao mapa mental de Savings Plans (Compute/EC2) e RIs.</p>
+                </div>
+            </details>
+
+            <h3>Serverless e Orquestração</h3>
+            <details>
+                <summary>AWS Lambda Durable Functions</summary>
+                <div class="content">
+                    <p>Coordena múltiplos passos de forma confiável por períodos longos (segundos até 1 ano) sem pagar por tempo ocioso esperando eventos externos ou decisões humanas.</p>
+                    <p><span class="tag tag-blue">Compare com:</span> Step Functions em workflows de longa duração — agora dá pra orquestrar dentro do próprio Lambda.</p>
+                </div>
+            </details>
+            <details>
+                <summary>AWS Lambda Managed Instances</summary>
+                <div class="content">
+                    <p>Roda funções Lambda sobre compute EC2 mantendo a simplicidade serverless — acesso a hardware especializado e modelos de preço de EC2, com a AWS gerenciando a infraestrutura.</p>
+                </div>
+            </details>
+
+            <h3>IaC / Deploy</h3>
+            <details>
+                <summary>AWS CloudFormation Express mode</summary>
+                <div class="content">
+                    <p>Confirmação de deploy em segundos para iteração mais rápida. Encaixa na seção de CloudFormation e estratégias de deploy.</p>
+                </div>
+            </details>
+
+            <h3>Storage e Dados</h3>
+            <details>
+                <summary>S3 Tables, FSx ONTAP + S3, S3 Storage Lens, S3 Vectors</summary>
+                <div class="content">
+                    <ul>
+                        <li><strong>S3 Tables:</strong> agora com replicação cross-region/cross-account e Intelligent-Tiering (otimização automática de custo). Relevante para data lakes analíticos.</li>
+                        <li><strong>FSx for NetApp ONTAP integra com S3:</strong> acessa dados do file system via S3 para analytics/ML/IA sem mover ou copiar dados. Reforça FSx ONTAP como escolha multiprotocolo.</li>
+                        <li><strong>S3 Storage Lens:</strong> métricas de performance, suporte a bilhões de prefixos e export para S3 Tables.</li>
+                        <li><strong>Amazon S3 Vectors (GA):</strong> armazenamento e consulta de vetores em escala com custo bem menor que bancos vetoriais dedicados (cenários de busca semântica / RAG).</li>
+                    </ul>
+                </div>
+            </details>
+
+            <h3>Compute / Database (menções rápidas)</h3>
+            <details>
+                <summary>Graviton5, EKS Capabilities, Aurora Serverless</summary>
+                <div class="content">
+                    <ul>
+                        <li><strong>Graviton5:</strong> melhor price-performance em EC2 — reforça o padrão "usar Graviton para reduzir custo/energia".</li>
+                        <li><strong>Amazon EKS Capabilities:</strong> orquestração de workloads gerenciada, reduz manutenção de infraestrutura K8s.</li>
+                        <li><strong>Aurora Serverless:</strong> ~30% melhor performance e scaling mais inteligente em mais regiões.</li>
+                    </ul>
+                </div>
+            </details>
+
+            <div class="info-box">
+                <strong>📌 Fontes</strong>
+                <a href="https://aws.amazon.com/blogs/aws/top-announcements-of-aws-reinvent-2025/" target="_blank">Top announcements re:Invent 2025</a> |
+                <a href="https://aws.amazon.com/about-aws/whats-new/" target="_blank">What's New with AWS</a>. Conteúdo resumido e reescrito para fins de estudo.
+            </div>
+        </section>
 
         <footer style="margin-top: 60px; padding: 30px 0; border-top: 1px solid var(--border); text-align: center; color: var(--text-secondary); font-size: 0.85rem;">
             <p><button onclick="window.print()" style="background: var(--bg-tertiary); border: 1px solid var(--border); color: var(--text-primary); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; margin-bottom: 15px;">🖨️ Imprimir / Salvar como PDF</button></p>

@@ -1671,22 +1671,24 @@
                         <div class="services">
                             <div class="service">
                                 <div class="service-name" onclick="this.parentElement.classList.toggle('open')">
-                                    <span class="dot dot-pink"></span>Respostas que parecem certas mas não são<span class="expand">+</span>
+                                    <span class="dot dot-pink"></span>A isca ❌ vs a resposta certa ✅<span class="expand">+</span>
                                 </div>
                                 <div class="service-detail">
+                                    <p style="margin: 0 0 8px; color: var(--text-dim); font-size: 0.85rem;">Cada linha: <strong>❌ o que a questão oferece como isca</strong> · <strong>✅ o que realmente resolve</strong>.</p>
                                     <ul>
-                                        <li><strong>Security Group para negar IP</strong> → SG só faz allow; use <strong>NACL</strong></li>
-                                        <li><strong>Converter fila Standard em FIFO</strong> ou <strong>DLQ de tipo diferente</strong> → inválido</li>
-                                        <li><strong>NAT Gateway para IPv6</strong> → é IPv4-only; use <strong>egress-only IGW</strong></li>
-                                        <li><strong>FreeLocalStorage no RDS</strong> → é métrica de Aurora; use <strong>FreeStorageSpace</strong></li>
-                                        <li><strong>CloudEndure com launch templates padrão</strong> → use <strong>DRS</strong></li>
-                                        <li><strong>DAX/ElastiCache para busca complexa</strong> → são cache, não motor de busca</li>
-                                        <li><strong>Adicionar LB ao App Runner</strong> → redundante (load balancing nativo)</li>
-                                        <li><strong>Root sempre recupera chave KMS</strong> → se não está na key policy, só o AWS Support</li>
-                                        <li><strong>Redshift/EMR para logs em tempo real</strong> → use Kinesis</li>
-                                        <li><strong>Snowmobile para dezenas de TB</strong> → só acima de 10 PB</li>
+                                        <li>❌ Security Group negando um IP → SG só faz <em>allow</em> &nbsp;·&nbsp; ✅ <strong>NACL</strong></li>
+                                        <li>❌ Converter fila Standard em FIFO / DLQ de outro tipo → tipo é imutável &nbsp;·&nbsp; ✅ <strong>fila nova FIFO</strong> (DLQ do mesmo tipo)</li>
+                                        <li>❌ NAT Gateway para saída IPv6 → é IPv4-only &nbsp;·&nbsp; ✅ <strong>egress-only IGW</strong></li>
+                                        <li>❌ <code>FreeLocalStorage</code> no autoscaling do RDS → é métrica do Aurora &nbsp;·&nbsp; ✅ <strong><code>FreeStorageSpace</code></strong></li>
+                                        <li>❌ CloudEndure com launch templates padrão → não suporta &nbsp;·&nbsp; ✅ <strong>AWS DRS</strong></li>
+                                        <li>❌ DAX/ElastiCache para busca complexa → são cache &nbsp;·&nbsp; ✅ <strong>OpenSearch</strong></li>
+                                        <li>❌ LB na frente do App Runner → redundante &nbsp;·&nbsp; ✅ <strong>App Runner</strong> direto</li>
+                                        <li>❌ Contar que o root recupera a chave KMS → só se estiver na key policy &nbsp;·&nbsp; ✅ <strong>AWS Support</strong></li>
+                                        <li>❌ Redshift/EMR para logs em tempo real → analítico/batch &nbsp;·&nbsp; ✅ <strong>Kinesis</strong></li>
+                                        <li>❌ Snowmobile para dezenas de TB → só &gt; 10 PB &nbsp;·&nbsp; ✅ <strong>Snowball</strong></li>
+                                        <li>❌ Detective/GuardDuty/Inspector para dados sensíveis → ameaças/vulnerabilidades &nbsp;·&nbsp; ✅ <strong>Macie</strong></li>
                                     </ul>
-                                    <div class="tip">💡 Detective/GuardDuty/Inspector ≠ descoberta de dados sensíveis (isso é Macie)</div>
+                                    <div class="tip">💡 A isca sempre soa plausível; o que elimina a opção é um detalhe do serviço (limite, escopo ou capacidade real).</div>
                                 </div>
                             </div>
                         </div>

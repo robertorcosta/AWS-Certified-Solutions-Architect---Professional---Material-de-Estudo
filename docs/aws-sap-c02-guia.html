@@ -3312,22 +3312,78 @@
 
             <h3 id="extra-armadilhas">10. Distratores Clássicos (por que estão errados)</h3>
             <div class="topic-card">
-                <div class="info-box warning">
-                    <ul>
-                        <li><strong>CloudFront</strong> para "menor latência global com failover" → é <strong>Global Accelerator</strong>.</li>
-                        <li><strong>Security Group para negar IP</strong> → SG só faz allow; use <strong>NACL</strong>.</li>
-                        <li><strong>Converter fila Standard em FIFO</strong> ou <strong>DLQ de tipo diferente</strong> → inválido.</li>
-                        <li><strong>FreeLocalStorage para RDS</strong> → é métrica de Aurora; use <strong>FreeStorageSpace</strong>.</li>
-                        <li><strong>Direct Connect</strong> para prazo curto / "rápido e criptografado" → lento e não criptografado por padrão.</li>
-                        <li><strong>CloudEndure com launch templates padrão</strong> → use <strong>DRS</strong>.</li>
-                        <li><strong>Detective / GuardDuty / Inspector</strong> para descoberta de dados sensíveis → é <strong>Macie</strong>.</li>
-                        <li><strong>Root sempre recupera chave KMS</strong> → se não estiver na key policy, só o AWS Support.</li>
-                        <li><strong>DAX / ElastiCache para busca complexa</strong> → são cache, não motor de busca.</li>
-                        <li><strong>Adicionar LB ao App Runner</strong> → redundante (load balancing nativo).</li>
-                        <li><strong>Redshift/EMR para logs em tempo real</strong> → Redshift é query analítica; EMR é batch; use Kinesis.</li>
-                        <li><strong>Snowmobile para dezenas de TB</strong> → só acima de 10 PB.</li>
-                    </ul>
-                </div>
+                <p>Estes são os distratores que mais aparecem: a opção soa razoável, mas viola um detalhe do serviço. Leia da esquerda para a direita — <strong>o que a alternativa oferece</strong>, <strong>por que ela falha</strong> e <strong>qual é a escolha correta</strong>.</p>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>A isca (parece certo)</th>
+                            <th>Por que está errado</th>
+                            <th>O certo é</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CloudFront para "menor latência global com failover cross-region"</td>
+                            <td>CloudFront é cache/CDN; não faz failover entre regiões de endpoints</td>
+                            <td><strong>Global Accelerator</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Security Group negando um IP específico</td>
+                            <td>SG só tem regras de <em>allow</em> (stateful); não existe deny</td>
+                            <td><strong>NACL</strong> (deny em nível de subnet)</td>
+                        </tr>
+                        <tr>
+                            <td>Converter uma fila Standard em FIFO (ou usar DLQ de tipo diferente)</td>
+                            <td>O tipo da fila é imutável e a DLQ precisa ser do mesmo tipo do source</td>
+                            <td>Criar uma <strong>fila nova FIFO</strong> / DLQ do mesmo tipo</td>
+                        </tr>
+                        <tr>
+                            <td>Monitorar <code>FreeLocalStorage</code> para autoscaling de storage do RDS</td>
+                            <td>Essa métrica é do storage local do Aurora, não do RDS</td>
+                            <td><strong><code>FreeStorageSpace</code></strong></td>
+                        </tr>
+                        <tr>
+                            <td>Direct Connect para conexão "rápida de implantar e criptografada"</td>
+                            <td>DX leva semanas para provisionar e não é criptografado por padrão</td>
+                            <td><strong>VPN</strong> agora (cutover para DX depois)</td>
+                        </tr>
+                        <tr>
+                            <td>CloudEndure usando launch templates padrão do EC2</td>
+                            <td>CloudEndure não suporta launch templates padrão</td>
+                            <td><strong>AWS DRS</strong> (Elastic Disaster Recovery)</td>
+                        </tr>
+                        <tr>
+                            <td>Detective, GuardDuty ou Inspector para achar dados sensíveis em S3</td>
+                            <td>Investigam ameaças/vulnerabilidades — não classificam conteúdo</td>
+                            <td><strong>Macie</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Assumir que o root sempre consegue recuperar uma chave KMS</td>
+                            <td>Se a key policy não concede ao root, ninguém recupera pela conta</td>
+                            <td>Abrir caso no <strong>AWS Support</strong></td>
+                        </tr>
+                        <tr>
+                            <td>DAX ou ElastiCache para busca/filtro complexo em dados</td>
+                            <td>São camadas de cache, não motores de busca</td>
+                            <td><strong>OpenSearch</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Colocar um Load Balancer na frente do App Runner</td>
+                            <td>App Runner já faz load balancing e scaling nativos</td>
+                            <td>Usar o <strong>App Runner</strong> direto</td>
+                        </tr>
+                        <tr>
+                            <td>Redshift ou EMR para análise de logs em tempo real</td>
+                            <td>Redshift é query analítica e EMR é batch — nenhum é near-real-time</td>
+                            <td><strong>Kinesis</strong> (Firehose → OpenSearch)</td>
+                        </tr>
+                        <tr>
+                            <td>Snowmobile para migrar dezenas de TB</td>
+                            <td>Snowmobile só se justifica acima de 10 PB</td>
+                            <td><strong>Snowball</strong> (Snow Family)</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </section>
 

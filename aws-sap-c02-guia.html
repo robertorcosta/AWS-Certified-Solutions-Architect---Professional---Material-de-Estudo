@@ -418,6 +418,40 @@
             font-style: italic;
         }
 
+        /* Seção "Questões que também podem cair" (edge cases) */
+        .edge-group {
+            margin-bottom: 28px;
+        }
+
+        .edge-group h3 {
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 6px;
+        }
+
+        .edge-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .edge-list li {
+            padding: 10px 14px;
+            margin-bottom: 8px;
+            border-left: 3px solid var(--purple);
+            background: rgba(163, 113, 247, 0.05);
+            border-radius: 0 6px 6px 0;
+            line-height: 1.55;
+        }
+
+        .edge-list .edge-svc {
+            font-weight: 600;
+            color: var(--purple);
+        }
+
+        @media print {
+            .edge-list li { break-inside: avoid; border-left-color: #999; background: #fafafa; }
+        }
+
         /* Termo técnico com link para doc oficial */
         .doc-term {
             color: inherit;
@@ -941,6 +975,7 @@
             <a href="#extra-ia" class="nav-link">IA/ML Aplicada</a>
             <a href="#extra-gatilhos" class="nav-link">Gatilho → Serviço</a>
             <a href="#extra-armadilhas" class="nav-link">Distratores Clássicos</a>
+            <a href="#edge-cases" class="nav-link">🎲 Questões menos prováveis</a>
         </div>
 
 </nav>
@@ -4003,6 +4038,79 @@
                 <strong>📌 Fontes</strong>
                 <a href="https://aws.amazon.com/blogs/aws/top-announcements-of-aws-reinvent-2025/" target="_blank">Top announcements re:Invent 2025</a> |
                 <a href="https://aws.amazon.com/about-aws/whats-new/" target="_blank">What's New with AWS</a>. Conteúdo resumido e reescrito para fins de estudo.
+            </div>
+        </section>
+
+        <div class="section-divider"><span>QUESTÕES MENOS PROVÁVEIS</span></div>
+
+        <section id="edge-cases">
+            <h2>🎲 Questões que também podem cair</h2>
+            <p>Cada serviço tem cenários frequentes (na seção "📝 Como cai na prova" de cada tópico) e detalhes que aparecem <strong>com menos frequência</strong>, mas que já derrubaram candidatos. Aqui vai um cenário menos provável por serviço — o tipo de pegadinha que separa quem sabe o básico de quem domina os detalhes.</p>
+
+            <div class="edge-group">
+                <h3>Domínio 1 — Complexidade Organizacional</h3>
+                <ul class="edge-list">
+                    <li><span class="edge-svc">Transit Gateway:</span> tráfego multicast entre subnets exige criar um <strong>multicast domain</strong> no TGW e associar as subnets — não basta habilitar multicast na VPC.</li>
+                    <li><span class="edge-svc">Direct Connect:</span> para criptografar na camada 2 na porta física, use <strong>MACsec</strong> (só em conexões dedicadas de 10/100 Gbps); a VPN sobre DX resolve a camada 3, não a 2.</li>
+                    <li><span class="edge-svc">Site-to-Site VPN:</span> o Customer Gateway só exige o <strong>ASN de BGP</strong> no roteamento dinâmico; no estático, ele não é necessário — mas o IP público do dispositivo precisa ser estático em ambos os casos.</li>
+                    <li><span class="edge-svc">PrivateLink:</span> um único endpoint atende <strong>vários membros/contas</strong> (relação um-para-muitos); e funciona mesmo com <strong>CIDRs sobrepostos</strong>, ao contrário de peering/TGW.</li>
+                    <li><span class="edge-svc">Route 53 Resolver:</span> para milhões de queries/s sem SPOF, precisa de endpoints inbound e outbound <strong>em cada AZ</strong> — um endpoint único numa AZ é ponto de falha.</li>
+                    <li><span class="edge-svc">Global Accelerator:</span> entrega um <strong>par de IPs anycast fixos</strong>, o que resolve o cenário de "allowlist de 2 IPs em firewall corporativo" — o CloudFront não tem IP fixo.</li>
+                    <li><span class="edge-svc">IAM cross-account:</span> <code>Deny</code> + <code>NotPrincipal</code> nega <strong>todos exceto</strong> os principals listados — pegadinha clássica de interpretação de policy.</li>
+                    <li><span class="edge-svc">IAM Identity Center:</span> quando o requisito é "sem cache do diretório", a resposta é <strong>AD Connector</strong>, não Managed Microsoft AD (que cacheia).</li>
+                    <li><span class="edge-svc">Identity Federation:</span> no enhanced authflow do Cognito, após o <code>GetId</code> chama-se <strong><code>GetCredentialsForIdentity</code></strong> — o <code>AssumeRoleWithWebIdentity</code> fica implícito nos bastidores.</li>
+                    <li><span class="edge-svc">KMS:</span> se a key policy perde o único principal e não tem o root, a chave fica <strong>ingerenciável</strong> — só o AWS Support recupera.</li>
+                    <li><span class="edge-svc">Segurança/Compliance:</span> consolidar <strong>duas Organizations diferentes</strong> no Security Hub exige convite manual do admin — o auto-enable só vale dentro da mesma Org.</li>
+                    <li><span class="edge-svc">DR:</span> no failover do Aurora Global Database, faz-se <strong>detach do secundário</strong> (promove a writer) — restaurar de snapshot não é failover.</li>
+                    <li><span class="edge-svc">Organizations:</span> mover contas entre OUs pelo console exige a permissão <code>organizations:MoveAccount</code> (+ <code>DescribeOrganization</code>) — não é preciso remover/reconvidar.</li>
+                    <li><span class="edge-svc">Control Tower:</span> dá para habilitá-lo <strong>sobre uma Organization já existente</strong> e inscrever (enroll) as contas, sem recriar nada.</li>
+                    <li><span class="edge-svc">SCP:</span> um <code>Deny</code> no Root <strong>não pode ser sobreposto</strong> por um Allow em OU/conta filha — para liberar exceção, mova o Deny para outro ramo.</li>
+                    <li><span class="edge-svc">RAM:</span> é o único jeito de compartilhar recursos do <strong>EC2 Image Builder</strong> (components/recipes/images) — o console do próprio Image Builder não faz isso.</li>
+                    <li><span class="edge-svc">Custos:</span> RDS Reserved Instances compartilhadas em billing consolidado só recebem o preço de RI se casarem <strong>Região, engine, instance class E deployment</strong>.</li>
+                </ul>
+            </div>
+
+            <div class="edge-group">
+                <h3>Domínio 2 — Design de Novas Soluções</h3>
+                <ul class="edge-list">
+                    <li><span class="edge-svc">Deployment:</span> o <strong>Immutable</strong> do Beanstalk cria as instâncias novas num ASG separado e descarta se falhar, sem reduzir a capacidade atual — diferente do Rolling.</li>
+                    <li><span class="edge-svc">CloudFormation:</span> <code>DeletionPolicy</code> aceita <strong>Retain/Snapshot/Delete</strong> — não existe "Rollback"; e Snapshot não se aplica ao S3.</li>
+                    <li><span class="edge-svc">Multi-Region:</span> DR de RDS custo-efetivo sem standby ligado = <strong>cross-Region automated backups</strong>, não uma read replica sempre rodando.</li>
+                    <li><span class="edge-svc">Proteção Web:</span> o Firewall Manager exige <strong>Config habilitado em cada conta-membro</strong> além de Organizations "all features" e conta admin.</li>
+                    <li><span class="edge-svc">Criptografia:</span> no EFS, o at-rest só é habilitável <strong>na criação</strong> do file system; o in-transit só no <strong>mount</strong> (<code>-o tls</code>).</li>
+                    <li><span class="edge-svc">Event-Driven:</span> não dá para converter uma fila <strong>Standard em FIFO</strong>; é preciso criar uma nova. E a DLQ tem que ser do mesmo tipo da fonte.</li>
+                    <li><span class="edge-svc">Cache:</span> o Redis do ElastiCache permite <strong>upgrade de node, mas não downgrade</strong> de versão do engine.</li>
+                    <li><span class="edge-svc">Bancos de dados:</span> busca/filtro rico sobre dados do DynamoDB = fazer <strong>stream para o OpenSearch</strong> — DAX e ElastiCache são cache, não busca.</li>
+                    <li><span class="edge-svc">Storage Tiering:</span> objetos menores que <strong>128 KB</strong> não são movidos entre tiers pelo Intelligent-Tiering (nem geram taxa de monitoramento).</li>
+                    <li><span class="edge-svc">Transferência de Dados:</span> o <strong>S3 Transfer Acceleration não funciona com Glacier</strong> — pegadinha em cenários de upload global.</li>
+                </ul>
+            </div>
+
+            <div class="edge-group">
+                <h3>Domínio 3 — Melhoria Contínua</h3>
+                <ul class="edge-list">
+                    <li><span class="edge-svc">Observabilidade:</span> para descobrir a memória realmente usada por uma Lambda, olhe a linha <strong>REPORT ("max memory used") no CloudWatch Logs</strong> — as métricas padrão não mostram isso.</li>
+                    <li><span class="edge-svc">Automação:</span> enviar logs de EC2 ao S3 num horário fixo = <strong>State Manager + Maintenance Windows</strong>, não o Session Manager.</li>
+                    <li><span class="edge-svc">Secrets:</span> só o <strong>Advanced Parameter Store e o SSM Automation</strong> geram custo adicional — Run Command e Patch Manager são gratuitos.</li>
+                    <li><span class="edge-svc">Rightsizing:</span> o <strong>enhanced infrastructure metrics</strong> do Compute Optimizer olha 90 dias de histórico (o default é 14).</li>
+                    <li><span class="edge-svc">Pontos de falha:</span> para monitorar o storage do RDS use <strong><code>FreeStorageSpace</code></strong> — <code>FreeLocalStorage</code> é métrica do Aurora e derruba a resposta.</li>
+                    <li><span class="edge-svc">Desperdícios:</span> achar serviços permitidos por SCP mas <strong>nunca usados</strong> = IAM › Access reports › <strong>Organization activity</strong> (last-accessed), não CloudTrail nem Config.</li>
+                </ul>
+            </div>
+
+            <div class="edge-group">
+                <h3>Domínio 4 — Migração e Modernização</h3>
+                <ul class="edge-list">
+                    <li><span class="edge-svc">7 Rs:</span> mover um app em VMs/containers "como está" para gestão na nuvem é <strong>Relocate</strong>, não Rehost (que é servidor a servidor).</li>
+                    <li><span class="edge-svc">Assessment:</span> criar cutover runbooks e a Landing Zone <strong>não fazem parte</strong> da fase de Portfolio Assessment (são das fases Migrate&Modernize e Mobilize).</li>
+                    <li><span class="edge-svc">Migração de Dados:</span> o <strong>DataSync não suporta SFTP como source</strong> — para ingestão SFTP use o Transfer Family.</li>
+                    <li><span class="edge-svc">Migração de BD:</span> para migrar um banco não suportado para o DynamoDB, o mapeamento (JSON) vai no <strong>source endpoint do DMS (S3)</strong>, não na task.</li>
+                    <li><span class="edge-svc">Migração de Servidores:</span> exportar uma EC2 como OVA para VMware usa <strong>VM Import/Export</strong> — o Server Migration Connector é do SMS descontinuado.</li>
+                    <li><span class="edge-svc">Compute:</span> o <strong>AWS Batch em Fargate</strong> é a escolha quando os jobs precisam iniciar rápido no scale-out sem gerir cluster.</li>
+                    <li><span class="edge-svc">Storage:</span> restaurar um cached volume do Storage Gateway = criar um <strong>volume EBS a partir do snapshot</strong> — os dados não são acessíveis via S3 API.</li>
+                    <li><span class="edge-svc">Serverless:</span> o <strong>limite de 29s do API Gateway</strong> gera HTTP 504 mesmo com a Lambda tendo timeout de 15 min.</li>
+                    <li><span class="edge-svc">Containers:</span> o EKS <strong>não exige o ECR</strong> — ele puxa imagens de qualquer registry (inclusive Docker Hub).</li>
+                </ul>
             </div>
         </section>
 

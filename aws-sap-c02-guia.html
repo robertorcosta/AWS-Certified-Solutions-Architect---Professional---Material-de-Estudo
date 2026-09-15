@@ -2069,6 +2069,16 @@
                         <li><strong>AWS CodeBuild:</strong> build + test serverless</li>
                         <li><strong>CloudFormation StackSets:</strong> deploy de IaC em múltiplas contas/regiões</li>
                     </ul>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">CI/CD faz deploy em produção a cada merge, causando downtime e falhas.</span> → <span class="resposta">Blue/Green Deployment</span> <span class="porque">— troca o tráfego só após validar, com rollback rápido; o Rolling deixa versões misturadas.</span></li>
+                            <li><span class="cenario">Serviço financeiro sensível a downtime, com necessidade de rollback fácil.</span> → <span class="resposta">Blue/Green</span> <span class="porque">— switch instantâneo entre ambientes; Canary e Rolling têm rollback mais complexo.</span></li>
+                            <li><span class="cenario">Atualizar o OS do Elastic Beanstalk com mínimo impacto.</span> → <span class="resposta">Blue/Green (novo env, testar, trocar CNAME, terminar o antigo)</span> <span class="porque">— a atualização in-place tem mais indisponibilidade.</span></li>
+                            <li><span class="cenario">App HA que exige minimizar downtime, rollback rápido, detecção gradual e teste antes do tráfego total.</span> → <span class="resposta">combinar Blue/Green + Rolling + Canary</span> <span class="porque">— all-at-once é arriscado; A/B testing é para comparação, não downtime.</span></li>
+                            <li><span class="cenario">Beanstalk precisa evitar capacidade extra durante o deploy, mantendo as instâncias saudáveis intactas.</span> → <span class="resposta"><a href="https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features.rolling-version-deploy.html" target="_blank" class="doc-term">Immutable deployment</a></span> <span class="porque">— cria instâncias novas num ASG separado e descarta se falhar.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/codedeploy/latest/userguide/welcome.html" target="_blank" class="ref-link">CodeDeploy</a>
                     <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/what-is-cfnstacksets.html" target="_blank" class="ref-link">CloudFormation StackSets</a>
                 </div>
@@ -2101,6 +2111,16 @@
                         <li><strong>Patch Manager:</strong> patching automatizado com baselines</li>
                         <li><strong>Automation:</strong> runbooks para tarefas operacionais</li>
                     </ul>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">Implantar regras do Config em toda a Organization/OUs e em várias Regiões via CloudFormation.</span> → <span class="resposta"><a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-getting-started-create.html" target="_blank" class="doc-term">StackSets</a> com service-managed permissions</span> <span class="porque">— self-managed exige selecionar contas manualmente.</span></li>
+                            <li><span class="cenario">Limitar um produto do Service Catalog a apenas um tipo de instância para o time de dev.</span> → <span class="resposta"><a href="https://docs.aws.amazon.com/servicecatalog/latest/adminguide/getstarted-constraint.html" target="_blank" class="doc-term">Template Constraint</a> no produto</span> <span class="porque">— service actions usam SSM docs e não limitam parâmetros.</span></li>
+                            <li><span class="cenario">Deletar a stack mas preservar o bucket S3 e poder restaurar o RDS.</span> → <span class="resposta"><a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-deletionpolicy.html" target="_blank" class="doc-term">DeletionPolicy</a> Retain no S3 + Snapshot no RDS</span> <span class="porque">— Snapshot não existe para S3.</span></li>
+                            <li><span class="cenario">Criar recursos diferentes por ambiente (dev/test/prod) condicionalmente no mesmo template.</span> → <span class="resposta">Fn::If + Conditions</span> <span class="porque">— Mappings/Select não fazem lógica condicional de criação sozinhos.</span></li>
+                            <li><span class="cenario">Detectar mudanças manuais feitas fora do template.</span> → <span class="resposta">Drift Detection</span> <span class="porque">— Change Sets só mostram o preview antes de aplicar.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html" target="_blank" class="ref-link">CloudFormation</a>
                     <a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/what-is-systems-manager.html" target="_blank" class="ref-link">Systems Manager</a>
                 </div>
@@ -2137,6 +2157,16 @@
                         Se a questão pede "active-active com dados consistentes globalmente" → DynamoDB Global Tables.<br>
                         Se pede "menor RPO com banco relacional" → Aurora Global Database.
                     </div>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">Rotear usuários ao endpoint ótimo por performance/localização/saúde para EC2 + ELB globais.</span> → <span class="resposta">AWS Global Accelerator</span> <span class="porque">— CloudFront é CDN de cache; NLB é single-region.</span></li>
+                            <li><span class="cenario">Aurora Global Database com a Região primária caída e o app conectado direto no cluster primário.</span> → <span class="resposta">detach do secundário (promove writable) e repontar o app ao novo writer</span> <span class="porque">— restaurar de snapshot não faz failover cross-region.</span></li>
+                            <li><span class="cenario">DR de EC2 para outra Região com RPO em segundos / RTO em minutos.</span> → <span class="resposta">AWS Elastic Disaster Recovery (DRS)</span> <span class="porque">— o Backup não atinge RPO/RTO baixos.</span></li>
+                            <li><span class="cenario">DR de RDS em outra Região com bom RTO/RPO e custo, sem standby sempre ligado.</span> → <span class="resposta">RDS cross-Region automated backups</span> <span class="porque">— export S3+CRR/Lambda geram trabalho e custo ad-hoc.</span></li>
+                            <li><span class="cenario">Web app global precisa de failover DNS ativo-passivo entre regiões.</span> → <span class="resposta">Route 53 failover routing + health checks (Evaluate Target Health)</span> <span class="porque">— sem isso o Route 53 mantém tráfego na região indisponível.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GlobalTables.html" target="_blank" class="ref-link">DynamoDB Global Tables</a>
                     <a href="https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-global-database.html" target="_blank" class="ref-link">Aurora Global Database</a>
                 </div>
@@ -2170,6 +2200,16 @@
                         <li>Inspeção de tráfego, IPS/IDS, filtragem de domínio</li>
                         <li>Deploy em subnet dedicada, integra com Firewall Manager</li>
                     </ul>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">Padronizar regras de segurança comuns em novas apps/contas da Organization.</span> → <span class="resposta"><a href="https://docs.aws.amazon.com/waf/latest/developerguide/fms-prereq.html" target="_blank" class="doc-term">AWS Firewall Manager</a></span> <span class="porque">— exige Organizations "all features", conta admin do FM e Config nos membros.</span></li>
+                            <li><span class="cenario">Bloquear temporariamente um bloco de IPs fazendo port scan em subnets.</span> → <span class="resposta">Network ACL com regra de deny</span> <span class="porque">— o Security Group não permite deny explícito.</span></li>
+                            <li><span class="cenario">Proteger app contra DDoS de camada 3/4 com resposta gerenciada e proteção de custo.</span> → <span class="resposta">AWS Shield Advanced</span> <span class="porque">— o Shield Standard é automático mas sem DRT/cost protection; WAF é L7.</span></li>
+                            <li><span class="cenario">Filtrar SQL injection/XSS e aplicar rate-limiting em CloudFront/ALB/API Gateway.</span> → <span class="resposta">AWS WAF (web ACL com rules)</span> <span class="porque">— Shield é DDoS; Network Firewall é tráfego de rede, não L7 de app.</span></li>
+                            <li><span class="cenario">Inspeção stateful de tráfego de rede em toda a VPC (IPS/filtragem de domínios).</span> → <span class="resposta">AWS Network Firewall</span> <span class="porque">— WAF é L7 de app; NACL/SG não fazem inspeção de payload.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/waf/latest/developerguide/what-is-aws-waf.html" target="_blank" class="ref-link">AWS WAF</a>
                     <a href="https://docs.aws.amazon.com/waf/latest/developerguide/shield-chapter.html" target="_blank" class="ref-link">AWS Shield</a>
                     <a href="https://docs.aws.amazon.com/network-firewall/latest/developerguide/what-is-aws-network-firewall.html" target="_blank" class="ref-link">Network Firewall</a>
@@ -2197,6 +2237,16 @@
                     <div class="info-box warning">
                         <strong>⚠️ Pegadinha comum</strong>
                         RDS não criptografado → não pode ser criptografado diretamente. Solução: snapshot → copy snapshot com criptografia → restore do snapshot criptografado.
+                    </div>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">EFS não criptografado em repouso nem em trânsito; como remediar.</span> → <span class="resposta">at-rest na criação do file system; in-transit no mount (<code>-o tls</code>)</span> <span class="porque">— at-rest não pode ser ligado depois no mount.</span></li>
+                            <li><span class="cenario">Conta Production precisa usar uma CMK do Dev para decriptar arquivos S3 num pipeline.</span> → <span class="resposta">key policy na CMK do Dev permitindo a conta Prod como key user</span> <span class="porque">— a key policy vai na chave, não na role; kms:* super-provisiona.</span></li>
+                            <li><span class="cenario">Milhões de objetos S3 com SSE-KMS elevando muito o custo, mantendo a criptografia.</span> → <span class="resposta">S3 Bucket Keys para SSE-KMS</span> <span class="porque">— reduz as chamadas ao KMS.</span></li>
+                            <li><span class="cenario">Descrever como funciona o SSE-S3.</span> → <span class="resposta">cada objeto com chave única, protegida por uma master key rotacionada (AES-256)</span> <span class="porque">— gerência de chaves pelo cliente é SSE-C.</span></li>
+                            <li><span class="cenario">RDS existente não está criptografado; como criptografar.</span> → <span class="resposta">snapshot → copy do snapshot com criptografia → restore</span> <span class="porque">— não dá para criptografar um RDS já criado diretamente.</span></li>
+                        </ol>
                     </div>
                     <a href="https://docs.aws.amazon.com/acm/latest/userguide/acm-overview.html" target="_blank" class="ref-link">ACM</a>
                 </div>
@@ -2250,6 +2300,16 @@
                         <li><strong>Express:</strong> até 5 minutos, at-least-once, alto throughput</li>
                         <li>Integração nativa com Lambda, ECS, SNS, SQS, DynamoDB, etc.</li>
                     </ul>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">Migrar um broker de mensagens WebSocket para a AWS sem mudar código.</span> → <span class="resposta">Amazon MQ</span> <span class="porque">— o SQS exigiria mudar o código; o MQ suporta WebSocket/JMS/AMQP nativo.</span></li>
+                            <li><span class="cenario">Step Functions para pagamento (longo, não-idempotente) e notificações (alto volume, idempotente).</span> → <span class="resposta">Standard para o não-idempotente + Express assíncrono para o idempotente</span> <span class="porque">— Standard = exactly-once; Express = at-least-once.</span></li>
+                            <li><span class="cenario">Priorizar o processamento de itens de clientes premium.</span> → <span class="resposta">duas filas SQS (alta e padrão), consumindo a de alta primeiro</span> <span class="porque">— uma fila única com campo de prioridade não garante ordem.</span></li>
+                            <li><span class="cenario">A ordem dos logs não é mantida numa fila SQS Standard.</span> → <span class="resposta">recriar como fila FIFO</span> <span class="porque">— não dá para converter Standard em FIFO no lugar.</span></li>
+                            <li><span class="cenario">Isolar mensagens que falham no processamento para diagnóstico.</span> → <span class="resposta">Dead-Letter Queue (do mesmo tipo da fonte) via maxReceiveCount</span> <span class="porque">— ajustar o visibility timeout não isola.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html" target="_blank" class="ref-link">SQS</a>
                     <a href="https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-what-is.html" target="_blank" class="ref-link">EventBridge</a>
                     <a href="https://docs.aws.amazon.com/step-functions/latest/dg/welcome.html" target="_blank" class="ref-link">Step Functions</a>
@@ -2299,6 +2359,16 @@
                         <tr><td>Backup</td><td>✅</td><td>❌</td></tr>
                     </table>
                     <p><span class="tag tag-green">Regra:</span> Se precisa de HA, persistência, ou tipos de dados complexos → Redis. Se precisa de cache simples com scaling horizontal → Memcached.</p>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">Melhorar o cache hit ratio do CloudFront e descarregar a origem.</span> → <span class="resposta">TTL mais longo para estáticos + cache key enxuta + <a href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/origin-shield.html" target="_blank" class="doc-term">Origin Shield</a></span> <span class="porque">— incluir todos os headers reduz o hit ratio.</span></li>
+                            <li><span class="cenario">Gerenciar a expiração por tipo de conteúdo, equilibrando frescor e custo.</span> → <span class="resposta">respeitar Cache-Control/Expires da origem + invalidação com parcimônia</span> <span class="porque">— invalidação frequente eleva o custo.</span></li>
+                            <li><span class="cenario">O cache não acompanha a carga e o engine é Redis, com mudança mínima.</span> → <span class="resposta">scale up do node type do ElastiCache</span> <span class="porque">— o Redis só permite upgrade de node.</span></li>
+                            <li><span class="cenario">Qual requisito NÃO é atendido pelo Memcached.</span> → <span class="resposta">tipos de dados avançados (lists/hashes/sets) — isso é Redis</span> <span class="porque">— o Memcached faz key-value simples com scaling horizontal.</span></li>
+                            <li><span class="cenario">Leituras do DynamoDB precisam de latência de microssegundos com cache gerenciado.</span> → <span class="resposta">DynamoDB Accelerator (DAX)</span> <span class="porque">— o ElastiCache exigiria lógica de cache no app.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/WhatIs.html" target="_blank" class="ref-link">ElastiCache Redis</a>
                     <a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DAX.html" target="_blank" class="ref-link">DAX</a>
                 </div>
@@ -2324,6 +2394,16 @@
                     <div class="info-box">
                         <strong>💡 Dica para a prova</strong>
                         A questão sempre dá pistas sobre o tipo de banco ideal: "milhões de requests por segundo com latência de milissegundos" → DynamoDB. "Consultas SQL complexas com joins" → Aurora/RDS. "Relações entre entidades" → Neptune.
+                    </div>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">Telemetria industrial serverless, sem infra, com bilhões de pontos temporais.</span> → <span class="resposta"><a href="https://docs.aws.amazon.com/timestream/latest/developerguide/storage.html" target="_blank" class="doc-term">Amazon Timestream</a></span> <span class="porque">— Aurora Serverless e DynamoDB não são time-series.</span></li>
+                            <li><span class="cenario">Precisa de controle total do banco (SYSTEM user) ou de uma versão legada não suportada.</span> → <span class="resposta">banco em EC2 self-managed</span> <span class="porque">— o RDS não dá esse nível de controle nem suporta certas versões antigas.</span></li>
+                            <li><span class="cenario">Banco relacional com carga imprevisível ou PoC ociosa, pagando pelo uso.</span> → <span class="resposta">Aurora Serverless</span> <span class="porque">— in-memory é ElastiCache; key-value é DynamoDB.</span></li>
+                            <li><span class="cenario">Busca/filtro lento em muitos registros no DynamoDB, precisa escalar e ser barato.</span> → <span class="resposta">stream do DynamoDB para o OpenSearch e buscar lá</span> <span class="porque">— o DAX é cache, não motor de busca.</span></li>
+                            <li><span class="cenario">Reduzir o custo de um cluster Redshift cujos dados são reproduzíveis a partir do S3.</span> → <span class="resposta">Redshift Spectrum consultando os dados direto no S3</span> <span class="porque">— desabilitar backups aumentaria risco/custo.</span></li>
+                        </ol>
                     </div>
                     <a href="https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/CHAP_AuroraOverview.html" target="_blank" class="ref-link">Aurora</a>
                     <a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html" target="_blank" class="ref-link">DynamoDB</a>
@@ -2397,6 +2477,16 @@
                         <li><strong>Pre-signed URLs:</strong> acesso temporário a objetos privados</li>
                     </ul>
 
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">Imagens com padrão de acesso incerto (o uso cai após semanas), otimizando custo mas mantendo acesso imediato.</span> → <span class="resposta">S3 Intelligent-Tiering</span> <span class="porque">— o Glacier tem recuperação lenta e viola o "acessível".</span></li>
+                            <li><span class="cenario">Migrar uma biblioteca de mídia de PB para tiers hot/warm/cool em poucos meses, sem impactar o serviço.</span> → <span class="resposta">múltiplos Snowball Edge → S3 + Intelligent-Tiering</span> <span class="porque">— DX + DataSync são lentos para PB.</span></li>
+                            <li><span class="cenario">Combinar rightsizing de compute com análise de padrões de uso do S3 e tracking de custo.</span> → <span class="resposta">Compute Optimizer + S3 Storage Lens + CUR</span> <span class="porque">— o Intelligent-Tiering automatiza mas não dá a visibilidade analítica.</span></li>
+                            <li><span class="cenario">Arquivamento longo com recuperação em horas para compliance.</span> → <span class="resposta">lifecycle para Glacier Flexible Retrieval / Deep Archive</span> <span class="porque">— manter em Standard é caro.</span></li>
+                            <li><span class="cenario">Objetos pequenos com acesso imprevisível, evitando a cobrança de monitoramento por objeto.</span> → <span class="resposta">Intelligent-Tiering, ciente do tamanho mínimo elegível (128KB)</span> <span class="porque">— objetos menores não são movidos entre tiers.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-class-intro.html" target="_blank" class="ref-link">S3 Storage Classes</a>
                     <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lifecycle-mgmt.html" target="_blank" class="ref-link">S3 Lifecycle</a>
                     <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage_lens.html" target="_blank" class="ref-link">S3 Storage Lens</a>
@@ -2422,6 +2512,16 @@
                         <li><strong>Direct Connect:</strong> preço de data transfer menor que internet</li>
                         <li><strong>S3 Transfer Acceleration:</strong> usa edge locations para uploads mais rápidos</li>
                     </ul>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">Tráfego alto de app → S3 via NAT custa caro, mas ainda precisa de patches externos.</span> → <span class="resposta">Gateway Endpoint para S3 (mantendo o NAT para patches)</span> <span class="porque">— o tráfego S3 deixa de passar/ser cobrado pelo NAT.</span></li>
+                            <li><span class="cenario">Consumir um SaaS do Marketplace por rede privada, não pela internet.</span> → <span class="resposta">Interface VPC Endpoint (PrivateLink)</span> <span class="porque">— o gateway endpoint só serve S3/DynamoDB.</span></li>
+                            <li><span class="cenario">Conectividade rápida agora, com tráfego que crescerá a dezenas de Gbps.</span> → <span class="resposta">VPN primeiro, cutover para Direct Connect depois</span> <span class="porque">— o DX demora a provisionar.</span></li>
+                            <li><span class="cenario">Private VIF de Direct Connect com alta disponibilidade e baixa latência ao VPC.</span> → <span class="resposta">private VIF + BGP + conexões redundantes em locations DX diferentes</span> <span class="porque">— a redundância é por locations, não por AZs.</span></li>
+                            <li><span class="cenario">Enviar rapidamente dados de muitos sites globais para um bucket S3 pela internet.</span> → <span class="resposta">S3 Transfer Acceleration</span> <span class="porque">— o DX é single-site; o Snowball é bulk offline.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://aws.amazon.com/s3/pricing/" target="_blank" class="ref-link">S3 Pricing</a>
                 </div>
             </details>

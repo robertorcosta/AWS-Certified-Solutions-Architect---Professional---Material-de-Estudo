@@ -2750,7 +2750,7 @@
                         <span class="exam-title">📝 Como cai na prova</span>
                         <ol>
                             <li><span class="cenario">Dashboard de savings e performance evitando over/under-provisioning de EC2/EBS/ASG/Lambda.</span> → <span class="resposta">AWS Compute Optimizer</span> <span class="porque">— o Budgets rastreia custo sem recomendar rightsizing.</span></li>
-                            <li><span class="cenario">Rightsizing de EC2 org-wide meses após a migração + recomendações críticas de segurança.</span> → <span class="resposta">Compute Optimizer (enhanced metrics, 90 dias) + Trusted Advisor Priority</span> <span class="porque">— as métricas default cobrem só 14 dias.</span></li>
+                            <li><span class="cenario">Rightsizing de EC2 org-wide meses após a migração + recomendações críticas de segurança.</span> → <span class="resposta">Compute Optimizer (enhanced metrics, até 93 dias) + Trusted Advisor Priority</span> <span class="porque">— as métricas default cobrem só 14 dias.</span></li>
                             <li><span class="cenario">App legado sem Auto Scaling, com pico raro e baixa memória, reduzindo custo a longo prazo.</span> → <span class="resposta">instância burstable (T) com Reserved Instance de 3 anos</span> <span class="porque">— um tipo maior custa mais; Spot pode faltar.</span></li>
                             <li><span class="cenario">CFO quer visão holística: rightsizing de compute + padrões de storage + tendência de custo.</span> → <span class="resposta">Compute Optimizer + S3 Storage Lens + CUR</span> <span class="porque">— combinações sem análise de storage são incompletas.</span></li>
                             <li><span class="cenario">Identificar economia potencial de Savings Plans/RIs e uso subutilizado.</span> → <span class="resposta"><a href="https://docs.aws.amazon.com/cost-management/latest/userguide/ce-rightsizing.html" target="_blank" class="doc-term">Cost Explorer</a> (rightsizing + recomendações de Savings Plans)</span> <span class="porque">— o Compute Optimizer foca eficiência de recurso, não a projeção comercial.</span></li>
@@ -2969,7 +2969,7 @@
                         <tr>
                             <td><strong>Snow Family</strong></td>
                             <td>Migração offline de grandes volumes</td>
-                            <td>Snowcone (8-14TB), Snowball Edge (80TB+), Snowmobile (100PB)</td>
+                            <td>Snowcone (8-14TB), Snowball Edge (80TB+). <em>Snowmobile (100PB) foi descontinuado em março/2024.</em></td>
                         </tr>
                         <tr>
                             <td><strong>S3 Transfer Acceleration</strong></td>
@@ -3328,7 +3328,7 @@
                     <div class="exam-scenarios">
                         <span class="exam-title">📝 Como cai na prova</span>
                         <ol>
-                            <li><span class="cenario">Retornando HTTP 504 após ~30s, embora o timeout do Lambda seja de 15 min.</span> → <span class="resposta">é o limite de 29s de integração do API Gateway (não aumentável)</span> <span class="porque">— o Lambda não é capado em 30s; não é erro do backend.</span></li>
+                            <li><span class="cenario">Retornando HTTP 504 após ~30s, embora o timeout do Lambda seja de 15 min.</span> → <span class="resposta">é o limite de integração do API Gateway (29s por padrão)</span> <span class="porque">— o Lambda não é capado em 30s; não é erro do backend. Desde 2024, o limite é ajustável até 300s em REST APIs Regional/Private.</span></li>
                             <li><span class="cenario">Enviar a requisição HTTP inteira ao Lambda e trocar a função sem redeploy.</span> → <span class="resposta">Lambda Proxy integration com o método "ANY"</span> <span class="porque">— o setup por método é desnecessário.</span></li>
                             <li><span class="cenario">A API parou de funcionar após uma mudança no método REST.</span> → <span class="resposta">fazer o redeploy da API</span> <span class="porque">— mudança de método exige redeploy; não é caching.</span></li>
                             <li><span class="cenario">Write throttling no DynamoDB só durante o dia por WCU baixa; correção mais fácil.</span> → <span class="resposta">habilitar DynamoDB Auto Scaling</span> <span class="porque">— aumentar a WCU fixa desperdiça à noite.</span></li>
@@ -3742,7 +3742,7 @@
                     <div class="service-card">
                         <h4>Aurora, RDS e DynamoDB</h4>
                         <ul>
-                            <li><strong>Aurora Global Database (DR):</strong> na falha da região primária, faça <strong>detach do secundário</strong> (promove a writable) e aponte o app para o novo writer. Restaurar snapshot NÃO é failover.</li>
+                            <li><strong>Aurora Global Database (DR):</strong> em desastre não-planejado (região primária fora do ar), faça <strong>detach-and-promote</strong> do secundário e aponte o app para o novo writer. Para troca planejada com a região saudável, use o <strong>managed failover (switchover)</strong>, que preserva a topologia. Restaurar snapshot NÃO é failover.</li>
                             <li><strong>RDS Multi-AZ</strong> = standby síncrono, não legível, alvo de failover (re-aponta o CNAME). <strong>Multi-AZ DB cluster</strong> = standbys <strong>legíveis</strong> + failover: HA e read scaling na mesma região.</li>
                             <li><strong>DynamoDB:</strong> query em atributo não-chave → <strong>GSI</strong>; picos de escrita → <strong>Auto Scaling</strong>; busca/filtro rico → replicar para <strong>OpenSearch</strong> (DAX e ElastiCache são cache, não busca).</li>
                             <li><strong>Trocar instance class do RDS causa reboot</strong> mesmo sem Apply Immediately → aplique na janela de manutenção.</li>
@@ -3774,7 +3774,7 @@
                     <div class="service-card">
                         <h4>Lambda e API Gateway</h4>
                         <ul>
-                            <li><strong>Lambda timeout máx 15 min</strong>, mas o <strong>API Gateway corta em 29 s</strong> (não aumentável) → HTTP 504 mesmo com Lambda longa.</li>
+                            <li><strong>Lambda timeout máx 15 min</strong>, mas o <strong>API Gateway corta em 29 s por padrão</strong> → HTTP 504 mesmo com Lambda longa (desde 2024 o limite é ajustável até 300s em REST APIs Regional/Private).</li>
                             <li><strong>Tuning de memória:</strong> leia "max memory used" no CloudWatch Logs; subir memória também sobe vCPU.</li>
                             <li><strong>Lambda Proxy integration</strong> com método <strong>ANY</strong> passa o request cru e evita re-deploy ao mudar a função.</li>
                         </ul>
@@ -3814,7 +3814,7 @@
                     <div class="service-card">
                         <h4>Snow, DataSync e Transfer</h4>
                         <ul>
-                            <li><strong>Snow Family</strong> para PB offline (limite de rede/compliance). <strong>Snowmobile só acima de 10 PB.</strong> Snowball Edge Compute Optimized quando precisa processar (ML) no edge antes de enviar.</li>
+                            <li><strong>Snow Family</strong> para PB offline (limite de rede/compliance). Snowball Edge Compute Optimized quando precisa processar (ML) no edge antes de enviar. <em>(Obs.: o Snowmobile, para exabytes, foi descontinuado em março/2024 — mas ainda pode aparecer como distrator na prova.)</em></li>
                             <li><strong>DataSync</strong> migra NFS/SMB/HDFS online, mas <strong>não suporta SFTP como source</strong> → use <strong>Transfer Family</strong> para ingestão SFTP.</li>
                         </ul>
                     </div>
@@ -3855,7 +3855,7 @@
                         <tr><td>Log analytics open-source em near-real-time</td><td><strong>Firehose → OpenSearch → Dashboards</strong></td></tr>
                         <tr><td>Menor latência de rede + failover cross-region (sem cache)</td><td><strong>Global Accelerator</strong></td></tr>
                         <tr><td>Acesso privado a serviço/SaaS sem internet</td><td><strong>Interface VPC Endpoint (PrivateLink)</strong></td></tr>
-                        <tr><td>Migrar PB com limite de rede/compliance</td><td><strong>Snow Family</strong> (Snowmobile só &gt; 10 PB)</td></tr>
+                        <tr><td>Migrar PB com limite de rede/compliance</td><td><strong>Snow Family</strong> (Snowball Edge; o Snowmobile foi descontinuado)</td></tr>
                         <tr><td>Bloquear IP/porta específicos</td><td><strong>NACL deny</strong> (SG não nega)</td></tr>
                         <tr><td>Query em atributo não-chave do DynamoDB</td><td><strong>GSI</strong>; busca rica → OpenSearch</td></tr>
                         <tr><td>HA + read scaling de RDS na mesma região</td><td><strong>Multi-AZ DB cluster</strong> (standby legível)</td></tr>
@@ -3942,7 +3942,7 @@
                         </tr>
                         <tr>
                             <td>Snowmobile para migrar dezenas de TB</td>
-                            <td>Snowmobile só se justifica acima de 10 PB</td>
+                            <td>Era só para exabytes — e foi descontinuado em março/2024</td>
                             <td><strong>Snowball</strong> (Snow Family)</td>
                         </tr>
                     </tbody>
@@ -4112,7 +4112,7 @@
                     <li><span class="edge-svc">Observabilidade:</span> para descobrir a memória realmente usada por uma Lambda, olhe a linha <strong>REPORT ("max memory used") no CloudWatch Logs</strong> — as métricas padrão não mostram isso.</li>
                     <li><span class="edge-svc">Automação:</span> enviar logs de EC2 ao S3 num horário fixo = <strong>State Manager + Maintenance Windows</strong>, não o Session Manager.</li>
                     <li><span class="edge-svc">Secrets:</span> só o <strong>Advanced Parameter Store e o SSM Automation</strong> geram custo adicional — Run Command e Patch Manager são gratuitos.</li>
-                    <li><span class="edge-svc">Rightsizing:</span> o <strong>enhanced infrastructure metrics</strong> do Compute Optimizer olha 90 dias de histórico (o default é 14).</li>
+                    <li><span class="edge-svc">Rightsizing:</span> o <strong>enhanced infrastructure metrics</strong> do Compute Optimizer olha até 93 dias de histórico (o default é 14).</li>
                     <li><span class="edge-svc">Pontos de falha:</span> para monitorar o storage do RDS use <strong><code>FreeStorageSpace</code></strong> — <code>FreeLocalStorage</code> é métrica do Aurora e derruba a resposta.</li>
                     <li><span class="edge-svc">Desperdícios:</span> achar serviços permitidos por SCP mas <strong>nunca usados</strong> = IAM › Access reports › <strong>Organization activity</strong> (last-accessed), não CloudTrail nem Config.</li>
                 </ul>

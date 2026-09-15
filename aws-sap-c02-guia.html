@@ -1316,6 +1316,16 @@
                         <strong>⚠️ Pegadinha na prova</strong>
                         Gateway Endpoint para S3 é GRÁTIS e deve ser a resposta quando a questão pede "reduzir custo de NAT Gateway" ou "manter tráfego S3 dentro da rede AWS".
                     </div>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">Inspecionar todo o tráfego entre VPCs (east-west) e para a internet (north-south) de forma centralizada.</span> → <span class="resposta">Inspection VPC com AWS Network Firewall, roteando via Transit Gateway</span> <span class="porque">— inspecionar VPC a VPC não escala.</span></li>
+                            <li><span class="cenario">Centralizar o acesso à internet de dezenas de VPCs para reduzir custo de NAT.</span> → <span class="resposta">Egress VPC com NAT Gateway central, atrás do Transit Gateway</span> <span class="porque">— um NAT por VPC multiplica o custo.</span></li>
+                            <li><span class="cenario">Reduzir custo de NAT com muito tráfego para o S3, mantendo o acesso a patches externos.</span> → <span class="resposta">Gateway Endpoint para S3 (mantendo o NAT para a internet)</span> <span class="porque">— o tráfego S3 deixa de passar/ser cobrado pelo NAT.</span></li>
+                            <li><span class="cenario">Segmentar produção e desenvolvimento para que não se comuniquem diretamente.</span> → <span class="resposta">Transit Gateway com route tables separadas por ambiente</span> <span class="porque">— o roteamento fino isola os domínios.</span></li>
+                            <li><span class="cenario">Compartilhar serviços comuns (DNS, AD, monitoramento) entre todas as VPCs.</span> → <span class="resposta">Shared Services VPC conectada via Transit Gateway</span> <span class="porque">— evita duplicar a infraestrutura em cada VPC.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/vpc/latest/privatelink/gateway-endpoints.html" target="_blank" class="ref-link">Gateway Endpoints</a>
                     <a href="https://docs.aws.amazon.com/vpc/latest/privatelink/create-interface-endpoint.html" target="_blank" class="ref-link">Interface Endpoints</a>
                 </div>
@@ -1832,6 +1842,16 @@
                         <li><strong>Geolocation/Geoproximity:</strong> roteia por localização do usuário</li>
                         <li><strong>Multivalue Answer:</strong> retorna múltiplos IPs saudáveis</li>
                     </ul>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">Atualizar o launch template e recriar todas as instâncias do ASG de forma controlada.</span> → <span class="resposta"><a href="https://docs.aws.amazon.com/autoscaling/ec2/userguide/asg-instance-refresh.html" target="_blank" class="doc-term">Instance Refresh</a> (definindo o mínimo saudável)</span> <span class="porque">— recriar manualmente é lento e arriscado.</span></li>
+                            <li><span class="cenario">Executar uma ação (drenar conexões, salvar logs) antes de uma instância ser terminada pelo ASG.</span> → <span class="resposta"><a href="https://docs.aws.amazon.com/autoscaling/ec2/userguide/lifecycle-hooks.html" target="_blank" class="doc-term">Lifecycle Hooks</a></span> <span class="porque">— sem o hook, a instância é terminada de imediato.</span></li>
+                            <li><span class="cenario">Escalar antecipadamente para um pico de tráfego já conhecido e recorrente.</span> → <span class="resposta">Scheduled Scaling (ou Predictive Scaling para padrões aprendidos)</span> <span class="porque">— Target Tracking só reage depois que a carga sobe.</span></li>
+                            <li><span class="cenario">Impedir que o ASG substitua instâncias durante uma janela de manutenção/depuração.</span> → <span class="resposta">suspender os scaling processes (ex.: ReplaceUnhealthy, Terminate)</span> <span class="porque">— o ASG permite pausar processos específicos.</span></li>
+                            <li><span class="cenario">Distribuir instâncias em hardware separado para maximizar a disponibilidade.</span> → <span class="resposta">Spread Placement Group (máx 7 por AZ)</span> <span class="porque">— o Cluster Placement Group faz o oposto (mesmo rack, baixa latência).</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html" target="_blank" class="ref-link">Route 53 Routing</a>
                     <a href="https://docs.aws.amazon.com/autoscaling/ec2/userguide/what-is-amazon-ec2-auto-scaling.html" target="_blank" class="ref-link">EC2 Auto Scaling</a>
                 </div>

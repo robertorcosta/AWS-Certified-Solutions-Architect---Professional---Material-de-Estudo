@@ -315,6 +315,22 @@
             font-size: 0.72rem;
         }
 
+        .service-detail .exam-tip {
+            background: rgba(233, 69, 96, 0.09);
+            border-left: 3px solid var(--accent);
+            padding: 6px 10px;
+            margin-top: 8px;
+            border-radius: 0 6px 6px 0;
+            font-size: 0.72rem;
+            color: var(--text);
+        }
+
+        .service-detail .exam-tip strong { color: var(--accent); }
+
+        @media print {
+            .service-detail .exam-tip { background: #fbeaec; border-left-color: #e94560; }
+        }
+
         /* Color dots for categories */
         .dot-blue { background: var(--blue); }
         .dot-green { background: var(--green); }
@@ -490,6 +506,7 @@
                                         <li>Até 50 Gbps por attachment, suporta multicast</li>
                                         <li>Transit VIF do Direct Connect conecta ao TGW</li>
                                     </ul>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> 50+ VPCs com roteamento transitivo → TGW. Multicast → multicast domain. VPN HA → 2 VPNs + BGP + ECMP no TGW.</div>
                                     <div class="tip">💡 50+ VPCs com roteamento centralizado = Transit Gateway</div>
                                     <a href="https://docs.aws.amazon.com/vpc/latest/tgw/what-is-transit-gateway.html" target="_blank">📖 Docs</a>
                                 </div>
@@ -505,6 +522,7 @@
                                         <li>LAG para agregar conexões, MACsec para criptografia L2</li>
                                         <li>Resiliência: 2 conexões em locais diferentes + VPN fallback</li>
                                     </ul>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> "Rápido de implantar" → NÃO é DX (leva semanas). Criptografia ponta a ponta → VPN sobre DX. HA → 2 locations + LAG.</div>
                                     <div class="tip">💡 Latência consistente + grande volume de dados = Direct Connect</div>
                                     <a href="https://docs.aws.amazon.com/directconnect/latest/UserGuide/Welcome.html" target="_blank">📖 Docs</a>
                                 </div>
@@ -519,6 +537,7 @@
                                         <li><strong>Accelerated VPN:</strong> usa Global Accelerator para melhor performance</li>
                                         <li><strong>ECMP</strong> com Transit Gateway: agregar múltiplas VPNs para mais throughput</li>
                                     </ul>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Conexão rápida enquanto o DX é provisionado → VPN. HA → 2 túneis + BGP. Latência global → Accelerated VPN.</div>
                                     <div class="tip">💡 Backup do DX ou conexão rápida temporária = VPN</div>
                                     <a href="https://docs.aws.amazon.com/vpn/latest/s2svpn/VPC_VPN.html" target="_blank">📖 Docs</a>
                                 </div>
@@ -547,6 +566,8 @@
                                         <li>Interface Endpoint (ENI + IP privado) na subnet do consumidor</li>
                                         <li>Gateway Endpoint (S3 e DynamoDB): grátis, rota na route table</li>
                                     </ul>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Poucas VPCs, ligação simples e barata → Peering. Muitas VPCs / transitivo → é TGW, não Peering.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Consumir SaaS/serviço privado sem internet → Interface Endpoint. Um endpoint atende vários consumidores; funciona com CIDR sobreposto.</div>
                                     <div class="tip">💡 "Acessar S3 sem NAT Gateway" = VPC Gateway Endpoint (grátis!)</div>
                                     <a href="https://docs.aws.amazon.com/vpc/latest/privatelink/what-is-privatelink.html" target="_blank">📖 Docs</a>
                                 </div>
@@ -586,6 +607,8 @@
                                         <li><strong>SCPs:</strong> guardrails no nível de Organization</li>
                                         <li><strong>Permission Boundaries:</strong> teto máximo para roles/users</li>
                                     </ul>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> On-prem resolve na AWS → INBOUND. AWS resolve on-prem → OUTBOUND + rules. HA → endpoints em cada AZ.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Acesso entre contas → role na conta DONA + AssumeRole na chamadora. Deny+NotPrincipal = todos exceto os listados.</div>
                                     <div class="tip">💡 Deny explícito SEMPRE vence. Cross-account: ambos lados precisam Allow.</div>
                                     <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html" target="_blank">📖 Docs</a>
                                 </div>
@@ -631,6 +654,9 @@
                                         <li>Retenção: 90 dias → S3 + Athena para long-term</li>
                                         <li>Organization Trail: todas as contas, um trail</li>
                                     </ul>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> SSO multi-conta com AD sem cache → AD Connector. Provisionar do IdP externo → SCIM. Permissões → permission sets.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Cross-account → key policy da chave (não kms:*). Custo com milhões de objetos S3 → S3 Bucket Keys. Sem root na policy → só o AWS Support recupera.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Impedir desligar o log na org → SCP negando cloudtrail:StopLogging. Reter além de 90 dias → S3 + Athena.</div>
                                     <div class="tip">💡 Reagir rápido a eventos: EventBridge (mais rápido) > CW Logs > S3</div>
                                     <a href="https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-user-guide.html" target="_blank">📖 Docs</a>
                                 </div>
@@ -725,6 +751,11 @@
                                         <li><strong>Warm Standby:</strong> sistema reduzido ativo, minutos RTO</li>
                                         <li><strong>Multi-Site:</strong> full active-active, near-zero RTO</li>
                                     </ul>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Detecção de ameaças com ML → GuardDuty. Visão consolidada de findings → Security Hub. Dados sensíveis em S3 → Macie.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Bloquear ação na org → Deny no root (Deny sempre vence). Serviços permitidos mas nunca usados → IAM Organization activity.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Landing Zone multi-conta pronta com baseline → Control Tower. Dá para habilitar sobre uma Org existente.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Compartilhar recipes/images do Image Builder, subnets ou TGW entre contas → RAM resource share.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> "Menor custo" → Backup & Restore. "RTO mínimo / near-zero" → Multi-Site. RPO segundos / RTO minutos → AWS DRS.</div>
                                     <div class="tip">💡 "Menor custo" + DR = Backup & Restore. "RTO mínimo" = Multi-Site.</div>
                                     <a href="https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-options-in-the-cloud.html" target="_blank">📖 Docs</a>
                                 </div>
@@ -820,6 +851,12 @@
                                         <li><strong>Reserved Instances:</strong> até 72%, capacity reservation garantida</li>
                                         <li><strong>Spot:</strong> até 90%, interruptível (2min aviso)</li>
                                     </ul>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Ativo-ativo multi-região com escrita local → DynamoDB Global Tables. Região primária caída no Aurora → detach-and-promote.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> DR de servidores com RPO segundos / RTO minutos → AWS DRS. Faça drills; ele não cria recursos não-EC2.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Failover ativo-passivo → Failover + health check. Em latency/weighted, failover só funciona com Evaluate Target Health.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Backup centralizado cross-service/cross-account → AWS Backup. Proteção contra ransomware (WORM) → Vault Lock.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Testar resiliência injetando falhas controladas (chaos engineering) → AWS FIS.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Estável com flexibilidade de família/OS → Compute Savings Plan. Interrompível/barato → Spot. Capacidade zonal garantida → Capacity Reservation.</div>
                                     <div class="tip">💡 Precisa de capacity reservation = RI. Flexibilidade = Savings Plans Compute.</div>
                                     <a href="https://docs.aws.amazon.com/savingsplans/latest/userguide/what-is-savings-plans.html" target="_blank">📖 Docs</a>
                                 </div>
@@ -951,6 +988,13 @@
                                         <li><strong>Redis:</strong> Multi-AZ, replicação, persistência, rich data types, Global Datastore</li>
                                         <li><strong>Memcached:</strong> simples, multi-thread, sem HA/replicação</li>
                                     </ul>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Rightsizing de compute → Compute Optimizer. Análise de S3 → Storage Lens. Dataset de custo detalhado → CUR.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Downtime mínimo + rollback rápido → Blue/Green. Update de plataforma no Beanstalk → Immutable ou swap de CNAME.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Deploy org-wide (contas/OUs) → StackSets service-managed. Preservar recurso ao deletar a stack → DeletionPolicy Retain/Snapshot.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Recriar instâncias após novo template → Instance Refresh. Ação antes de terminar → Lifecycle Hook. Pico conhecido → Scheduled/Predictive.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Agendar script em EC2 → State Manager + Maintenance Windows. Acesso sem SSH/bastion → Session Manager.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Cache de estáticos + conteúdo pago (signed URLs) → CloudFront. Melhorar hit ratio → TTL maior + cache key enxuta + Origin Shield.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Tipos de dados avançados/HA/persistência → Redis. Cache simples com scale-out horizontal → Memcached.</div>
                                     <div class="tip">💡 Precisa de HA/persistência = Redis. Cache simples horizontal = Memcached.</div>
                                     <a href="https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/WhatIs.html" target="_blank">📖 Docs</a>
                                 </div>
@@ -965,6 +1009,7 @@
                                         <li>Failover instantâneo entre regiões via health checks</li>
                                         <li>Ideal para: gaming, IoT, VoIP, apps que precisam de IP fixo</li>
                                     </ul>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Menor latência de rede + failover cross-region (sem cache) → Global Accelerator. IPs anycast fixos para allowlist.</div>
                                     <div class="tip">💡 vs CloudFront: GA = sem cache, TCP/UDP, IP fixo. CF = cache HTTP, DNS.</div>
                                     <a href="https://docs.aws.amazon.com/global-accelerator/latest/dg/what-is-global-accelerator.html" target="_blank">📖 Docs</a>
                                 </div>
@@ -1002,6 +1047,8 @@
                                         <li>DAX: cache in-memory (microsegundos)</li>
                                         <li>Streams + Lambda para event-driven processing</li>
                                     </ul>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Carga imprevisível ou PoC ociosa → Aurora Serverless. Reduzir overhead de PostgreSQL/MySQL em EC2 → Aurora.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Query em atributo não-chave → GSI. Picos de escrita → Auto Scaling. Busca/filtro rico → stream para OpenSearch. Cache µs → DAX.</div>
                                     <div class="tip">💡 "Milhões de req/s com ms de latência" = DynamoDB</div>
                                     <a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html" target="_blank">📖 Docs</a>
                                 </div>
@@ -1121,6 +1168,13 @@
                                         <li><strong>RDS:</strong> criptografa na criação (snapshot → copy encrypted → restore)</li>
                                         <li><strong>DynamoDB:</strong> AWS owned key ou CMK</li>
                                     </ul>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Série temporal (IoT) → Timestream. Grafo/relações → Neptune. Ledger imutável → QLDB. Cassandra gerenciado → Keyspaces.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Fan-out para vários consumidores → SNS. Ordenar → FIFO (não se converte de Standard). Isolar falhas → DLQ do mesmo tipo. Prioridade → 2 filas.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Tarefa longa não-idempotente (pagamento) → Standard (exactly-once). Alto volume idempotente → Express.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Lift-and-shift de broker JMS/AMQP/MQTT/WebSocket sem mudar código → Amazon MQ (não SQS).</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> SQL injection/XSS/rate-limit → WAF. DDoS com DRT/cost protection → Shield Advanced. Inspeção de rede na VPC → Network Firewall. Padronizar na org → Firewall Manager.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> TLS gerenciado para serviços AWS → ACM. EFS in-transit → mount com -o tls.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> RDS já criado sem criptografia → snapshot → copy criptografada → restore. Milhões de objetos SSE-KMS → S3 Bucket Keys.</div>
                                     <div class="tip">💡 RDS não criptografado → snapshot → copy com encryption → restore</div>
                                 </div>
                             </div>
@@ -1133,6 +1187,7 @@
                                         <li><strong>Secrets Manager:</strong> $0.40/mês, rotação automática (Lambda), KMS obrigatório, cross-account via resource policy</li>
                                         <li><strong>Parameter Store:</strong> grátis (standard), hierarquia (/app/prod/key), sem rotação nativa, 4KB max</li>
                                     </ul>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Rotação automática de credenciais de banco → Secrets Manager. Config hierárquica sem rotação → Parameter Store.</div>
                                     <div class="tip">💡 "Rotação automática de DB creds" = Secrets Manager. "Config com hierarquia" = Parameter Store.</div>
                                     <a href="https://docs.aws.amazon.com/secretsmanager/latest/userguide/intro.html" target="_blank">📖 Docs</a>
                                 </div>
@@ -1264,6 +1319,13 @@
                                         <li>Aggregator: visão multi-account e multi-region</li>
                                         <li>Padrão: Config detecta → EventBridge → Lambda/SSM fix</li>
                                     </ul>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Acesso incerto, otimizar sem intervir → Intelligent-Tiering (objetos <128KB não migram). Arquivo com recuperação em horas → Glacier.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Muito tráfego para S3 via NAT → Gateway Endpoint. Upload global rápido para S3 → Transfer Acceleration (não com Glacier).</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> I/O intenso/baixa latência → io2. Compartilhado Linux (NFS) → EFS. SMB Windows gerenciado → FSx for Windows. HPC → FSx for Lustre.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Storage híbrido com cache local de baixa latência → Storage Gateway. Restaurar cached volume → volume EBS a partir do snapshot.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Monitorar endpoint (heartbeat/GET/POST) → Synthetics Canaries. Memória usada pela Lambda → linha REPORT nos Logs. Dashboards cross-account → OAM.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Achar gargalo de latência em app distribuído, agrupando por feature/cliente → X-Ray (segments + annotations).</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Compliance org-wide com regras + remediação → Config Conformance Packs. Corrigir recurso fora de conformidade → Config + SSM Automation.</div>
                                     <div class="tip">💡 Na prova: automatizar detecção + remediação > intervenção manual</div>
                                     <a href="https://docs.aws.amazon.com/config/latest/developerguide/WhatIsConfig.html" target="_blank">📖 Docs</a>
                                 </div>
@@ -1453,6 +1515,15 @@
                                         <li><strong>Repurchase:</strong> trocar por SaaS</li>
                                         <li><strong>Refactor:</strong> redesenhar cloud-native</li>
                                     </ul>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Recursos ociosos (EBS/EIP não usados, instâncias subutilizadas) → Trusted Advisor cost checks.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Impedir lançar EC2 acima do orçamento → Budgets action aplicando SCP. Ligar/desligar em horário → Instance Scheduler.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Recursos expostos externamente → IAM Access Analyzer. Gerar policy pela atividade real → Access Analyzer Policy Generation.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Patching automatizado com baselines → SSM Patch Manager. Conformidade contínua → Config.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Rightsizing de EC2/EBS/Lambda → Compute Optimizer (enhanced = até 93 dias). Escalar leitura → Read Replicas.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Baixa latência entre instâncias (HPC) → Cluster. Máxima disponibilidade (hardware separado) → Spread.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Storage do RDS cheio → FreeStorageSpace + Storage Autoscaling. MAC fixo (licença) que sobrevive à troca → ENI. Desacoplar job pesado → Worker env + SQS.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Instância unhealthy substituída sozinha → ASG + health check. Task que morre relançada → ECS Service.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Lift & shift → Rehost. DB para RDS / cortar licença → Replatform. Monólito em microservices → Refactor. VMware as-is → Relocate.</div>
                                     <div class="tip">💡 "Menor esforço" = Rehost. "Melhor uso da cloud" = Refactor.</div>
                                 </div>
                             </div>
@@ -1480,6 +1551,8 @@
                                         <li><strong>Snowball + DMS:</strong> SCT extrai → Snow → S3 → DMS migra</li>
                                         <li>Suporta Oracle, SQL Server, MySQL, PostgreSQL, MongoDB → AWS</li>
                                     </ul>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Lift-and-shift de servidores com replicação em bloco + cutover → MGN. Testar antes → test instances. Banda limitada → pilot light + throttling.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Replicação contínua (mínimo downtime) → DMS com CDC. Migração heterogênea (Oracle→Aurora) → SCT converte schema + DMS migra dados.</div>
                                     <div class="tip">💡 Oracle → Aurora: SCT (schema) + DMS (dados com CDC)</div>
                                     <a href="https://docs.aws.amazon.com/dms/latest/userguide/Welcome.html" target="_blank">📖 Docs</a>
                                 </div>
@@ -1592,6 +1665,10 @@
                                         <li>VPN com alta disponibilidade automática → 2 túneis para o <strong>Transit Gateway</strong> com <strong>BGP + ECMP</strong> (rotas equivalentes em paralelo)</li>
                                         <li>Failover em latency routing → precisa de <strong>health check + Evaluate Target Health</strong></li>
                                     </ul>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> SFTP gerenciado → Transfer Family (DataSync não faz SFTP). PB offline com rede ruim → Snow Family (Snowmobile foi descontinuado).</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Backend event-driven <15min sem gerir infra → Lambda + API Gateway. HTTP 504 aos ~29s → limite do API Gateway (ajustável até 300s).</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> Container serverless sem API K8s → ECS Fargate. Web app sem gerir LB + CI/CD de repo → App Runner. Resiliência barata → ECS capacity provider.</div>
+                                    <div class="exam-tip"><strong>📝 Prova:</strong> EFS em Fargate → SG inbound 2049, mesmo VPC. io2 para I/O intenso. SMB gerenciado → FSx for Windows.</div>
                                     <div class="tip">💡 Direct Connect é lento de provisionar e não é criptografado por padrão</div>
                                 </div>
                             </div>

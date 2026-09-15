@@ -2556,6 +2556,16 @@
                         <li>Conta de monitoramento central que visualiza métricas/logs/traces de outras contas</li>
                         <li>Usa OAM (Observability Access Manager) para criar links entre contas</li>
                     </ul>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">Monitorar continuamente um endpoint com heartbeat + GET/POST, publicando métricas e alarmes.</span> → <span class="resposta"><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html" target="_blank" class="doc-term">CloudWatch Synthetics Canaries</a></span> <span class="porque">— Resource Health cobre só EC2.</span></li>
+                            <li><span class="cenario">Achar problemas de performance em tempo real e agrupar por feature/cliente.</span> → <span class="resposta">X-Ray com segments + annotations</span> <span class="porque">— CloudWatch Logs não têm correlação automática.</span></li>
+                            <li><span class="cenario">Descobrir o uso de memória atual de uma função Lambda para fazer o rightsizing.</span> → <span class="resposta">CloudWatch Logs (linha REPORT com "max memory used")</span> <span class="porque">— as métricas default não mostram memória usada.</span></li>
+                            <li><span class="cenario">Analisar logs (AD/VPC Flow) em near-real-time com ferramenta open-source e dashboards.</span> → <span class="resposta">Kinesis Data Firehose → OpenSearch (Dashboards)</span> <span class="porque">— Athena + QuickSight é SQL/batch.</span></li>
+                            <li><span class="cenario">Monitorar métricas Prometheus de EKS com dashboards/alertas open-source.</span> → <span class="resposta">Amazon Managed Service for Prometheus + Managed Grafana</span> <span class="porque">— CloudWatch + QuickSight não é open-source.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html" target="_blank" class="ref-link">CloudWatch</a>
                     <a href="https://docs.aws.amazon.com/xray/latest/devguide/aws-xray.html" target="_blank" class="ref-link">X-Ray</a>
                 </div>
@@ -2576,6 +2586,16 @@
                     <div class="info-box success">
                         <strong>✅ Princípio-chave</strong>
                         Na prova, a resposta que automatiza detecção + remediação geralmente é mais correta que a que requer intervenção manual. AWS favorece "automate everything".
+                    </div>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">Framework de compliance org-wide com regras + remediação e relatório, reduzindo o tempo não-conforme.</span> → <span class="resposta">AWS Config + <a href="https://docs.aws.amazon.com/config/latest/developerguide/conformance-packs.html" target="_blank" class="doc-term">Conformance Packs</a></span> <span class="porque">— Beanstalk/SSM Run Command não definem regras em todos os recursos.</span></li>
+                            <li><span class="cenario">Escanear políticas permissivas continuamente e remediar em tempo real.</span> → <span class="resposta">IAM Access Analyzer + EventBridge → Lambda + notificação</span> <span class="porque">— revisão única/relatório não é remediação proativa.</span></li>
+                            <li><span class="cenario">Enviar logs de todos os EC2 para o S3 diariamente num horário fixo via Systems Manager.</span> → <span class="resposta"><a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/state-manager-vs-maintenance-windows.html" target="_blank" class="doc-term">State Manager</a> + Maintenance Windows</span> <span class="porque">— o Session Manager não roda scripts agendados.</span></li>
+                            <li><span class="cenario">Impedir que um time crie EC2 ao estourar o orçamento (jeito mais fácil).</span> → <span class="resposta">AWS Budgets com budget action aplicando um SCP</span> <span class="porque">— a ação "stop instances" só para as em execução.</span></li>
+                            <li><span class="cenario">Ver logs e status do SSM Agent que falha em alguns EC2.</span> → <span class="resposta">encaminhar os logs do agente para o CloudWatch Logs</span> <span class="porque">— o CloudTrail só grava chamadas de API.</span></li>
+                        </ol>
                     </div>
                     <a href="https://docs.aws.amazon.com/config/latest/developerguide/remediation.html" target="_blank" class="ref-link">Config Remediation</a>
                     <a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-automation.html" target="_blank" class="ref-link">SSM Automation</a>
@@ -2626,6 +2646,16 @@
                         <li><strong>S3 Access Points:</strong> políticas granulares por caso de uso (simplifica bucket policies complexas)</li>
                         <li><strong>VPC Endpoint Policies:</strong> restringe quais recursos podem ser acessados pelo endpoint</li>
                     </ul>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">Credenciais de banco que precisam de rotação automática gerenciada, integrada ao RDS.</span> → <span class="resposta">AWS Secrets Manager</span> <span class="porque">— o Parameter Store não faz rotação nativa.</span></li>
+                            <li><span class="cenario">App precisa apenas ler parâmetros SecureString cifrados por uma CMK.</span> → <span class="resposta">IAM policy com ssm:GetParameters + kms:Decrypt apenas</span> <span class="porque">— Encrypt/GenerateDataKey são desnecessários (menor privilégio).</span></li>
+                            <li><span class="cenario">Compartilhar um secret entre contas.</span> → <span class="resposta">Secrets Manager com resource-based policy (+ kms:Decrypt na key policy)</span> <span class="porque">— o Parameter Store precisaria de IAM role cross-account.</span></li>
+                            <li><span class="cenario">Configurações de aplicação organizadas em hierarquia de caminhos.</span> → <span class="resposta">Parameter Store (paths como /app/prod/db)</span> <span class="porque">— o Secrets Manager não tem hierarquia de paths.</span></li>
+                            <li><span class="cenario">Quais recursos do Systems Manager geram custo adicional.</span> → <span class="resposta">Advanced Parameter Store + Systems Manager Automation</span> <span class="porque">— Run Command e Patch Manager são gratuitos.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/secretsmanager/latest/userguide/intro.html" target="_blank" class="ref-link">Secrets Manager</a>
                     <a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html" target="_blank" class="ref-link">Parameter Store</a>
                 </div>
@@ -2661,6 +2691,16 @@
                         <li><strong>Spread:</strong> hardware separado por instância (HA, máx 7/AZ)</li>
                         <li><strong>Partition:</strong> grupos em racks separados (HDFS, Cassandra, Kafka)</li>
                     </ul>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">Dashboard de savings e performance evitando over/under-provisioning de EC2/EBS/ASG/Lambda.</span> → <span class="resposta">AWS Compute Optimizer</span> <span class="porque">— o Budgets rastreia custo sem recomendar rightsizing.</span></li>
+                            <li><span class="cenario">Rightsizing de EC2 org-wide meses após a migração + recomendações críticas de segurança.</span> → <span class="resposta">Compute Optimizer (enhanced metrics, 90 dias) + Trusted Advisor Priority</span> <span class="porque">— as métricas default cobrem só 14 dias.</span></li>
+                            <li><span class="cenario">App legado sem Auto Scaling, com pico raro e baixa memória, reduzindo custo a longo prazo.</span> → <span class="resposta">instância burstable (T) com Reserved Instance de 3 anos</span> <span class="porque">— um tipo maior custa mais; Spot pode faltar.</span></li>
+                            <li><span class="cenario">CFO quer visão holística: rightsizing de compute + padrões de storage + tendência de custo.</span> → <span class="resposta">Compute Optimizer + S3 Storage Lens + CUR</span> <span class="porque">— combinações sem análise de storage são incompletas.</span></li>
+                            <li><span class="cenario">Identificar economia potencial de Savings Plans/RIs e uso subutilizado.</span> → <span class="resposta"><a href="https://docs.aws.amazon.com/cost-management/latest/userguide/ce-rightsizing.html" target="_blank" class="doc-term">Cost Explorer</a> (rightsizing + recomendações de Savings Plans)</span> <span class="porque">— o Compute Optimizer foca eficiência de recurso, não a projeção comercial.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/placement-groups.html" target="_blank" class="ref-link">Placement Groups</a>
                 </div>
             </details>
@@ -2698,6 +2738,16 @@
                         <li>Request increase proativamente antes de scaling events</li>
                         <li>Trusted Advisor alerta quando está perto do limite</li>
                     </ul>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">O que acontece no RDS Multi-AZ quando a instância primária falha.</span> → <span class="resposta">o CNAME é re-apontado para o standby</span> <span class="porque">— o IP não muda e não se cria uma instância nova.</span></li>
+                            <li><span class="cenario">RDS ficou sem armazenamento; monitorar e crescer sem intervenção.</span> → <span class="resposta">métrica FreeStorageSpace + Storage Autoscaling do RDS</span> <span class="porque">— FreeLocalStorage é métrica do Aurora (errada aqui).</span></li>
+                            <li><span class="cenario">RTO de minutos / RPO de segundos custo-efetivo para falha de hardware EC2 sob ECS.</span> → <span class="resposta">ECS capacity provider usando um Auto Scaling Group de EC2</span> <span class="porque">— hot standby cross-region é caro; Fargate Spot sofre interrupções.</span></li>
+                            <li><span class="cenario">Processo não-crítico sobrecarrega o EC2 do Beanstalk; melhorar a resposta com custo baixo.</span> → <span class="resposta">Elastic Beanstalk Worker environment + SQS (desacoplar o processo)</span> <span class="porque">— trocar a instância não desacopla o culpado.</span></li>
+                            <li><span class="cenario">MAC address fixo (licença) precisa sobreviver à troca de instância EC2.</span> → <span class="resposta">Elastic Network Interface (ENI) destacada e reanexada</span> <span class="porque">— a ENI mantém MAC/IP ao mover para o standby.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/welcome.html" target="_blank" class="ref-link">Well-Architected Reliability Pillar</a>
                 </div>
             </details>
@@ -2727,6 +2777,16 @@
                         <li><strong>AWS Budgets Actions:</strong> aplica SCP ou para instâncias quando budget excede</li>
                         <li><strong>Tagging obrigatório:</strong> SCP que bloqueia criação de recursos sem tags de custo</li>
                     </ul>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">Reduzir o custo de NAT com muito tráfego para o S3, mantendo os patches externos.</span> → <span class="resposta">Gateway Endpoint para S3 (mantendo o NAT para a internet)</span> <span class="porque">— o tráfego S3 deixa de ser cobrado pelo NAT.</span></li>
+                            <li><span class="cenario">Achar serviços permitidos por SCP mas nunca acessados, para enxugar as listas.</span> → <span class="resposta">IAM > Access reports > Organization activity</span> <span class="porque">— o CloudTrail é manual/90 dias e o Config não mostra isso.</span></li>
+                            <li><span class="cenario">Ajustar o menor privilégio mantendo permissões usadas nos últimos meses.</span> → <span class="resposta">Last Accessed Information via conta de gerência da Org</span> <span class="porque">— o Config mostra mudanças, não recursos acessados.</span></li>
+                            <li><span class="cenario">Achar recursos ociosos como EBS/EIP não usados e instâncias subutilizadas.</span> → <span class="resposta"><a href="https://docs.aws.amazon.com/awssupport/latest/user/cost-optimization-checks.html" target="_blank" class="doc-term">Trusted Advisor</a> (cost optimization checks)</span> <span class="porque">— o Compute Optimizer foca rightsizing de performance.</span></li>
+                            <li><span class="cenario">Analisar a tendência de gasto por tag e detectar recursos que geram custo sem uso.</span> → <span class="resposta">Cost Explorer + Cost Allocation Tags</span> <span class="porque">— o Budgets alerta mas não faz a análise detalhada.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/budgets-managing-costs.html" target="_blank" class="ref-link">AWS Budgets</a>
                 </div>
             </details>

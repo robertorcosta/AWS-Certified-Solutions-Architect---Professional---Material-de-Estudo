@@ -377,6 +377,75 @@
             margin-bottom: 5px;
         }
 
+        /* Rodapé "Como cai na prova" */
+        .exam-scenarios {
+            margin: 18px 0 6px;
+            padding: 14px 16px 6px;
+            border: 1px dashed var(--accent);
+            border-radius: 8px;
+            background: rgba(88, 166, 255, 0.04);
+        }
+
+        .exam-scenarios > .exam-title {
+            display: block;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .exam-scenarios ol {
+            margin: 0;
+            padding-left: 22px;
+        }
+
+        .exam-scenarios li {
+            margin-bottom: 10px;
+            line-height: 1.55;
+        }
+
+        .exam-scenarios .cenario {
+            color: var(--text-secondary);
+        }
+
+        .exam-scenarios .resposta {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .exam-scenarios .porque {
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        /* Termo técnico com link para doc oficial */
+        .doc-term {
+            color: inherit;
+            text-decoration: none;
+            border-bottom: 1px dotted var(--accent);
+            cursor: help;
+        }
+
+        .doc-term:hover {
+            color: var(--accent);
+            border-bottom-style: solid;
+        }
+
+        .doc-term::after {
+            content: "↗";
+            font-size: 0.7em;
+            vertical-align: super;
+            color: var(--accent);
+            margin-left: 1px;
+        }
+
+        @media print {
+            .exam-scenarios { break-inside: avoid; border-color: #999; background: #fafafa; }
+            .exam-scenarios > .exam-title { color: #000; }
+            .doc-term { border-bottom: none; }
+            .doc-term::after { content: ""; }
+        }
+
         /* Tables */
         table {
             width: 100%;
@@ -1048,7 +1117,16 @@
                         <li><strong>Bandwidth:</strong> até 50 Gbps por attachment</li>
                         <li><strong>Inter-Region Peering:</strong> tráfego criptografado entre TGWs de diferentes regiões</li>
                     </ul>
-                    <p><span class="tag tag-yellow">Cenário comum na prova:</span> "Empresa com 50+ VPCs precisa de conectividade full-mesh com roteamento centralizado"</p>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">Empresa com dezenas de VPCs e conexões on-premises precisa de conectividade centralizada com roteamento transitivo, sem malha de peering.</span> → <span class="resposta">Transit Gateway (hub-and-spoke)</span> <span class="porque">— VPC Peering não é transitivo e vira uma malha ingerenciável.</span></li>
+                            <li><span class="cenario">Aplicação precisa de tráfego multicast entre instâncias em subnets diferentes.</span> → <span class="resposta">Transit Gateway com multicast domain</span> <span class="porque">— peering e ENI não fazem multicast nativo.</span></li>
+                            <li><span class="cenario">VPN híbrida de alta disponibilidade com balanceamento e reroute automático.</span> → <span class="resposta">2 VPNs de Customer Gateways distintos para um único TGW, com BGP + ECMP</span> <span class="porque">— rotas estáticas com failover de DNS são inferiores.</span></li>
+                            <li><span class="cenario">Instâncias em duas <a href="https://docs.aws.amazon.com/wavelength/latest/developerguide/what-is-wavelength.html" target="_blank" class="doc-term">Wavelength Zones</a> diferentes precisam se comunicar diretamente com controle fino de roteamento.</span> → <span class="resposta">conectar as subnets via Transit Gateway</span> <span class="porque">— Carrier Gateway é para saída à internet do carrier, não tráfego interno.</span></li>
+                            <li><span class="cenario">Conectar milhares de contas/VPCs numa organização, reaproveitando o hub entre contas.</span> → <span class="resposta">TGW compartilhado via RAM (Resource Access Manager)</span> <span class="porque">— evita um TGW por conta.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/vpc/latest/tgw/what-is-transit-gateway.html" target="_blank" class="ref-link">Documentação Transit Gateway</a>
                 </div>
             </details>

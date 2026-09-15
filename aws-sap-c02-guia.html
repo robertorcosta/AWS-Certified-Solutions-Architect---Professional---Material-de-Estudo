@@ -1148,7 +1148,16 @@
                         <li><strong>Resiliência:</strong> para alta disponibilidade, use 2 conexões em locais diferentes + VPN como fallback</li>
                         <li><strong>MACsec:</strong> criptografia na camada 2 (disponível em 10/100 Gbps dedicated)</li>
                     </ul>
-                    <p><span class="tag tag-yellow">Cenário comum:</span> "Migração de grandes volumes de dados com latência consistente" ou "Conexão híbrida resiliente com failover"</p>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">Conectividade on-premises que precisa subir rápido, mas vai crescer para dezenas de Gbps.</span> → <span class="resposta">VPN agora + pedido de Direct Connect em paralelo, migrando (cutover) quando o DX ficar pronto</span> <span class="porque">— o DX sozinho demora semanas; a VPN sozinha não escala além de ~10 Gbps.</span></li>
+                            <li><span class="cenario">Banda dedicada e consistente com criptografia ponta a ponta.</span> → <span class="resposta">DX (private VIF) + Site-to-Site VPN por cima do DX</span> <span class="porque">— o DX por si só não é criptografado.</span></li>
+                            <li><span class="cenario">Um único DX precisa alcançar VPCs em várias Regiões/contas de forma privada.</span> → <span class="resposta"><a href="https://docs.aws.amazon.com/directconnect/latest/UserGuide/direct-connect-gateways.html" target="_blank" class="doc-term">Direct Connect Gateway</a> associado a Transit Gateways/VGWs</span> <span class="porque">— evita um VIF por VPC.</span></li>
+                            <li><span class="cenario">Alta disponibilidade da conexão física, sem ponto único de falha.</span> → <span class="resposta">2 DX em locations diferentes (ou <a href="https://docs.aws.amazon.com/directconnect/latest/UserGuide/lags.html" target="_blank" class="doc-term">LAG</a>) + VPN de backup com BGP</span> <span class="porque">— uma única porta/conexão é SPOF.</span></li>
+                            <li><span class="cenario">Tráfego do DX precisa de criptografia na camada 2 na porta física (compliance).</span> → <span class="resposta"><a href="https://docs.aws.amazon.com/directconnect/latest/UserGuide/MACsec.html" target="_blank" class="doc-term">MACsec</a> em conexões dedicadas suportadas</span> <span class="porque">— IPsec/VPN é camada 3 e não atende o requisito de L2.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/directconnect/latest/UserGuide/Welcome.html" target="_blank" class="ref-link">Documentação Direct Connect</a>
                 </div>
             </details>
@@ -1164,7 +1173,16 @@
                         <li><strong>Throughput:</strong> ~1.25 Gbps por túnel (2 túneis por conexão VPN)</li>
                         <li><strong>ECMP:</strong> Equal-Cost Multi-Path — com Transit Gateway, permite agregar múltiplas VPNs para mais throughput</li>
                     </ul>
-                    <p><span class="tag tag-yellow">Cenário comum:</span> "Precisa de conexão rápida enquanto Direct Connect é provisionado" (VPN como backup ou solução temporária)</p>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">VPN redundante que escala com o tráfego e faz failover automático, sem downtime.</span> → <span class="resposta">2 VPNs de Customer Gateways diferentes para um único Transit Gateway, com BGP e <a href="https://docs.aws.amazon.com/vpn/latest/s2svpn/VPNTunnels.html" target="_blank" class="doc-term">ECMP</a></span> <span class="porque">— roteamento estático com failover de DNS exige intervenção manual.</span></li>
+                            <li><span class="cenario">Ao criar a VPN, quais dados o <a href="https://docs.aws.amazon.com/vpn/latest/s2svpn/SetUpVPNConnections.html" target="_blank" class="doc-term">Customer Gateway</a> exige.</span> → <span class="resposta">ASN de BGP (se roteamento dinâmico) + IP público estático e roteável do dispositivo on-premises</span> <span class="porque">— o ASN só é exigido no roteamento dinâmico; o IP não pode ser dinâmico.</span></li>
+                            <li><span class="cenario">Conectividade on-premises rápida enquanto o Direct Connect é provisionado.</span> → <span class="resposta">VPN Site-to-Site imediata como ponte, migrando para o DX depois</span> <span class="porque">— a VPN sobe em minutos.</span></li>
+                            <li><span class="cenario">Aproveitar a alta disponibilidade nativa de cada conexão VPN.</span> → <span class="resposta">usar os dois túneis (cada um em endpoint AWS distinto) com BGP</span> <span class="porque">— toda conexão S2S já vem com 2 túneis em AZs diferentes.</span></li>
+                            <li><span class="cenario">Reduzir latência/jitter da VPN para usuários globais.</span> → <span class="resposta"><a href="https://docs.aws.amazon.com/vpn/latest/s2svpn/accelerated-vpn.html" target="_blank" class="doc-term">Accelerated Site-to-Site VPN</a></span> <span class="porque">— usa a rede de edge do Global Accelerator; a VPN comum trafega pela internet pública.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/vpn/latest/s2svpn/VPC_VPN.html" target="_blank" class="ref-link">Documentação Site-to-Site VPN</a>
                 </div>
             </details>
@@ -1216,6 +1234,16 @@
                             <td>Expor serviço</td>
                         </tr>
                     </table>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">Consumir um SaaS do Marketplace que já expôs um PrivateLink, mantendo o tráfego privado.</span> → <span class="resposta">Interface VPC Endpoint (cria uma ENI com IP privado)</span> <span class="porque">— Gateway Endpoint é o tipo errado; VPN/DX são para on-premises, não para SaaS dentro da AWS.</span></li>
+                            <li><span class="cenario">Vários membros (contas) precisam acessar um serviço via endpoints privados.</span> → <span class="resposta">um único endpoint PrivateLink atende todos os membros</span> <span class="porque">— PrivateLink é um-para-muitos; não precisa de um endpoint por conta.</span></li>
+                            <li><span class="cenario">Conectar centenas de VPCs/contas com roteamento transitivo centralizado.</span> → <span class="resposta">Transit Gateway (hub-and-spoke)</span> <span class="porque">— VPC Peering não é transitivo e vira uma malha O(n²) inviável.</span></li>
+                            <li><span class="cenario">Expor um único serviço a consumidores, sem rotear redes inteiras e sem se preocupar com CIDRs sobrepostos.</span> → <span class="resposta">PrivateLink (endpoint service via NLB)</span> <span class="porque">— peering/TGW conectam redes inteiras e falham com CIDR sobreposto.</span></li>
+                            <li><span class="cenario">Poucas VPCs que precisam se comunicar de forma simples e pontual.</span> → <span class="resposta">VPC Peering</span> <span class="porque">— o TGW cobra por attachment e só compensa com muitas VPCs.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/vpc/latest/peering/what-is-vpc-peering.html" target="_blank" class="ref-link">VPC Peering</a>
                     <a href="https://docs.aws.amazon.com/vpc/latest/privatelink/what-is-privatelink.html" target="_blank" class="ref-link">PrivateLink</a>
                 </div>
@@ -1268,7 +1296,16 @@
                         <li><strong>Resolver Rules:</strong> regras de encaminhamento condicional (ex: "*.corp.local" → DNS on-prem)</li>
                         <li><strong>RAM Sharing:</strong> compartilhe regras entre contas via Resource Access Manager</li>
                     </ul>
-                    <p><span class="tag tag-yellow">Cenário comum:</span> "Resolver nomes de domínio privados entre AWS e on-premises em ambiente multi-account"</p>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">On-premises precisa resolver registros de uma Private Hosted Zone na VPC (a consulta entra na AWS).</span> → <span class="resposta">Resolver INBOUND endpoint, com os resolvers on-premises apontando para ele</span> <span class="porque">— inbound = on-prem → AWS; outbound é o sentido inverso.</span></li>
+                            <li><span class="cenario">EC2 na VPC precisam resolver domínios de um DNS on-premises (a consulta sai da AWS).</span> → <span class="resposta">OUTBOUND endpoint + forwarding rules indicando os domínios</span> <span class="porque">— a route table não configura forwarding de DNS.</span></li>
+                            <li><span class="cenario">DNS altamente disponível e escalável (milhões de queries/s) sem ponto único de falha.</span> → <span class="resposta">inbound e outbound endpoints em cada AZ + Resolver Rules por tipo de query</span> <span class="porque">— um endpoint único numa AZ é SPOF.</span></li>
+                            <li><span class="cenario">Resolução DNS bidirecional entre on-premises e AWS na mesma arquitetura.</span> → <span class="resposta">criar AMBOS os endpoints (inbound e outbound)</span> <span class="porque">— cada endpoint cobre só um sentido.</span></li>
+                            <li><span class="cenario">Compartilhar as regras de forwarding do Resolver com muitas VPCs/contas.</span> → <span class="resposta">Resolver rules compartilhadas via RAM</span> <span class="porque">— recriar as rules em cada VPC não escala.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver.html" target="_blank" class="ref-link">Route 53 Resolver</a>
                 </div>
             </details>
@@ -1313,6 +1350,16 @@
                             <td>Via Origin failover</td>
                         </tr>
                     </table>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">App global (EC2 + ELB) que precisa rotear usuários ao endpoint regional ótimo por desempenho/saúde, com failover multi-Região rápido.</span> → <span class="resposta">Global Accelerator na frente do ELB</span> <span class="porque">— CloudFront é CDN de cache e não escolhe o melhor endpoint regional.</span></li>
+                            <li><span class="cenario">Distribuir conteúdo estático/vídeo com cache na edge e URLs assinadas para conteúdo pago.</span> → <span class="resposta">CloudFront (com Signed URLs / OAC)</span> <span class="porque">— o Global Accelerator não faz cache.</span></li>
+                            <li><span class="cenario">Aplicação TCP/UDP não-HTTP (jogos, IoT, VoIP) que precisa de baixa latência.</span> → <span class="resposta">Global Accelerator</span> <span class="porque">— o CloudFront é focado em HTTP/HTTPS.</span></li>
+                            <li><span class="cenario">Precisa de 2 IPs estáticos fixos para allowlist em firewall corporativo.</span> → <span class="resposta">Global Accelerator (par de <a href="https://docs.aws.amazon.com/global-accelerator/latest/dg/introduction-how-it-works.html" target="_blank" class="doc-term">IPs anycast</a> fixos)</span> <span class="porque">— o CloudFront usa IPs de edge variáveis.</span></li>
+                            <li><span class="cenario">Reduzir latência de API dinâmica global, sem necessidade de cache.</span> → <span class="resposta">Global Accelerator</span> <span class="porque">— otimiza o caminho pela backbone da AWS; escolha CloudFront só quando há conteúdo cacheável.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/global-accelerator/latest/dg/what-is-global-accelerator.html" target="_blank" class="ref-link">Global Accelerator</a>
                     <a href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html" target="_blank" class="ref-link">CloudFront</a>
                 </div>
@@ -1348,6 +1395,16 @@
                         Um deny explícito em QUALQUER nível sempre vence. Para cross-account, AMBOS os lados precisam permitir (exceto resource-based policies do S3 que podem conceder direto).
                     </div>
 
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">Auditor externo (com IAM user próprio) precisa de acesso somente-leitura em todas as contas, sem IdP.</span> → <span class="resposta">IAM role read-only em cada conta + permitir que o user do auditor faça AssumeRole</span> <span class="porque">— roles dão credenciais temporárias; criar IAM user por conta é overhead.</span></li>
+                            <li><span class="cenario">Devs (mas não Testers) da conta Dev precisam atualizar um bucket S3 na conta Production.</span> → <span class="resposta">role na Prod confiando na Dev + na Dev permitir sts:AssumeRole ao grupo Developers (Deny aos Testers)</span> <span class="porque">— ExternalId é para terceiros, não cross-account interno.</span></li>
+                            <li><span class="cenario">A conta Admin deve gerenciar recursos da conta Finance sem acessar os dados.</span> → <span class="resposta">criar a cross-account role NA conta Finance (a dona dos recursos concede)</span> <span class="porque">— a role vive na conta cujos recursos serão acessados.</span></li>
+                            <li><span class="cenario">Interpretar policy com <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_notprincipal.html" target="_blank" class="doc-term">Deny + NotPrincipal</a> listando um usuário e o root.</span> → <span class="resposta">só os listados têm acesso; todos os demais são negados</span> <span class="porque">— Deny + NotPrincipal nega todos EXCETO os listados.</span></li>
+                            <li><span class="cenario">Delegar criação de roles a devs, forçando um <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_boundaries.html" target="_blank" class="doc-term">permissions boundary</a> que eles não possam remover.</span> → <span class="resposta">Allow em iam:CreateRole com Condition iam:PermissionsBoundary + Deny em iam:DeleteRolePermissionsBoundary</span> <span class="porque">— só PutRolePermissionsBoundary não permite criar role.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html" target="_blank" class="ref-link">Lógica de Avaliação IAM</a>
                     <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_boundaries.html" target="_blank" class="ref-link">Permission Boundaries</a>
                 </div>
@@ -1365,7 +1422,16 @@
                         <li><strong>Application Assignments:</strong> SSO para apps SAML 2.0 (Salesforce, Box, Microsoft 365)</li>
                         <li><strong>EC2 Windows:</strong> login único em instâncias Windows via SSO</li>
                     </ul>
-                    <p><span class="tag tag-yellow">Cenário comum:</span> "Centralizar autenticação para 100+ contas AWS com identidades corporativas existentes"</p>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">Usar o Identity Center com um AD Microsoft self-managed on-premises, SEM cachear o diretório na AWS.</span> → <span class="resposta"><a href="https://docs.aws.amazon.com/directoryservice/latest/admin-guide/directory_ad_connector.html" target="_blank" class="doc-term">AD Connector</a> como gateway, conectando o Identity Center ao AD self-managed</span> <span class="porque">— o Managed Microsoft AD cacheia e exige trust.</span></li>
+                            <li><span class="cenario">IdP SAML 2.0 on-premises dando acesso federado ao console, sem criar IAM users.</span> → <span class="resposta">autenticar no IdP → credenciais temporárias via STS → acesso pelo endpoint do Identity Center</span> <span class="porque">— AssumeRoleWithWebIdentity é só para IdP web/social.</span></li>
+                            <li><span class="cenario">Acesso centralizado a múltiplas contas da Organization com conjuntos de permissão reutilizáveis.</span> → <span class="resposta">Identity Center com <a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/permissionsetsconcept.html" target="_blank" class="doc-term">permission sets</a> atribuídos a grupos</span> <span class="porque">— viram roles nas contas-membro; IAM user por conta não escala.</span></li>
+                            <li><span class="cenario">Permissões por atributo (departamento/projeto) vindas do IdP, sem policy por usuário.</span> → <span class="resposta">ABAC no Identity Center usando atributos de sessão</span> <span class="porque">— ABAC escala por atributos; policies estáticas não.</span></li>
+                            <li><span class="cenario">Federar usuários de IdP externo (Okta/Entra ID) para todas as contas com provisionamento automático.</span> → <span class="resposta">Identity Center com IdP externo via SAML + <a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/scim-profile-saml.html" target="_blank" class="doc-term">SCIM</a></span> <span class="porque">— o SCIM sincroniza usuários/grupos automaticamente.</span></li>
+                        </ol>
+                    </div>
                     <div class="info-box">
                         <strong>💡 SAML 2.0 Federation vs IAM Identity Center</strong>
                         SAML 2.0 Federation é o "jeito antigo" — Identity Center é o recomendado. Se a questão menciona setup novo com AD, a resposta é IAM Identity Center. Se menciona sistema legado já com SAML configurado, pode ser SAML direto.
@@ -1438,6 +1504,16 @@
                             <li>Se a questão fala "replicar AD para reduzir latência na cloud": Managed AD + trust com on-prem.</li>
                         </ul>
                     </div>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">App mobile (iOS+Android) com Cognito adicionando login Google e acesso a recursos AWS.</span> → <span class="resposta">User Pool para autenticação (federação com Google) + Identity Pool para credenciais AWS</span> <span class="porque">— user pool autentica, identity pool autoriza.</span></li>
+                            <li><span class="cenario">Usuários de IdP SAML 2.0 on-premises baixam arquivos do S3 sem IAM users.</span> → <span class="resposta">usuário autentica no IdP → recebe a assertion → chama STS AssumeRoleWithSAML</span> <span class="porque">— a assertion vai ao usuário, não IdP → STS direto.</span></li>
+                            <li><span class="cenario">App mobile precisa de acesso temporário ao DynamoDB por dispositivo.</span> → <span class="resposta">IAM role + AssumeRoleWithWebIdentity para credenciais STS no sign-in</span> <span class="porque">— nunca embutir credenciais de longo prazo no app.</span></li>
+                            <li><span class="cenario">Fluxo enhanced (simplificado) do Cognito Identity Pool, após o GetId retornar o identity ID.</span> → <span class="resposta"><a href="https://docs.aws.amazon.com/cognito/latest/developerguide/authentication-flow.html" target="_blank" class="doc-term">GetCredentialsForIdentity</a> (retorna as credenciais direto)</span> <span class="porque">— o basic flow mandaria AssumeRoleWithWebIdentity ao STS.</span></li>
+                            <li><span class="cenario">Sistema legado (IdP não-SAML) precisa de acesso temporário via identity broker.</span> → <span class="resposta">broker que autentica e chama <a href="https://docs.aws.amazon.com/STS/latest/APIReference/API_GetFederationToken.html" target="_blank" class="doc-term">GetFederationToken</a> ou AssumeRole</span> <span class="porque">— DecodeAuthorizationMessage só decodifica erro de autorização, não gera credenciais.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/directoryservice/latest/admin-guide/what_is.html" target="_blank" class="ref-link">Directory Services</a>
                     <a href="https://docs.aws.amazon.com/cognito/latest/developerguide/what-is-amazon-cognito.html" target="_blank" class="ref-link">Amazon Cognito</a>
                 </div>
@@ -1507,6 +1583,16 @@
                     <h4>Envelope Encryption</h4>
                     <p>Data Key criptografa os dados → CMK criptografa a Data Key. Padrão usado pelo SDK da AWS. Necessário para arquivos > 4KB.</p>
 
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">Uma role na conta Production precisa usar uma CMK da conta Dev para decriptar num pipeline.</span> → <span class="resposta">na key policy da CMK, permitir a conta Prod como key user com ações mínimas (Encrypt, Decrypt, GenerateDataKey*, DescribeKey)</span> <span class="porque">— use menor privilégio, nunca kms:*.</span></li>
+                            <li><span class="cenario">O único principal da key policy foi deletado e o root não está na policy — a CMK ficou ingerenciável.</span> → <span class="resposta">abrir chamado no AWS Support</span> <span class="porque">— sem o root na key policy, nem o root corrige; policy IAM não sobrepõe key policy.</span></li>
+                            <li><span class="cenario">Permitir Encrypt/Decrypt apenas em chaves com uma tag específica (ABAC).</span> → <span class="resposta">Allow com Condition StringEquals em aws:ResourceTag</span> <span class="porque">— kms:ResourceAliases é para alias, não tag.</span></li>
+                            <li><span class="cenario">SSE-KMS em bucket com milhões de objetos gera custo alto de chamadas KMS.</span> → <span class="resposta"><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucket-key.html" target="_blank" class="doc-term">S3 Bucket Keys</a></span> <span class="porque">— geram data keys locais, reduzindo chamadas por objeto.</span></li>
+                            <li><span class="cenario">O que acontece ao deletar uma chave KMS.</span> → <span class="resposta">deleção agendada com espera de 7 a 30 dias (default 30), cancelável na janela</span> <span class="porque">— a chave não some na hora.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/kms/latest/developerguide/overview.html" target="_blank" class="ref-link">AWS KMS</a>
                     <a href="https://docs.aws.amazon.com/cloudhsm/latest/userguide/introduction.html" target="_blank" class="ref-link">CloudHSM</a>
                     <a href="https://docs.aws.amazon.com/kms/latest/developerguide/multi-region-keys-overview.html" target="_blank" class="ref-link">Multi-Region Keys</a>
@@ -1584,6 +1670,16 @@
                         <li><strong>S3 Security:</strong> Versioning + MFA Delete + Object Lock + SSE-KMS + Lifecycle para Glacier</li>
                     </ul>
 
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">Após fusão, consolidar duas Organizations distintas sob um único admin do Security Hub.</span> → <span class="resposta">enviar o convite DA conta administradora do Security Hub para as contas-membro da outra Org</span> <span class="porque">— auto-enable só funciona dentro da mesma Org.</span></li>
+                            <li><span class="cenario">Detecção org-wide de dados sensíveis em S3 cifrado com CMK, cobrindo contas novas.</span> → <span class="resposta">Macie na Org com Auto-enable ON + kms:Decrypt na service-linked role</span> <span class="porque">— sem decrypt, o Macie só lê metadados.</span></li>
+                            <li><span class="cenario">Auditoria precisa listar buckets S3 compartilhados externamente E os que contêm dados sensíveis.</span> → <span class="resposta"><a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/what-is-access-analyzer.html" target="_blank" class="doc-term">IAM Access Analyzer</a> (acesso externo) + Macie (dados sensíveis)</span> <span class="porque">— nenhum serviço sozinho atende os dois requisitos.</span></li>
+                            <li><span class="cenario">Reduzir acesso cross-account excessivamente permissivo, impondo menor privilégio.</span> → <span class="resposta">IAM Access Analyzer para identificar/revisar o acesso cross-account</span> <span class="porque">— bloquear tudo via SCP é grosseiro e o CloudTrail é reativo.</span></li>
+                            <li><span class="cenario">Framework para monitorar conformidade continuamente, com regras e remediações próprias.</span> → <span class="resposta">regras + remediações no AWS Config distribuídas via <a href="https://docs.aws.amazon.com/config/latest/developerguide/conformance-packs.html" target="_blank" class="doc-term">Conformance Packs</a></span> <span class="porque">— empacotam tudo como uma unidade reutilizável.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-user-guide.html" target="_blank" class="ref-link">CloudTrail</a>
                     <a href="https://docs.aws.amazon.com/guardduty/latest/ug/what-is-guardduty.html" target="_blank" class="ref-link">GuardDuty</a>
                     <a href="https://docs.aws.amazon.com/securityhub/latest/userguide/what-is-securityhub.html" target="_blank" class="ref-link">Security Hub</a>
@@ -1665,6 +1761,16 @@
                         <li><strong>Backup Vault Lock (WORM):</strong> backups não podem ser deletados — nem pelo root user! Proteção contra ransomware.</li>
                     </ul>
 
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">DR de servidores EC2 entre Regiões usando <a href="https://docs.aws.amazon.com/drs/latest/userguide/what-is-drs.html" target="_blank" class="doc-term">Elastic Disaster Recovery (DRS)</a> — melhor prática.</span> → <span class="resposta">rodar drills periódicos lançando instâncias de teste e validando a recuperação</span> <span class="porque">— o DRS não provisiona recursos não-EC2 (use CloudFormation para o resto).</span></li>
+                            <li><span class="cenario">Aurora Global Database com a Região primária fora do ar; o app conectava direto no cluster primário.</span> → <span class="resposta">detach do cluster secundário (promove a gravável) e apontar o app para o novo writer</span> <span class="porque">— restore de snapshot ou adicionar Região nova não é failover.</span></li>
+                            <li><span class="cenario">DR de RDS para outra Região com bom RTO/RPO, sem standby sempre ligado.</span> → <span class="resposta">cross-Region automated backup replication e restaurar quando necessário</span> <span class="porque">— dá RTO/RPO em minutos sem custo de DB standby rodando.</span></li>
+                            <li><span class="cenario">App multi-Região com Route 53 latency + weighted não faz failover ao derrubar uma Região.</span> → <span class="resposta">anexar health checks aos records E ligar "Evaluate Target Health"</span> <span class="porque">— sem isso o Route 53 assume tudo saudável.</span></li>
+                            <li><span class="cenario">Aplicação global ativo-ativo com leitura/escrita local de baixa latência em várias Regiões.</span> → <span class="resposta">DynamoDB Global Tables</span> <span class="porque">— o Aurora Global tem uma única primária de escrita por vez.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-options-in-the-cloud.html" target="_blank" class="ref-link">Whitepaper DR na AWS</a>
                     <a href="https://docs.aws.amazon.com/drs/latest/userguide/what-is-drs.html" target="_blank" class="ref-link">Elastic Disaster Recovery</a>
                     <a href="https://docs.aws.amazon.com/aws-backup/latest/devguide/whatisbackup.html" target="_blank" class="ref-link">AWS Backup</a>
@@ -1719,6 +1825,16 @@
                         <li><strong>Workloads OU:</strong> Production, Staging, Development</li>
                         <li><strong>Sandbox OU:</strong> contas de experimentação com restrições</li>
                     </ul>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">Como adicionar contas a uma nova Organization.</span> → <span class="resposta">criar contas novas dentro da Org OU, na management account, convidar contas existentes</span> <span class="porque">— não existe fluxo de "pedido de entrada" por conta-membro.</span></li>
+                            <li><span class="cenario">Mover contas entre OUs pelo console falha por permissão — quais IAM perms.</span> → <span class="resposta">organizations:DescribeOrganization + organizations:MoveAccount</span> <span class="porque">— DescribeAccount/AttachPolicy não são necessárias para mover.</span></li>
+                            <li><span class="cenario">Mover contas de um OU para um novo OU.</span> → <span class="resposta">no console de Organizations, selecionar as contas e Actions > Move</span> <span class="porque">— não é preciso remover/reconvidar nem passar pelo root.</span></li>
+                            <li><span class="cenario">Exportar a lista de todas as contas-membro (IDs, e-mails, status).</span> → <span class="resposta">console de Organizations (como IAM user) > Export account list (CSV)</span> <span class="porque">— evite o root para tarefas rotineiras.</span></li>
+                            <li><span class="cenario">Admins da management account precisam gerenciar recursos nas contas Dev/Test (billing consolidado).</span> → <span class="resposta">cross-account roles com as permissões NAS contas Dev/Test + AssumeRole</span> <span class="porque">— consolidated billing não concede acesso a recursos.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/organizations/latest/userguide/orgs_introduction.html" target="_blank" class="ref-link">AWS Organizations</a>
                     <a href="https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps.html" target="_blank" class="ref-link">SCPs</a>
                 </div>
@@ -1750,7 +1866,16 @@
 
                     <h4>Detect and Remediate Policy Violations</h4>
                     <p>Fluxo: Control Tower detecta non-compliance → SNS → EventBridge → Lambda executa remediação automática</p>
-                    <p><span class="tag tag-yellow">Cenário comum:</span> "Precisa provisionar novas contas automaticamente com baseline de segurança"</p>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">Padronizar rapidamente um ambiente multi-conta com contas de auditoria/log, baseline de segurança e governança.</span> → <span class="resposta">AWS Control Tower (<a href="https://docs.aws.amazon.com/controltower/latest/userguide/how-control-tower-works.html" target="_blank" class="doc-term">Landing Zone</a>)</span> <span class="porque">— montar Organizations + SCPs + contas manualmente é lento e propenso a erro.</span></li>
+                            <li><span class="cenario">Provisionar novas contas já em conformidade, de forma self-service.</span> → <span class="resposta"><a href="https://docs.aws.amazon.com/controltower/latest/userguide/account-factory.html" target="_blank" class="doc-term">Account Factory</a></span> <span class="porque">— aplica baseline e OUs automaticamente.</span></li>
+                            <li><span class="cenario">Impor regras preventivas/detectivas de conformidade sem escrever cada SCP à mão.</span> → <span class="resposta">Guardrails do Control Tower (preventivos via SCP, detectivos via Config)</span> <span class="porque">— são controles gerenciados prontos.</span></li>
+                            <li><span class="cenario">Governar Regiões permitidas e detectar drift em todo o ambiente.</span> → <span class="resposta">Region deny guardrail + detecção de drift na Landing Zone</span> <span class="porque">— o Control Tower monitora desvios da baseline centralmente.</span></li>
+                            <li><span class="cenario">Empresa quer Landing Zone mas já tem uma Organization existente.</span> → <span class="resposta">habilitar o Control Tower sobre a Org existente e inscrever (enroll) as contas</span> <span class="porque">— estende a governança sem recriar a Org.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/controltower/latest/userguide/what-is-control-tower.html" target="_blank" class="ref-link">Control Tower</a>
                 </div>
             </details>
@@ -1776,6 +1901,16 @@
                         <li><strong>Restringir criação sem Tags:</strong> SCP pode bloquear ec2:RunInstances se não tiver tags específicas (usando aws:TagKeys)</li>
                         <li><strong>Restringir por Região:</strong> SCP com condição aws:RequestedRegion para bloquear regiões não autorizadas</li>
                     </ul>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">Herança de SCP: um OU pai tem Deny, um OU filho tem Allow all; um usuário do filho tenta a ação negada.</span> → <span class="resposta">NEGADO — o Deny herdado prevalece</span> <span class="porque">— Deny explícito sempre vence; Allow de OU não sobrepõe Deny herdado.</span></li>
+                            <li><span class="cenario">Achar serviços permitidos mas nunca usados, para reforçar as Deny lists.</span> → <span class="resposta">IAM > <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_access-advisor-view-data-orgs.html" target="_blank" class="doc-term">Organization activity</a> (last-accessed)</span> <span class="porque">— o console de Organizations e o Config não têm o last-accessed org-wide.</span></li>
+                            <li><span class="cenario">Usuários desligam o CloudTrail; impedir isso dali em diante (billing consolidado).</span> → <span class="resposta">upgrade para "All features" + SCP negando cloudtrail:StopLogging</span> <span class="porque">— não precisa recriar a Org; policy IAM local é contornável.</span></li>
+                            <li><span class="cenario">Root nega tudo exceto t2.micro; UMA conta dev precisa de um tipo maior temporário.</span> → <span class="resposta">criar Development OU, mover a conta, e mover o SCP de deny do Root para o OU de Produção</span> <span class="porque">— um Deny no Root não pode ser sobreposto por Allow de OU/conta.</span></li>
+                            <li><span class="cenario">Impedir, em toda a org, que qualquer usuário delete buckets S3.</span> → <span class="resposta">SCP negando s3:DeleteBucket no Root, com SCPs habilitados</span> <span class="porque">— policy IAM por usuário é contornável e não é org-wide.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_tag-policies.html" target="_blank" class="ref-link">Tag Policies</a>
                     <a href="https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_backup.html" target="_blank" class="ref-link">Backup Policies</a>
                 </div>
@@ -1798,6 +1933,16 @@
                         <strong>💡 Dica importante</strong>
                         VPC Subnet sharing permite que múltiplas contas lancem recursos na mesma subnet, mas cada conta gerencia seus próprios recursos. Ideal para centralizar networking.
                     </div>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">Compartilhar recursos do <a href="https://docs.aws.amazon.com/imagebuilder/latest/userguide/manage-shared-resources.html" target="_blank" class="doc-term">EC2 Image Builder</a> (components, recipes, images) com outras contas/OUs.</span> → <span class="resposta">adicionar os recursos a um resource share e configurar os principals</span> <span class="porque">— não dá para compartilhar direto pelo console do Image Builder.</span></li>
+                            <li><span class="cenario">Pré-requisito do Firewall Manager para configurar Network Firewall entre contas/VPCs.</span> → <span class="resposta">habilitar o RAM (compartilhamento)</span> <span class="porque">— o Firewall Manager depende do RAM para propagar regras entre contas.</span></li>
+                            <li><span class="cenario">Rede centralizada onde várias contas usam subnets de uma VPC compartilhada.</span> → <span class="resposta">compartilhar as subnets via RAM (VPC sharing)</span> <span class="porque">— peering/TGW conectam redes separadas, não compartilham a mesma.</span></li>
+                            <li><span class="cenario">Compartilhar um Transit Gateway com todas as contas da Org.</span> → <span class="resposta">compartilhar o TGW via RAM</span> <span class="porque">— é o mecanismo oficial de compartilhamento do TGW.</span></li>
+                            <li><span class="cenario">Centralizar licenças (License Manager) ou regras do Resolver entre contas.</span> → <span class="resposta">compartilhar via RAM</span> <span class="porque">— sem duplicar o recurso por conta.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/ram/latest/userguide/what-is.html" target="_blank" class="ref-link">Resource Access Manager</a>
                 </div>
             </details>
@@ -1819,6 +1964,16 @@
                         <tr><td><strong>Compute Optimizer</strong></td><td>Recomendação de rightsizing para EC2, EBS, Lambda, ECS.</td></tr>
                         <tr><td><strong>S3 Storage Lens</strong></td><td>Visibilidade de uso e otimização de storage S3 org-wide.</td></tr>
                     </table>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">Custos crescentes de S3; precisa de insights de uso/atividade e recomendações em vários buckets.</span> → <span class="resposta"><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage_lens.html" target="_blank" class="doc-term">S3 Storage Lens</a></span> <span class="porque">— o Trusted Advisor é genérico e o Compute Optimizer é para compute.</span></li>
+                            <li><span class="cenario">Dashboard de rightsizing para EC2, EBS, ASG e Lambda, evitando over/under-provisioning.</span> → <span class="resposta">AWS Compute Optimizer</span> <span class="porque">— o Budgets só rastreia/alerta custo.</span></li>
+                            <li><span class="cenario">Pós-migração: rightsizing de EC2 org-wide + recomendações críticas de segurança agregadas.</span> → <span class="resposta">Compute Optimizer com enhanced metrics + <a href="https://docs.aws.amazon.com/awssupport/latest/user/trusted-advisor-priority.html" target="_blank" class="doc-term">Trusted Advisor Priority</a> (org view)</span> <span class="porque">— enhanced olha 90 dias (default 14).</span></li>
+                            <li><span class="cenario">Plano holístico: rightsizing de compute + padrões de S3 + tendências de custo ao longo do tempo.</span> → <span class="resposta">Compute Optimizer + S3 Storage Lens + <a href="https://docs.aws.amazon.com/cur/latest/userguide/what-is-cur.html" target="_blank" class="doc-term">CUR</a></span> <span class="porque">— cobre os três pilares.</span></li>
+                            <li><span class="cenario">Impedir um time de Dev de lançar mais EC2 ao estourar o orçamento.</span> → <span class="resposta">AWS Budgets com <a href="https://docs.aws.amazon.com/cost-management/latest/userguide/budgets-controls.html" target="_blank" class="doc-term">budget action</a> aplicando um SCP</span> <span class="porque">— "stop EC2" só para instâncias já rodando.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/cost-management/latest/userguide/what-is-costmanagement.html" target="_blank" class="ref-link">AWS Cost Management</a>
                     <a href="https://docs.aws.amazon.com/compute-optimizer/latest/ug/what-is-compute-optimizer.html" target="_blank" class="ref-link">Compute Optimizer</a>
                 </div>
@@ -1843,6 +1998,16 @@
                             <li><strong>Reserved Instances:</strong> quando precisa de capacity reservation (garantia de capacidade em uma AZ específica)</li>
                             <li><strong>Spot:</strong> batch processing, CI/CD, big data, workloads stateless</li>
                         </ul>
+                    </div>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">App legado que não escala, com pico só ~5% do tempo e uso de longo prazo ao menor custo.</span> → <span class="resposta">instância burstable (família T) com Reserved Instance de 3 anos</span> <span class="porque">— T cobre o perfil ocioso/pico; o RI de 3 anos dá o menor custo de longo prazo.</span></li>
+                            <li><span class="cenario">Billing consolidado com RDS Reserved Instances compartilhadas; como fazer todas receberem o preço de RI.</span> → <span class="resposta">casar Região, engine, instance class E deployment (Single/Multi-AZ)</span> <span class="porque">— o benefício só se aplica quando todos os atributos batem.</span></li>
+                            <li><span class="cenario">Uso de compute previsível e estável, mas com liberdade de mudar família/OS/Região.</span> → <span class="resposta">Compute Savings Plan</span> <span class="porque">— o Standard RI trava atributos.</span></li>
+                            <li><span class="cenario">Workloads tolerantes a interrupção (batch, CI, big data) buscando o máximo desconto.</span> → <span class="resposta">Spot Instances</span> <span class="porque">— até ~90% de desconto; RI/Savings Plans não maximizam desconto para cargas efêmeras.</span></li>
+                            <li><span class="cenario">Garantir capacidade numa AZ específica para um evento/pico.</span> → <span class="resposta"><a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-capacity-reservations.html" target="_blank" class="doc-term">On-Demand Capacity Reservation</a> (combinável com Savings Plan)</span> <span class="porque">— o RI Regional dá desconto mas não garante capacidade zonal.</span></li>
+                        </ol>
                     </div>
                     <a href="https://docs.aws.amazon.com/savingsplans/latest/userguide/what-is-savings-plans.html" target="_blank" class="ref-link">Savings Plans</a>
                 </div>

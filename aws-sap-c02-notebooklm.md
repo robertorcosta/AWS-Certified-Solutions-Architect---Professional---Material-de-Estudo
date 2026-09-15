@@ -571,6 +571,49 @@
 - "Sem SSH/bastion" → Systems Manager Session Manager
 - "Dados > 1 semana pela rede" → Snow Family
 
+### Gatilho → Serviço (referência rápida)
+- Compartilhar recipes/images do EC2 Image Builder entre contas → RAM resource share
+- Serviços permitidos por SCP mas nunca usados (afinar deny) → IAM › Access reports › Organization activity (last-accessed)
+- Bloquear ação perigosa em toda a org → SCP com Deny no root
+- Log analytics open-source near-real-time → Kinesis Data Firehose → OpenSearch → Dashboards
+- Menor latência de rede + failover cross-region (sem cache) → Global Accelerator
+- Acesso privado a serviço/SaaS sem internet → Interface VPC Endpoint (PrivateLink)
+- Bloquear IP/porta específicos → NACL deny (Security Group não nega)
+- Query em atributo não-chave do DynamoDB → GSI; busca/filtro rico → stream para OpenSearch
+- HA + escala de leitura de RDS na mesma região → Multi-AZ DB cluster (standby legível)
+- DR com RPO segundos / RTO minutos → AWS DRS
+- Deploy de container sem gerir LB/cluster + CI/CD de repo → App Runner
+- Federação SAML corporativa → STS AssumeRoleWithSAML (Web Identity só p/ IdP social)
+- Compliance org-wide (regras + remediação) → AWS Config Conformance Packs
+- Restringir valores de parâmetro do CloudFormation por time → Service Catalog Template Constraint
+- Reduzir custo de KMS com milhões de objetos S3 → S3 Bucket Keys
+- Descobrir dados sensíveis em S3 org-wide → Macie (Auto-enable + kms:Decrypt na service-linked role)
+- Broker de mensagens WebSocket/JMS/AMQP lift-and-shift → Amazon MQ
+- Edge de rede 5G com latência mínima → Wavelength (acesso à internet via Carrier Gateway, não NAT)
+- Rightsizing de compute / análise de S3 / dataset de custo → Compute Optimizer / Storage Lens / CUR
+
+### Distratores Clássicos (parece certo, mas está errado)
+- CloudFront para "menor latência global com failover cross-region" → é Global Accelerator (CloudFront é cache)
+- Security Group para negar um IP → SG só faz allow; use NACL
+- Converter fila SQS Standard em FIFO, ou DLQ de tipo diferente → inválido; recrie a fila / DLQ do mesmo tipo
+- NAT Gateway para saída IPv6 → é IPv4-only; use egress-only Internet Gateway
+- FreeLocalStorage para autoscaling de storage do RDS → é métrica do Aurora; use FreeStorageSpace
+- Direct Connect para "conexão rápida de implantar e criptografada" → DX é lento de provisionar e não é criptografado por padrão
+- CloudEndure com launch templates padrão → use AWS DRS
+- Detective / GuardDuty / Inspector para achar dados sensíveis → é Macie (Detective investiga, é multi-account e por-região)
+- Assumir que o root sempre recupera uma chave KMS → se a key policy não o inclui, só o AWS Support recupera
+- DAX ou ElastiCache para busca/filtro complexo → são cache, não motor de busca (use OpenSearch)
+- Colocar Load Balancer na frente do App Runner → redundante (load balancing e scaling são nativos)
+- Redshift ou EMR para logs em tempo real → Redshift é analítico e EMR é batch; use Kinesis
+- Restaurar Aurora Global Database de snapshot como "failover" → snapshot restore não é failover
+- DeletionPolicy: Rollback → não existe (só Retain / Snapshot / Delete)
+
+### Atualizações factuais (2024–2025) — atenção a dados antigos
+- **API Gateway REST:** o timeout de integração de 29s deixou de ser fixo. Desde jun/2024 é ajustável via Service Quotas até 300s (5 min) para REST APIs Regional e Private. O default segue 29s.
+- **AWS Snowmobile:** descontinuado (retirado em março/2024). Não é mais oferecido. Para PB, use Snowball Edge / DataSync. (Ainda pode aparecer como distrator em questões legadas.)
+- **Compute Optimizer:** o enhanced infrastructure metrics analisa até 93 dias de histórico (o default são 14 dias).
+- **Aurora Global Database:** há dois caminhos — *managed failover / switchover* (troca planejada, preserva a topologia) e *detach-and-promote* (recuperação de desastre não-planejado, quando a região primária está fora do ar).
+
 ---
 
 ## NOVIDADES AWS 2025-2026 (CONTEXTO)

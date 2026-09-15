@@ -2849,6 +2849,16 @@
                         <strong>⚠️ Na prova</strong>
                         Questões de migração sempre pedem "menor esforço", "menor tempo", ou "melhor uso da cloud". Rehost = menor esforço. Refactor = melhor uso da cloud mas mais tempo/custo.
                     </div>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">Decompor um monólito em microsserviços serverless para ganhar agilidade.</span> → <span class="resposta">Refactor / Re-architect</span> <span class="porque">— Relocate é VMware/containers; Replatform são ajustes pequenos.</span></li>
+                            <li><span class="cenario">Escolher o melhor candidato para uma migração piloto.</span> → <span class="resposta">workload de baixa criticidade, 1-3 instâncias, via Rehost</span> <span class="porque">— reduz o risco começando pelo simples.</span></li>
+                            <li><span class="cenario">Reduzir licenciamento migrando de comercial para open-source (ex.: DB → RDS).</span> → <span class="resposta">Replatform ("lift, tinker and shift")</span> <span class="porque">— Rehost não muda a plataforma; Refactor é reescrita maior.</span></li>
+                            <li><span class="cenario">App em VMs/containers já prontos que só precisam ir para a nuvem para gestão/escala.</span> → <span class="resposta">Relocate</span> <span class="porque">— Rehost move servidor a servidor; Relocate move a plataforma existente.</span></li>
+                            <li><span class="cenario">Aplicação que não é mais necessária ou já existe como SaaS pronto.</span> → <span class="resposta">Retire (descontinuar) ou Repurchase (trocar por SaaS)</span> <span class="porque">— migrar algo que será desligado é desperdício.</span></li>
+                        </ol>
+                    </div>
                 </div>
             </details>
 
@@ -2866,6 +2876,16 @@
                         <li><strong>AWS Migration Evaluator:</strong> análise de TCO, business case para migração</li>
                         <li><strong>TSO Logic:</strong> recomendação de instâncias baseada em usage real</li>
                     </ul>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">Analisar o ambiente VMware on-premises e as dependências antes de migrar.</span> → <span class="resposta"><a href="https://docs.aws.amazon.com/application-discovery/latest/userguide/what-is-appdiscovery.html" target="_blank" class="doc-term">Application Discovery Service</a> (com HTTPS 443 + IAM)</span> <span class="porque">— o modo agentless é suportado; SSH inbound é irrelevante.</span></li>
+                            <li><span class="cenario">Atividades que NÃO fazem parte da fase de Application Portfolio Assessment.</span> → <span class="resposta">criar cutover runbooks e a Landing Zone</span> <span class="porque">— pertencem às fases Migrate&Modernize e Mobilize.</span></li>
+                            <li><span class="cenario">Rastrear e visualizar o progresso da migração de várias aplicações num painel central.</span> → <span class="resposta">AWS Migration Hub</span> <span class="porque">— o Discovery Service coleta dados; o Hub consolida o acompanhamento.</span></li>
+                            <li><span class="cenario">Estimar custo/TCO na AWS antes de migrar, a partir do inventário on-premises.</span> → <span class="resposta">Migration Evaluator</span> <span class="porque">— o Discovery Service coleta dependências, mas o business case é do Evaluator.</span></li>
+                            <li><span class="cenario">Coletar dependências de rede e utilização detalhada por servidor com agente.</span> → <span class="resposta">Application Discovery Service (agent-based)</span> <span class="porque">— o modo agentless coleta menos detalhe.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/migrationhub/latest/ug/whatishub.html" target="_blank" class="ref-link">Migration Hub</a>
                     <a href="https://docs.aws.amazon.com/application-discovery/latest/userguide/what-is-appdiscovery.html" target="_blank" class="ref-link">Application Discovery Service</a>
                 </div>
@@ -2945,6 +2965,16 @@
                         <li>DMS pega do S3 e migra para o target (com CDC para updates contínuos)</li>
                     </ol>
 
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">Infra SFTP segura e rápida para trocar dados PB-scale com parceiros.</span> → <span class="resposta">AWS Transfer Family (SFTP)</span> <span class="porque">— o DataSync não suporta SFTP; o Snowball é bulk offline.</span></li>
+                            <li><span class="cenario">App on-premises só suporta SFTP, com volume variável e sem intervenção manual.</span> → <span class="resposta">Transfer Family → S3 (+ Athena para consultar)</span> <span class="porque">— o Storage Gateway não tem SFTP.</span></li>
+                            <li><span class="cenario">Backup híbrido: file shares on-premises com storage na nuvem e cache local de baixa latência.</span> → <span class="resposta">AWS Storage Gateway</span> <span class="porque">— o DataSync é transferência online, não storage híbrido.</span></li>
+                            <li><span class="cenario">Migrar PB de mídia em poucos meses sem impactar o serviço.</span> → <span class="resposta">múltiplos <a href="https://docs.aws.amazon.com/snowball/latest/developer-guide/device-differences.html" target="_blank" class="doc-term">Snowball Edge</a> → S3</span> <span class="porque">— DX + DataSync são lentos para PB.</span></li>
+                            <li><span class="cenario">Migrar PB de dados sensíveis com rede ruim e compliance.</span> → <span class="resposta">AWS Snow Family</span> <span class="porque">— DataSync/Transfer dependem da rede.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/datasync/latest/userguide/what-is-datasync.html" target="_blank" class="ref-link">DataSync</a>
                     <a href="https://docs.aws.amazon.com/snowball/latest/developer-guide/whatisedge.html" target="_blank" class="ref-link">Snow Family</a>
                     <a href="https://docs.aws.amazon.com/transfer/latest/userguide/what-is-aws-transfer-family.html" target="_blank" class="ref-link">Transfer Family</a>
@@ -2973,6 +3003,16 @@
                         <strong>✅ Combinação típica na prova</strong>
                         Oracle → Aurora PostgreSQL: SCT (converte schema) + DMS (migra dados com CDC para downtime mínimo)
                     </div>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">Replicar um RDS MySQL para uma instância on-premises como standby (DR contínuo).</span> → <span class="resposta">AWS DMS com CDC (source RDS → target on-premises)</span> <span class="porque">— a read replica do RDS só existe dentro da AWS.</span></li>
+                            <li><span class="cenario">Migrar um banco não suportado para DynamoDB, com CSV exportado e regras de mapeamento.</span> → <span class="resposta">DMS com S3 como source endpoint (mapping JSON no endpoint) → DynamoDB</span> <span class="porque">— o DynamoDB não importa CSV direto neste caso.</span></li>
+                            <li><span class="cenario">Como a instância de replicação do DMS criptografa os dados armazenados.</span> → <span class="resposta">em repouso via KMS (chave aws/dms padrão ou CMK)</span> <span class="porque">— não é sem criptografia por padrão.</span></li>
+                            <li><span class="cenario">Converter o esquema de Oracle/SQL Server para Aurora/PostgreSQL antes de migrar.</span> → <span class="resposta">AWS SCT (converte schema) + DMS (migra os dados)</span> <span class="porque">— o DMS sozinho não converte esquema heterogêneo.</span></li>
+                            <li><span class="cenario">Migração homogênea (mesmo engine) com downtime mínimo.</span> → <span class="resposta">DMS com full load + CDC</span> <span class="porque">— o SCT é desnecessário quando source e target têm o mesmo engine.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/dms/latest/userguide/Welcome.html" target="_blank" class="ref-link">AWS DMS</a>
                     <a href="https://docs.aws.amazon.com/SchemaConversionTool/latest/userguide/CHAP_Welcome.html" target="_blank" class="ref-link">AWS SCT</a>
                 </div>
@@ -2996,6 +3036,16 @@
                         <li>Use quando: equipe já é expert em VMware e quer migrar sem re-architect</li>
                         <li>Integração nativa com serviços AWS (S3, RDS, etc.)</li>
                     </ul>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">Migração grande com o MGN sofrendo falhas de replicação e limites de banda, com cutover de mínimo downtime.</span> → <span class="resposta">estratégia pilot light para os críticos + throttling de banda no MGN</span> <span class="porque">— o DMS é só banco; o Snowball é offline, não replicação viva.</span></li>
+                            <li><span class="cenario">Lift-and-shift de servidores físicos/VMs para EC2 com replicação em bloco e cutover controlado.</span> → <span class="resposta">AWS Application Migration Service (MGN)</span> <span class="porque">— é o serviço primário de rehost; o DMS migra só bancos.</span></li>
+                            <li><span class="cenario">Substituir o antigo Server Migration Service (SMS) por replicação contínua.</span> → <span class="resposta">AWS MGN</span> <span class="porque">— o SMS foi descontinuado; o MGN é o sucessor.</span></li>
+                            <li><span class="cenario">Testar a recuperação/cutover sem impactar a produção antes do corte final.</span> → <span class="resposta">MGN test instances (launch de teste)</span> <span class="porque">— valida os servidores replicados sem afetar a origem.</span></li>
+                            <li><span class="cenario">Exportar uma EC2 como OVA para deploy on-premises em VMware.</span> → <span class="resposta"><a href="https://docs.aws.amazon.com/vm-import/latest/userguide/vmexport.html" target="_blank" class="doc-term">VM Import/Export</a></span> <span class="porque">— o Server Migration Connector é do SMS descontinuado.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/mgn/latest/ug/what-is-application-migration-service.html" target="_blank" class="ref-link">Application Migration Service</a>
                 </div>
             </details>
@@ -3074,6 +3124,16 @@
                         <li>Use para: batch, CI/CD, big data, workloads stateless e tolerantes a interrupção</li>
                     </ul>
 
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">Backend Node.js para eventos, com execução curta e sem gerir infra.</span> → <span class="resposta">AWS Lambda (event-driven) + API Gateway</span> <span class="porque">— EC2+ASG é manual; Beanstalk é para apps long-running.</span></li>
+                            <li><span class="cenario">App Python em container, simples/barato, sem configurar load balancer, escalando por concorrência.</span> → <span class="resposta"><a href="https://docs.aws.amazon.com/apprunner/latest/dg/what-is-apprunner.html" target="_blank" class="doc-term">AWS App Runner</a></span> <span class="porque">— Lambda provisiona uma instância por request; ECS/EKS exigem LB.</span></li>
+                            <li><span class="cenario">Jobs que precisam iniciar rápido no scale-out, sem provisionar cluster.</span> → <span class="resposta">AWS Batch em Fargate</span> <span class="porque">— GPU/AMI custom/instance types específicos exigiriam EC2.</span></li>
+                            <li><span class="cenario">App legado sem Auto Scaling, com pico raro e baixa memória, minimizando custo.</span> → <span class="resposta">instância burstable (T) com Reserved Instance de 3 anos</span> <span class="porque">— um tipo maior custa mais; Spot pode faltar.</span></li>
+                            <li><span class="cenario">Deploy CI/CD de um app direto de um repositório GitHub/Bitbucket, com build no push.</span> → <span class="resposta">App Runner com integração de source repo</span> <span class="porque">— CodeBuild/CodePipeline seriam mais complexos.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/autoscaling/ec2/userguide/what-is-amazon-ec2-auto-scaling.html" target="_blank" class="ref-link">EC2 Auto Scaling</a>
                     <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-spot-instances.html" target="_blank" class="ref-link">Spot Instances</a>
                     <a href="https://docs.aws.amazon.com/lambda/latest/dg/welcome.html" target="_blank" class="ref-link">Lambda</a>
@@ -3156,6 +3216,16 @@
                         <strong>💡 File Gateway: Object Lock + Versioning</strong>
                         Habilita WORM data. Modificações criam nova versão sem afetar as anteriores. Use "RefreshCache" API para ser notificado de restores.
                     </div>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">Montar um EFS persistente em tarefas ECS Fargate.</span> → <span class="resposta">SG do EFS com inbound 2049 vindo do Fargate + mesmo VPC</span> <span class="porque">— o EFS precisa ser multi-AZ, no mesmo VPC das tasks.</span></li>
+                            <li><span class="cenario">EFS compartilhado sem criptografia; habilitar at-rest e in-transit.</span> → <span class="resposta">at-rest na criação, in-transit no mount (<code>-o tls</code>)</span> <span class="porque">— at-rest não pode ser ativado só no mount.</span></li>
+                            <li><span class="cenario">Restaurar dados de um Storage Gateway (cached volume) na AWS.</span> → <span class="resposta">criar um volume EBS a partir do snapshot do gateway e montar num EC2</span> <span class="porque">— os dados não estão acessíveis via S3 API.</span></li>
+                            <li><span class="cenario">Escolher o tipo de volume EBS para um banco com latência mínima e I/O intenso.</span> → <span class="resposta">Provisioned IOPS SSD (io2)</span> <span class="porque">— gp2 é boot/test; st1/sc1 são para throughput/cold.</span></li>
+                            <li><span class="cenario">Compartilhamento de arquivos Windows (SMB) totalmente gerenciado para um app migrado.</span> → <span class="resposta">Amazon FSx for Windows File Server</span> <span class="porque">— EFS é NFS/Linux; FSx for Lustre é HPC.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/storagegateway/latest/userguide/WhatIsStorageGateway.html" target="_blank" class="ref-link">Storage Gateway</a>
                     <a href="https://docs.aws.amazon.com/fsx/" target="_blank" class="ref-link">FSx</a>
                     <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AmazonEBS.html" target="_blank" class="ref-link">EBS</a>
@@ -3200,6 +3270,16 @@
                         <li>Concurrency padrão: 1000 por região (pode solicitar aumento)</li>
                         <li>/tmp storage: até 10 GB</li>
                     </ul>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">Retornando HTTP 504 após ~30s, embora o timeout do Lambda seja de 15 min.</span> → <span class="resposta">é o limite de 29s de integração do API Gateway (não aumentável)</span> <span class="porque">— o Lambda não é capado em 30s; não é erro do backend.</span></li>
+                            <li><span class="cenario">Enviar a requisição HTTP inteira ao Lambda e trocar a função sem redeploy.</span> → <span class="resposta">Lambda Proxy integration com o método "ANY"</span> <span class="porque">— o setup por método é desnecessário.</span></li>
+                            <li><span class="cenario">A API parou de funcionar após uma mudança no método REST.</span> → <span class="resposta">fazer o redeploy da API</span> <span class="porque">— mudança de método exige redeploy; não é caching.</span></li>
+                            <li><span class="cenario">Write throttling no DynamoDB só durante o dia por WCU baixa; correção mais fácil.</span> → <span class="resposta">habilitar DynamoDB Auto Scaling</span> <span class="porque">— aumentar a WCU fixa desperdiça à noite.</span></li>
+                            <li><span class="cenario">Autenticar um grande número de clientes de uma REST API + Lambda.</span> → <span class="resposta">Cognito User Pool authorizer no API Gateway</span> <span class="porque">— o Lambda authorizer adiciona latência/custo em escala.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-limits.html" target="_blank" class="ref-link">Lambda Limits</a>
                     <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html" target="_blank" class="ref-link">API Gateway</a>
                 </div>
@@ -3260,6 +3340,16 @@
                         <li>Image Scanning: Basic (CVE) ou Enhanced (Inspector — OS + linguagem)</li>
                         <li>Scan results geram eventos no EventBridge</li>
                     </ul>
+                    <div class="exam-scenarios">
+                        <span class="exam-title">📝 Como cai na prova</span>
+                        <ol>
+                            <li><span class="cenario">Pré-requisitos para começar a usar o EKS.</span> → <span class="resposta">role de serviço IAM do EKS + VPC para o cluster</span> <span class="porque">— o EKS puxa imagens de qualquer registry, não só do ECR.</span></li>
+                            <li><span class="cenario">App containerizado serverless, sem provisionar infra e sem API open-source.</span> → <span class="resposta">ECS com launch type Fargate</span> <span class="porque">— o EKS é para quem precisa da API Kubernetes.</span></li>
+                            <li><span class="cenario">RTO de minutos / RPO de segundos custo-efetivo para falha de hardware EC2 no ECS.</span> → <span class="resposta">ECS capacity provider com um Auto Scaling Group de EC2</span> <span class="porque">— hot standby cross-region é caro; Fargate Spot é interrompível.</span></li>
+                            <li><span class="cenario">App em container com comunicação segura a um RDS privado, HA e auto-scale, sem gerir LB.</span> → <span class="resposta">AWS App Runner (VPC Connector + Auto Scaling)</span> <span class="porque">— ECS Fargate/EKS exigiriam configurar o load balancer.</span></li>
+                            <li><span class="cenario">Migrar um portal Java+MySQL para containers HA sem gerenciar servidores.</span> → <span class="resposta">imagens no ECR + ECS Fargate + Aurora</span> <span class="porque">— o launch type EC2 aumenta o overhead; o EKS agrega complexidade sem necessidade.</span></li>
+                        </ol>
+                    </div>
                     <a href="https://docs.aws.amazon.com/AmazonECS/latest/developerguide/Welcome.html" target="_blank" class="ref-link">ECS</a>
                     <a href="https://docs.aws.amazon.com/eks/latest/userguide/what-is-eks.html" target="_blank" class="ref-link">EKS</a>
                     <a href="https://docs.aws.amazon.com/AmazonECR/latest/userguide/what-is-ecr.html" target="_blank" class="ref-link">ECR</a>

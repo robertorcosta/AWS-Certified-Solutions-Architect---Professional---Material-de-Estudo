@@ -148,6 +148,7 @@
         .main-content {
             margin-left: var(--sidebar-width);
             flex: 1;
+            min-width: 0;
             padding: 40px 60px;
             max-width: 900px;
         }
@@ -655,23 +656,27 @@
 
             .main-content {
                 margin-left: 0;
-                padding: 20px 16px;
+                padding: 64px 16px 20px;
+                max-width: 100%;
             }
+
+            h1 { font-size: 1.5rem; }
+            h2 { font-size: 1.25rem; }
 
             .menu-toggle {
                 display: block;
             }
 
-            /* Tabelas rolam horizontalmente em vez de estourar a tela */
+            /* Tabelas: quebram o texto para caber; rolam só se ainda forem largas */
             table {
-                font-size: 0.8rem;
+                font-size: 0.78rem;
                 display: block;
                 overflow-x: auto;
                 -webkit-overflow-scrolling: touch;
-                white-space: nowrap;
             }
 
             th, td {
+                white-space: normal;
                 padding: 8px 10px;
             }
 

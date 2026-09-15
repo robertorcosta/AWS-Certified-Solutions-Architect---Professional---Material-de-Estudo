@@ -59,6 +59,13 @@
             color: var(--text-primary);
             line-height: 1.7;
             display: flex;
+            overflow-x: hidden;
+        }
+
+        /* Evita que palavras/URLs longas estourem a largura no mobile */
+        p, li, td, th, summary, h1, h2, h3, h4 {
+            overflow-wrap: break-word;
+            word-break: break-word;
         }
 
         /* Sidebar */
@@ -648,19 +655,33 @@
 
             .main-content {
                 margin-left: 0;
-                padding: 20px;
+                padding: 20px 16px;
             }
 
             .menu-toggle {
                 display: block;
             }
 
+            /* Tabelas rolam horizontalmente em vez de estourar a tela */
             table {
                 font-size: 0.8rem;
+                display: block;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                white-space: nowrap;
             }
 
             th, td {
                 padding: 8px 10px;
+            }
+
+            /* Barras de peso dos domínios quebram em vez de forçar largura fixa */
+            .domain-weight {
+                flex-wrap: wrap;
+            }
+
+            .domain-weight > span[style*="min-width"] {
+                min-width: 100% !important;
             }
         }
 

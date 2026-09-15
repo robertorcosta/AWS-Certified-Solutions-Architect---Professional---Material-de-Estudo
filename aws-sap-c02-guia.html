@@ -1476,7 +1476,7 @@
             </details>
 
             <details>
-                <summary>Identity Federation — Flavors</summary>
+                <summary>Federação de Identidade — Tipos</summary>
                 <div class="content">
                     <p>Permite que usuários fora da AWS acessem recursos AWS sem criar IAM Users.</p>
                     <table>
@@ -1583,13 +1583,13 @@
                         </tr>
                     </table>
 
-                    <h4>Key Types</h4>
+                    <h4>Tipos de Chave</h4>
                     <ul>
                         <li><strong>Symmetric (AES-256):</strong> uma chave para encrypt/decrypt. Usada por todos os serviços AWS integrados. Necessária para envelope encryption. Nunca exposta sem criptografia.</li>
                         <li><strong>Asymmetric (RSA/ECC):</strong> par público/privado. Public key é downloadable. Use case: encrypt fora da AWS por quem não pode chamar a KMS API.</li>
                     </ul>
 
-                    <h4>Key Material Origin</h4>
+                    <h4>Origem do Material da Chave</h4>
                     <ul>
                         <li><strong>KMS (AWS_KMS):</strong> padrão, AWS gera e gerencia</li>
                         <li><strong>External (EXTERNAL):</strong> BYOK — você importa. Responsável pela segurança fora da AWS. Sem rotação automática.</li>
@@ -1698,7 +1698,7 @@
                         <li><strong>S3 Delivery:</strong> a cada 5 minutos (análise de integridade, cross-account, long-term)</li>
                     </ol>
 
-                    <h4>CloudTrail Solution Architectures (comuns na prova)</h4>
+                    <h4>Arquiteturas com CloudTrail (comuns na prova)</h4>
                     <ul>
                         <li><strong>Multi-Account Logging:</strong> S3 bucket centralizado com bucket policy para cross-account delivery</li>
                         <li><strong>Alertas:</strong> CloudTrail → CloudWatch Logs → Metric Filter (ex: count TerminateInstances) → Alarm → SNS</li>
@@ -1778,7 +1778,7 @@
                         <li><strong>DynamoDB Global Tables:</strong> multi-region, multi-active com replicação automática</li>
                     </ul>
 
-                    <h4>DR Tips (do PDF do Stephane Maarek)</h4>
+                    <h4>Dicas de DR</h4>
                     <ul>
                         <li><strong>Backup:</strong> EBS Snapshots, RDS automated backups, S3 + Lifecycle + CRR, Storage Gateway, Snowball</li>
                         <li><strong>HA:</strong> Route 53 failover, RDS Multi-AZ, ElastiCache Multi-AZ, EFS, S3. VPN como recovery do Direct Connect.</li>
@@ -2986,7 +2986,7 @@
                     <div class="info-box success">
                         <strong>✅ Regra do PDF</strong>
                         "Se levar mais de 1 semana para transferir pela rede, use Snow Family!"<br><br>
-                        <strong>Performance tips:</strong> múltiplos terminais em paralelo, agrupar arquivos pequenos (min 1MB), usar S3 Adapter (250-400 MB/s) ao invés do file interface (25-40 MB/s).
+                        <strong>Dicas de performance:</strong> múltiplos terminais em paralelo, agrupar arquivos pequenos (min 1MB), usar S3 Adapter (250-400 MB/s) ao invés do file interface (25-40 MB/s).
                     </div>
 
                     <h4>DataSync — Conexão via Direct Connect</h4>
@@ -3240,7 +3240,7 @@
                         <li><strong>Reduzir volume size:</strong> criar novo FSx menor + DataSync para sync</li>
                     </ul>
 
-                    <h4>Storage Gateway Types</h4>
+                    <h4>Tipos de Storage Gateway</h4>
                     <ul>
                         <li><strong>S3 File Gateway:</strong> NFS/SMB → S3 (Standard, IA, One Zone-IA, Intelligent-Tiering). Cache local. AD integration para SMB.</li>
                         <li><strong>FSx File Gateway:</strong> cache local de FSx for Windows (para branches com latência)</li>
@@ -3352,7 +3352,7 @@
                     <h4>ECS — ALB Integration e Dynamic Port Mapping</h4>
                     <p>Permite múltiplas instâncias do mesmo container na mesma EC2. O ALB descobre a porta automaticamente. Aumenta resiliência e utilização de CPU.</p>
 
-                    <h4>ECS Networking Modes</h4>
+                    <h4>Modos de Rede do ECS</h4>
                     <table>
                         <tr><th>Mode</th><th>Descrição</th><th>Uso</th></tr>
                         <tr><td><strong>awsvpc</strong></td><td>Cada task ganha sua própria ENI + IP privado</td><td>Default no Fargate. Melhor segurança (SGs por task).</td></tr>
